@@ -11,7 +11,7 @@
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.androidvip.bookshelf.MainActivity">
+        tools:context="com.androidvip.bookshelf.activities.MainActivity">
 
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
@@ -52,6 +52,6 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_cabecalho"
-        app:menu="@menu/activity_main_drawer" />
+        app:menu="@menu/drawer" />
 
 </android.support.v4.widget.DrawerLayout>

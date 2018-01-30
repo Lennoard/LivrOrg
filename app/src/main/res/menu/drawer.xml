@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_lendo"
+            android:icon="@drawable/ic_livro"
+            android:title="Lendo" />
+        <item
+            android:id="@+id/nav_lista_desejos"
+            android:icon="@drawable/ic_lista_desejos"
+            android:title="Lista de desejos" />
+        <item
+            android:id="@+id/nav_todos_livros"
+            android:icon="@drawable/ic_todos_livros"
+            android:title="Todos os livros" />
+    </group>
+
+</menu>

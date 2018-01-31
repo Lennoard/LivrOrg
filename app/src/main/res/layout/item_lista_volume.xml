@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginStart="8dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="138dp">
+
+        <ImageView
+            android:id="@+id/lista_capa_livro"
+            android:layout_width="103dp"
+            android:layout_height="138dp"
+            android:src="@drawable/carregando_imagem" />
+
+        <TextView
+            android:id="@+id/lista_titulo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/lista_capa_livro"
+            android:text="Domestic na kanojo"
+            android:theme="@style/TextoVolumeTitulo" />
+
+        <TextView
+            android:id="@+id/lista_autores"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/TextoVolumeAutor"
+            android:layout_below="@+id/lista_titulo"
+            android:text="Sasuga kei"
+            android:layout_toEndOf="@+id/lista_capa_livro" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginTop="16dp"
+            android:layout_toEndOf="@+id/lista_capa_livro"
+            android:layout_below="@+id/lista_autores">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginEnd="12dp"
+                android:layout_marginStart="12dp"
+                android:background="#ccc" />
+
+            <RatingBar
+                android:id="@+id/lista_classificacao"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                style="?android:attr/ratingBarStyleIndicator"
+                android:numStars="5"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

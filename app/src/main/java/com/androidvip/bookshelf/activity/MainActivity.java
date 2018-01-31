@@ -1,8 +1,10 @@
-package com.androidvip.bookshelf.activities;
+package com.androidvip.bookshelf.activity;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -14,8 +16,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.androidvip.bookshelf.R;
+import com.androidvip.bookshelf.adapter.VolumeAdapter;
+import com.androidvip.bookshelf.util.Utils;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.services.books.model.Volume;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+    RecyclerView rv;
+    RecyclerView.Adapter mAdapter;
+    List<Volume> volumesLista = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +55,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
+        new Thread(() -> {
+            try {
+                volumesLista = Utils.pesquisarLivros(jsonFactory, "potter");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            runOnUiThread(this::configurarRecyclerView);
+        }).start();
+
+    }
+
+    private void configurarRecyclerView() {
+        rv = findViewById(R.id.rv_livros);
+        mAdapter = new VolumeAdapter(this, volumesLista);
+
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
+        rv.setHasFixedSize(true);
+        rv.setLayoutManager(mLayoutManager);
+        rv.setAdapter(mAdapter);
     }
 
     @Override

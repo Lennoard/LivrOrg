@@ -9,13 +9,29 @@
             android:icon="@drawable/ic_livro"
             android:title="Lendo" />
         <item
+            android:id="@+id/nav_em_espera"
+            android:icon="@drawable/ic_em_espera"
+            android:title="Em espera" />
+        <item
+            android:id="@+id/nav_desistencias"
+            android:icon="@drawable/ic_desistencias"
+            android:title="Desistências" />
+        <item
+            android:id="@+id/nav_favoritos"
+            android:icon="@drawable/ic_favoritos"
+            android:title="Favoritos" />
+        <item
             android:id="@+id/nav_lista_desejos"
             android:icon="@drawable/ic_lista_desejos"
             android:title="Lista de desejos" />
         <item
             android:id="@+id/nav_todos_livros"
             android:icon="@drawable/ic_todos_livros"
-            android:title="Todos os livros" />
+            android:title="Meus livros" />
+        <item
+            android:id="@+id/nav_pesquisar"
+            android:icon="@drawable/ic_pesquisa"
+            android:title="@string/pesquisar" />
     </group>
 
 </menu>

@@ -9,7 +9,7 @@ import com.google.api.services.books.model.Volumes;
 
 import java.util.List;
 
-public class Utils {
+public final class Utils {
 
     private Utils() {
 

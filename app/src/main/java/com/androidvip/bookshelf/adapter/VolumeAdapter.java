@@ -53,39 +53,45 @@ public class VolumeAdapter extends RecyclerView.Adapter<VolumeAdapter.ViewHolder
         Volume volume = mDataSet.get(position);
         Volume.VolumeInfo volumeInfo = volume.getVolumeInfo();
 
-        holder.titulo.setText(volume.getVolumeInfo().getTitle());
+        if (volumeInfo != null) {
+            holder.titulo.setText(volumeInfo.getTitle());
 
-        StringBuilder autoresBuilder = new StringBuilder();
-        for (String autor : volume.getVolumeInfo().getAuthors()) {
-            autoresBuilder.append(autor).append(", ");
+            if (volumeInfo.getAuthors() != null) {
+                StringBuilder autoresBuilder = new StringBuilder();
+                for (String autor : volumeInfo.getAuthors())
+                    autoresBuilder.append(autor).append(", ");
+                holder.autores.setText(autoresBuilder.toString());
+            }
+
+            holder.classificacao.setRating(volumeInfo.getAverageRating() == null
+                    ? 0F : Float.parseFloat(volumeInfo.getAverageRating().toString()));
+
+            if (volumeInfo.getImageLinks() != null)
+                carregarImagem(activity, volumeInfo.getImageLinks().getThumbnail(), holder.capa);
         }
-
-        holder.autores.setText(autoresBuilder.toString());
-        holder.classificacao.setRating(volumeInfo.getAverageRating() == null
-                ? 0F : Float.parseFloat(volumeInfo.getAverageRating().toString()));
-
-        carregarImagem(activity, volume.getVolumeInfo().getImageLinks().getThumbnail(), holder.capa);
     }
 
     private synchronized void carregarImagem(Activity activity, String capaUrl, ImageView imageView) {
-        new Thread(() -> {
-            URL url;
-            final Bitmap capaBitmap;
-            try {
-                url = new URL(capaUrl);
-                capaBitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-                if (activity != null) {
-                    activity.runOnUiThread(() -> imageView.setImageDrawable(new BitmapDrawable(activity.getResources(), capaBitmap)));
+        if (capaUrl != null) {
+            new Thread(() -> {
+                URL url;
+                final Bitmap capaBitmap;
+                try {
+                    url = new URL(capaUrl);
+                    capaBitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+                    if (activity != null) {
+                        activity.runOnUiThread(() -> imageView.setImageDrawable(new BitmapDrawable(activity.getResources(), capaBitmap)));
+                    }
+                } catch (Exception ignored) {
+
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }).start();
+            }).start();
+        }
     }
 
     @Override
     public int getItemCount(){
-        return mDataSet.size();
+        return mDataSet == null ? 0 : mDataSet.size();
     }
 
 }

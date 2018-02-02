@@ -23,6 +23,7 @@ public final class Utils {
 
         Books.Volumes.List listaVolumes = books.volumes().list(pesquisa);
         listaVolumes.setMaxResults(40L);
+        listaVolumes.setOrderBy("relevance");
         Volumes volumes = listaVolumes.execute();
 
         return volumes.getItems();

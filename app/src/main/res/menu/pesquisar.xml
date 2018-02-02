@@ -4,6 +4,14 @@
     <item android:id="@+id/action_pesquisar"
         android:title="@string/pesquisar"
         android:icon="@drawable/ic_pesquisa"
-        app:actionViewClass="android.widget.SearchView"
+        app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="collapseActionView|ifRoom" />
+
+    <item android:id="@+id/action_pesquisar_por"
+        android:title="Pesquisar por"
+        android:icon="@drawable/ic_ordenar"
+        app:showAsAction="ifRoom">
+
+    </item>
+
 </menu>

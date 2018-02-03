@@ -4,34 +4,33 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 
+import com.androidvip.bookshelf.App;
 import com.androidvip.bookshelf.R;
-import com.androidvip.bookshelf.adapter.VolumeAdapter;
-import com.androidvip.bookshelf.util.Utils;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.services.books.model.Volume;
+import com.androidvip.bookshelf.adapter.LivroAdapter;
+import com.androidvip.bookshelf.model.Comentario;
+import com.androidvip.bookshelf.model.Livro;
 
-import java.util.ArrayList;
-import java.util.List;
+import io.objectbox.Box;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     DrawerLayout drawer;
     RecyclerView rv;
     RecyclerView.Adapter mAdapter;
-    List<Volume> volumesLista = new ArrayList<>();
+    private SwipeRefreshLayout swipeLayout;
+
+    private Box<Livro> livroBox;
+    private Box<Comentario> comentarioBox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,24 +43,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         configurarDrawer(toolbar);
 
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
+        fab.setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, PesquisarActivity.class);
+            intent.putExtra("add", true);
+            startActivity(intent);
         });
+    }
 
-        JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
-        new Thread(() -> {
-            try {
-                volumesLista = Utils.pesquisarLivros(jsonFactory, "potter");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            runOnUiThread(this::configurarRecyclerView);
-        }).start();
-
+    @Override
+    protected void onStart() {
+        livroBox = ((App) getApplication()).getBoxStore().boxFor(Livro.class);
+        comentarioBox = ((App) getApplication()).getBoxStore().boxFor(Comentario.class);
+        configurarRecyclerView();
+        super.onStart();
     }
 
     @Override
@@ -75,26 +69,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.nav_pesquisar:
-                startActivity(new Intent(this, Pesquisar.class));
+                startActivity(new Intent(this, PesquisarActivity.class));
                 break;
         }
 
@@ -114,12 +92,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void configurarRecyclerView() {
-        rv = findViewById(R.id.rv_livros);
-        mAdapter = new VolumeAdapter(this, volumesLista);
+        if (rv != null) {
+            mAdapter = new LivroAdapter(this, livroBox, false);
+            rv.setAdapter(mAdapter);
+        } else {
+            rv = findViewById(R.id.rv_livros);
+            mAdapter = new LivroAdapter(this, livroBox, false);
 
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
-        rv.setHasFixedSize(true);
-        rv.setLayoutManager(mLayoutManager);
-        rv.setAdapter(mAdapter);
+            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
+            rv.setHasFixedSize(true);
+            rv.setLayoutManager(mLayoutManager);
+            rv.setAdapter(mAdapter);
+        }
     }
+
 }

@@ -1,6 +1,7 @@
 package com.androidvip.bookshelf.adapter;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -18,7 +19,9 @@ import android.widget.TextView;
 
 import com.androidvip.bookshelf.App;
 import com.androidvip.bookshelf.R;
+import com.androidvip.bookshelf.activity.DetalhesActivity;
 import com.androidvip.bookshelf.model.Livro;
+import com.androidvip.bookshelf.util.Utils;
 import com.google.api.services.books.model.Volume;
 
 import java.net.URL;
@@ -75,7 +78,7 @@ public class VolumeAdapter extends RecyclerView.Adapter<VolumeAdapter.ViewHolder
                     ? 0F : Float.parseFloat(volumeInfo.getAverageRating().toString()));
 
             if (volumeInfo.getImageLinks() != null)
-                carregarImagem(activity, volumeInfo.getImageLinks().getThumbnail(), holder.capa);
+                Utils.carregarImagem(activity, volumeInfo.getImageLinks().getThumbnail(), holder.capa);
 
             holder.cardLayout.setOnLongClickListener(v -> {
                 String titulo = volumeInfo.getTitle();
@@ -93,26 +96,16 @@ public class VolumeAdapter extends RecyclerView.Adapter<VolumeAdapter.ViewHolder
                         }).show();
                 return true;
             });
+
+            holder.cardLayout.setOnClickListener(v -> {
+                Intent intent = new Intent(activity, DetalhesActivity.class);
+                intent.putExtra("volumeId", volume.getId());
+                activity.startActivity(intent);
+            });
         }
     }
 
-    private synchronized void carregarImagem(Activity activity, String capaUrl, ImageView imageView) {
-        if (capaUrl != null) {
-            new Thread(() -> {
-                URL url;
-                final Bitmap capaBitmap;
-                try {
-                    url = new URL(capaUrl);
-                    capaBitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-                    if (activity != null) {
-                        activity.runOnUiThread(() -> imageView.setImageDrawable(new BitmapDrawable(activity.getResources(), capaBitmap)));
-                    }
-                } catch (Exception ignored) {
 
-                }
-            }).start();
-        }
-    }
 
     @Override
     public int getItemCount(){

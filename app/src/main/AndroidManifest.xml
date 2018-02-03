@@ -23,14 +23,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".activity.PesquisarActivity"
             android:label="@string/pesquisar"
             android:theme="@style/AppTheme.NoActionBar">
-            <meta-data android:name="android.app.searchable"
+            <meta-data
+                android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
+        <activity
+            android:name=".activity.DetalhesActivity"
+            android:label="@string/detalhes"
+            android:windowSoftInputMode="stateHidden|stateAlwaysHidden"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>

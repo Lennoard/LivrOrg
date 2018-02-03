@@ -22,13 +22,14 @@ public class Livro {
     private Date dataTerminoLeitura;
     private int estadoLeitura;
 
-    @IntDef({ESTADO_DESISTIDO, ESTADO_DESEJADO, ESTADO_LENDO, ESTADO_FINALIZADO})
+    @IntDef({ESTADO_LENDO, ESTADO_DESEJADO, ESTADO_EM_ESPERA, ESTADO_DESISTIDO, ESTADO_FINALIZADO})
     private @interface EstadoLeitura {}
 
-    public static final int ESTADO_DESISTIDO = -1;
-    public static final int ESTADO_DESEJADO = 0;
     public static final int ESTADO_LENDO = 1;
-    public static final int ESTADO_FINALIZADO = 2;
+    public static final int ESTADO_DESEJADO = 2;
+    public static final int ESTADO_EM_ESPERA = 3;
+    public static final int ESTADO_DESISTIDO = 4;
+    public static final int ESTADO_FINALIZADO = 5;
 
     public Livro() {
 

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.androidvip.bookshelf.activity.DetalhesActivity"
+    tools:showIn="@layout/activity_detalhes">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="12dp"
+            android:background="#f3f3f3">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/detalhes_tag_layout"
+                android:gravity="center_vertical">
+
+                <EditText
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/detalhes_tag_edit"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:hint="Tags"/>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/detalhes_tag_botao"
+                    android:src="@drawable/ic_check"
+                    android:layout_gravity="end"
+                    android:padding="8dp"
+                    style="@style/SelectableItemBackgroundBorderless"/>
+
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="113dp"
+                android:layout_height="151dp"
+                android:id="@+id/detalhes_capa"
+                android:src="@drawable/carregando_imagem"
+                android:layout_marginTop="12dp"
+                android:layout_below="@id/detalhes_tag_layout"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="138dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginStart="12dp"
+                android:gravity=""
+                android:layout_toEndOf="@id/detalhes_capa"
+                android:layout_below="@id/detalhes_tag_layout"
+                android:orientation="vertical">
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/detalhes_estado"
+                    android:textColor="#ffab40"
+                    android:background="@drawable/botao_detalhes_selector"
+                    android:layout_marginBottom="8dp"
+                    android:text="@string/carregando" />
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/detalhes_nota"
+                    android:textColor="#ffab40"
+                    android:background="@drawable/botao_detalhes_default"
+                    android:text="@string/carregando"
+                    style="@style/SelectableItemBackground"/>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#ccc"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:id="@+id/detalhes_titulo"
+                android:text="@string/carregando"
+                android:textSize="20sp"
+                android:paddingBottom="9dp"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:maxLines="2" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/detalhes_autores"
+                android:fontFamily="sans-serif-light"
+                android:gravity="center_horizontal"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:paddingBottom="12dp"
+                android:text="" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#ccc"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="@string/descricao"
+                android:textColor="@color/colorAccent"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/detalhes_descricao"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="12dp"
+                android:text="@string/carregando"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="@string/comentarios"
+                android:textColor="@color/colorAccent"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:id="@+id/rv_detalhes"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</android.support.v4.widget.NestedScrollView>

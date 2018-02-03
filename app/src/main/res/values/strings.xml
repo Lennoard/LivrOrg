@@ -13,9 +13,18 @@
     <string name="item_removido">%s foi removido</string>
     <string name="item_adicionado">%s foi adicionado à lista de desejos</string>
     <string name="desfazer">Desfazer</string>
-    <string-array name="pesquisar_por_array">
-        <item>@string/titulo</item>
-        <item>@string/autor</item>
-        <item>ISBN</item>
-    </string-array>
+    <string name="detalhes">Detalhes</string>
+    <string name="nenhuma_tag">Nenhuma tag</string>
+    <string name="nota_format">Nota: %d</string>
+    <string name="comentarios">Comentários</string>
+    <string name="detalhes_erro">Não foi possível carregar os detalhes do livro</string>
+    <string name="estado_leitura_lendo">Lendo</string>
+    <string name="estado_leitura_desejo">Lista de desejos</string>
+    <string name="estado_leitura_desistido">Desistido</string>
+    <string name="estado_leitura_finalizado">Finalizado</string>
+    <string name="estado_leitura_em_espera">Em espera</string>
+    <string name="add_lista">Adicionar à lista</string>
+    <string name="sem_nota">Sem nota</string>
+    <string name="carregando">Carregando…</string>
+    <string name="descricao">Descrição</string>
 </resources>

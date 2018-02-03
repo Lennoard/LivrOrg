@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="pesquisar_por_array">
+        <item>@string/titulo</item>
+        <item>@string/autor</item>
+        <item>ISBN</item>
+    </string-array>
+    <string-array name="estado_leitura_array">
+        <item>@string/estado_leitura_lendo</item>
+        <item>@string/estado_leitura_desejo</item>
+        <item>@string/estado_leitura_em_espera</item>
+        <item>@string/estado_leitura_desistido</item>
+        <item>@string/estado_leitura_finalizado</item>
+    </string-array>
+</resources>

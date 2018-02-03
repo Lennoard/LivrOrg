@@ -30,7 +30,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     RecyclerView.Adapter mAdapter;
     private SwipeRefreshLayout swipeLayout;
     private Box<Livro> livroBox;
-    private Box<Comentario> comentarioBox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +57,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onStart() {
         swipeLayout.setRefreshing(true);
         livroBox = ((App) getApplication()).getBoxStore().boxFor(Livro.class);
-        comentarioBox = ((App) getApplication()).getBoxStore().boxFor(Comentario.class);
         configurarRecyclerView();
         super.onStart();
     }

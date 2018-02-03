@@ -1,6 +1,7 @@
 package com.androidvip.bookshelf.adapter;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -17,6 +18,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.androidvip.bookshelf.R;
+import com.androidvip.bookshelf.activity.DetalhesActivity;
 import com.androidvip.bookshelf.model.Livro;
 import com.androidvip.bookshelf.util.Utils;
 import com.google.api.client.json.jackson2.JacksonFactory;
@@ -73,7 +75,7 @@ public class LivroAdapter extends RecyclerView.Adapter<LivroAdapter.ViewHolder> 
             try {
                 Volume volume = Utils.obterVolume(JacksonFactory.getDefaultInstance(), livro.getGoogleBooksId());
                 if (volume.getVolumeInfo().getImageLinks() != null)
-                    carregarImagem(activity, volume.getVolumeInfo().getImageLinks().getThumbnail(), holder.capa);
+                    Utils.carregarImagem(activity, volume.getVolumeInfo().getImageLinks().getThumbnail(), holder.capa);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -81,7 +83,7 @@ public class LivroAdapter extends RecyclerView.Adapter<LivroAdapter.ViewHolder> 
 
         holder.titulo.setText(livro.getTitulo());
         holder.autores.setText(livro.getAutores());
-        holder.nota.setText(livro.getNota() == 0 ? "?/10" : String.valueOf(livro.getNota()) + "/10");
+        holder.nota.setText(livro.getNota() == 0 ? "?/5" : String.valueOf(livro.getNota()) + "/5");
         holder.data.setText(livrosFinalizados
                 ? Utils.dateToString(livro.getDataTerminoLeitura())
                 : Utils.dateToString(livro.getDataInicioLeitura())
@@ -111,6 +113,12 @@ public class LivroAdapter extends RecyclerView.Adapter<LivroAdapter.ViewHolder> 
             popup.show();
             return true;
         });
+
+        holder.cardLayout.setOnClickListener(v -> {
+            Intent intent = new Intent(activity, DetalhesActivity.class);
+            intent.putExtra("livroId", livroBox.getId(livro));
+            activity.startActivity(intent);
+        });
     }
 
     private void removerLivro(Livro livro, int position) {
@@ -127,24 +135,6 @@ public class LivroAdapter extends RecyclerView.Adapter<LivroAdapter.ViewHolder> 
         mDataSet.add(livro);
         notifyDataSetChanged();
         Snackbar.make(cl, activity.getString(R.string.item_adicionado, livro.getTitulo()), Snackbar.LENGTH_SHORT).show();
-    }
-
-    private synchronized void carregarImagem(Activity activity, String capaUrl, ImageView imageView) {
-        if (capaUrl != null) {
-            new Thread(() -> {
-                URL url;
-                final Bitmap capaBitmap;
-                try {
-                    url = new URL(capaUrl);
-                    capaBitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-                    if (activity != null) {
-                        activity.runOnUiThread(() -> imageView.setImageDrawable(new BitmapDrawable(activity.getResources(), capaBitmap)));
-                    }
-                } catch (Exception ignored) {
-
-                }
-            }).start();
-        }
     }
 
     @Override

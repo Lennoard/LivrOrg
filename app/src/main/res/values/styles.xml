@@ -38,4 +38,16 @@
         <item name="android:fontFamily">sans-serif-light</item>
     </style>
 
+    <style name="SelectableItemBackground">
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+    </style>
+
+    <style name="SelectableItemBackgroundBorderless">
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+    </style>
+
 </resources>

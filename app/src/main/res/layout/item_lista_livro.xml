@@ -8,7 +8,9 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="138dp">
+        android:layout_height="138dp"
+        android:id="@+id/card_layout"
+        style="@style/SelectableItemBackground">
 
         <ImageView
             android:id="@+id/lista_capa_livro"
@@ -53,21 +55,23 @@
             android:layout_below="@+id/divisor">
 
             <TextView
-                android:id="@+id/lista_nota"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="24sp"
-                android:padding="13dp"
-                android:textColor="@color/colorAccent" />
-
-            <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/lista_data"
                 android:layout_weight="1"
                 android:padding="13dp"
                 android:textSize="12sp"
-                android:gravity="end" />
+                android:gravity="start" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/lista_nota"
+                android:gravity="center_horizontal"
+                android:textSize="22sp"
+                android:padding="13dp"
+                android:textColor="@color/colorAccent"
+                style="@style/SelectableItemBackgroundBorderless"/>
 
         </LinearLayout>
 

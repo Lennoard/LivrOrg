@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.androidvip.bookshelf.App;
@@ -28,17 +30,20 @@ public class VolumeAdapter extends RecyclerView.Adapter<VolumeAdapter.ViewHolder
     private Activity activity;
     private List<Volume> mDataSet;
     private Box<Livro> livroBox;
+    private CoordinatorLayout cl;
 
     public VolumeAdapter(Activity activity, List<Volume> list) {
         this.activity = activity;
         mDataSet = list;
         livroBox = ((App) activity.getApplication()).getBoxStore().boxFor(Livro.class);
+        cl = activity.findViewById(R.id.cl);
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView titulo, autores;
         RatingBar classificacao;
         ImageView capa;
+        RelativeLayout cardLayout;
 
         ViewHolder(View v){
             super(v);
@@ -46,6 +51,7 @@ public class VolumeAdapter extends RecyclerView.Adapter<VolumeAdapter.ViewHolder
             autores = v.findViewById(R.id.lista_autores);
             classificacao = v.findViewById(R.id.lista_classificacao);
             capa = v.findViewById(R.id.lista_capa_livro);
+            cardLayout = v.findViewById(R.id.card_layout);
         }
     }
 
@@ -71,7 +77,7 @@ public class VolumeAdapter extends RecyclerView.Adapter<VolumeAdapter.ViewHolder
             if (volumeInfo.getImageLinks() != null)
                 carregarImagem(activity, volumeInfo.getImageLinks().getThumbnail(), holder.capa);
 
-            holder.itemView.setOnLongClickListener(v -> {
+            holder.cardLayout.setOnLongClickListener(v -> {
                 String titulo = volumeInfo.getTitle();
                 Livro livro = new Livro();
                 livro.setTitulo(titulo == null ? "" : titulo);
@@ -80,11 +86,11 @@ public class VolumeAdapter extends RecyclerView.Adapter<VolumeAdapter.ViewHolder
                 livro.setEstadoLeitura(Livro.ESTADO_DESEJADO);
                 long id = livroBox.put(livro);
 
-                Snackbar.make(holder.titulo, activity.getString(R.string.item_adicionado, titulo), Snackbar.LENGTH_LONG)
+                Snackbar.make(cl, activity.getString(R.string.item_adicionado, titulo), Snackbar.LENGTH_LONG)
                         .setAction(R.string.desfazer, view -> {
                             livroBox.remove(id);
-                            Snackbar.make(holder.titulo, activity.getString(R.string.item_removido, titulo), Snackbar.LENGTH_SHORT).show();
-                        });
+                            Snackbar.make(cl, activity.getString(R.string.item_removido, titulo), Snackbar.LENGTH_SHORT).show();
+                        }).show();
                 return true;
             });
         }

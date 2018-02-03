@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -28,7 +29,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     RecyclerView rv;
     RecyclerView.Adapter mAdapter;
     private SwipeRefreshLayout swipeLayout;
-
     private Box<Livro> livroBox;
     private Box<Comentario> comentarioBox;
 
@@ -48,10 +48,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             intent.putExtra("add", true);
             startActivity(intent);
         });
+
+        swipeLayout = findViewById(R.id.swipe_rv_main);
+        swipeLayout.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorAccent));
+        swipeLayout.setOnRefreshListener(this::onStart);
     }
 
     @Override
     protected void onStart() {
+        swipeLayout.setRefreshing(true);
         livroBox = ((App) getApplication()).getBoxStore().boxFor(Livro.class);
         comentarioBox = ((App) getApplication()).getBoxStore().boxFor(Comentario.class);
         configurarRecyclerView();
@@ -60,7 +65,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -96,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             mAdapter = new LivroAdapter(this, livroBox, false);
             rv.setAdapter(mAdapter);
         } else {
-            rv = findViewById(R.id.rv_livros);
+            rv = findViewById(R.id.rv_main);
             mAdapter = new LivroAdapter(this, livroBox, false);
 
             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
@@ -104,6 +108,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             rv.setLayoutManager(mLayoutManager);
             rv.setAdapter(mAdapter);
         }
+        swipeLayout.setRefreshing(false);
     }
 
 }

@@ -107,7 +107,6 @@ public class PesquisarActivity extends AppCompatActivity {
                             }
                             set(dialog, which);
                         }
-
                         private void set(DialogInterface dialog, int checkedItem) {
                             PesquisarActivity.this.checkedItem = checkedItem;
                             atualizarLista();

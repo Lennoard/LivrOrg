@@ -1,12 +1,10 @@
 package com.androidvip.bookshelf.adapter;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.PopupMenu;
@@ -15,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.androidvip.bookshelf.R;
@@ -46,6 +45,7 @@ public class LivroAdapter extends RecyclerView.Adapter<LivroAdapter.ViewHolder> 
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView titulo, autores, data, nota;
         ImageView capa;
+        RelativeLayout cardLayout;
 
         ViewHolder(View v){
             super(v);
@@ -54,6 +54,7 @@ public class LivroAdapter extends RecyclerView.Adapter<LivroAdapter.ViewHolder> 
             data = v.findViewById(R.id.lista_data);
             nota = v.findViewById(R.id.lista_nota);
             capa = v.findViewById(R.id.lista_capa_livro);
+            cardLayout = v.findViewById(R.id.card_layout);
         }
     }
 
@@ -80,13 +81,13 @@ public class LivroAdapter extends RecyclerView.Adapter<LivroAdapter.ViewHolder> 
 
         holder.titulo.setText(livro.getTitulo());
         holder.autores.setText(livro.getAutores());
-        holder.nota.setText(livro.getNota() == 0 ? "--/10" : String.valueOf(livro.getNota()) + "/10");
+        holder.nota.setText(livro.getNota() == 0 ? "?/10" : String.valueOf(livro.getNota()) + "/10");
         holder.data.setText(livrosFinalizados
                 ? Utils.dateToString(livro.getDataTerminoLeitura())
                 : Utils.dateToString(livro.getDataInicioLeitura())
         );
-        holder.itemView.setOnLongClickListener(v -> {
-            PopupMenu popup = new PopupMenu(activity, holder.itemView);
+        holder.cardLayout.setOnLongClickListener(v -> {
+            PopupMenu popup = new PopupMenu(activity, holder.cardLayout);
             popup.getMenuInflater().inflate(R.menu.popup, popup.getMenu());
             popup.setOnMenuItemClickListener(item -> {
                 switch (item.getItemId()){
@@ -118,14 +119,13 @@ public class LivroAdapter extends RecyclerView.Adapter<LivroAdapter.ViewHolder> 
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, getItemCount());
         Snackbar.make(cl, activity.getString(R.string.item_removido, livro.getTitulo()), Snackbar.LENGTH_LONG)
-                .setAction(R.string.desfazer, v1 -> addLivro(livro, position)).show();
+                .setAction(R.string.desfazer, v1 -> addLivro(livro)).show();
     }
 
-    private void addLivro(Livro livro, int position) {
+    private void addLivro(Livro livro) {
         livroBox.put(livro);
         mDataSet.add(livro);
-        notifyItemInserted(position);
-        notifyItemRangeInserted(position, getItemCount());
+        notifyDataSetChanged();
         Snackbar.make(cl, activity.getString(R.string.item_adicionado, livro.getTitulo()), Snackbar.LENGTH_SHORT).show();
     }
 

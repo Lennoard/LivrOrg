@@ -12,4 +12,11 @@
         <item>@string/estado_leitura_desistido</item>
         <item>@string/estado_leitura_finalizado</item>
     </string-array>
+    <string-array name="notas_array">
+        <item>1 - Horrível</item>
+        <item>2 - Ruim</item>
+        <item>3 - Bom</item>
+        <item>4 - Excelente</item>
+        <item>5 - Obra prima</item>
+    </string-array>
 </resources>

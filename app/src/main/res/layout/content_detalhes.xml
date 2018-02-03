@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="12dp"
-            android:background="#f3f3f3">
+            android:background="#eeeeee">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -135,6 +135,7 @@
                 android:id="@+id/detalhes_descricao"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="12dp"
+                android:textIsSelectable="true"
                 android:text="@string/carregando"/>
 
             <TextView

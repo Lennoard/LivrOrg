@@ -27,4 +27,5 @@
     <string name="sem_nota">Sem nota</string>
     <string name="carregando">Carregando…</string>
     <string name="descricao">Descrição</string>
+    <string name="nota">Nota</string>
 </resources>

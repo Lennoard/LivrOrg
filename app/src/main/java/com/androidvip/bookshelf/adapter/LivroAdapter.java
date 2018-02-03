@@ -2,9 +2,6 @@ package com.androidvip.bookshelf.adapter;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
@@ -24,7 +21,6 @@ import com.androidvip.bookshelf.util.Utils;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.books.model.Volume;
 
-import java.net.URL;
 import java.util.List;
 
 import io.objectbox.Box;

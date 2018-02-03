@@ -1,5 +1,6 @@
 package com.androidvip.bookshelf.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -27,7 +29,7 @@ import java.util.Date;
 import io.objectbox.Box;
 
 public class DetalhesActivity extends AppCompatActivity {
-    TextView titulo, autores, descricao, estadoLeitura, nota;
+    private TextView titulo, autores, descricao, estadoLeitura, nota;
     EditText tags;
     ImageView capa, salvarTags;
     Livro livro;
@@ -59,6 +61,15 @@ public class DetalhesActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                finish();
+        }
+        return true;
+    }
+
     private View.OnClickListener estadoListener = v -> {
         int estadoLeitura = livro.getEstadoLeitura();
         int checkedItem = estadoLeitura == 0 ? -1 : livro.getEstadoLeitura() - 1;
@@ -74,18 +85,23 @@ public class DetalhesActivity extends AppCompatActivity {
                         case 0:
                             livro.setEstadoLeitura(Livro.ESTADO_LENDO);
                             livro.setDataInicioLeitura(new Date(System.currentTimeMillis()));
+                            DetalhesActivity.this.estadoLeitura.setText(estadoLeituraToString(Livro.ESTADO_LENDO));
                             break;
                         case 1:
                             livro.setEstadoLeitura(Livro.ESTADO_DESEJADO);
+                            DetalhesActivity.this.estadoLeitura.setText(estadoLeituraToString(Livro.ESTADO_DESEJADO));
                             break;
                         case 2:
                             livro.setEstadoLeitura(Livro.ESTADO_EM_ESPERA);
+                            DetalhesActivity.this.estadoLeitura.setText(estadoLeituraToString(Livro.ESTADO_EM_ESPERA));
                             break;
                         case 3:
                             livro.setEstadoLeitura(Livro.ESTADO_DESISTIDO);
+                            DetalhesActivity.this.estadoLeitura.setText(estadoLeituraToString(Livro.ESTADO_DESISTIDO));
                             break;
                         case 4:
                             livro.setEstadoLeitura(Livro.ESTADO_FINALIZADO);
+                            DetalhesActivity.this.estadoLeitura.setText(estadoLeituraToString(Livro.ESTADO_FINALIZADO));
                             livro.setDataTerminoLeitura(new Date(System.currentTimeMillis()));
                             break;
                     }
@@ -104,6 +120,7 @@ public class DetalhesActivity extends AppCompatActivity {
         livroBox = ((App) getApplication()).getBoxStore().boxFor(Livro.class);
         livro = new Livro();
         obterVolume(volumeId);
+        nota.setEnabled(false);
     }
 
     private void obterVolume(String volumeId) {
@@ -148,6 +165,18 @@ public class DetalhesActivity extends AppCompatActivity {
         }
 
         estadoLeitura.setOnClickListener(estadoListener);
+        nota.setOnClickListener(v -> {
+            int checkedItem = livro.getNota() == 0 ? -1 : livro.getNota();
+            String[] notas = getResources().getStringArray(R.array.notas_array);
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.nota)
+                    .setSingleChoiceItems(notas, checkedItem, (dialog, which) -> {
+                        livro.setNota(which + 1);
+                        livroBox.put(livro);
+                        nota.setText(notaToString(which + 1));
+                        dialog.dismiss();
+                    }).show();
+        });
     }
 
     private String lidarComNulo(@Nullable String stringNulavel) {

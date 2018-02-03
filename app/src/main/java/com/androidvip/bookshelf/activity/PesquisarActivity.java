@@ -93,30 +93,37 @@ public class PesquisarActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_pesquisar_por) {
-            String[] array = getResources().getStringArray(R.array.pesquisar_por_array);
-            new AlertDialog.Builder(this)
-                    .setTitle(R.string.pesquisar_por)
-                    .setSingleChoiceItems(array, checkedItem, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            switch (which) {
-                                case 0: prefixo = "intitle:";  break;
-                                case 1: prefixo = "inauthor:"; break;
-                                case 2: prefixo = "isbn:";     break;
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+
+            case R.id.action_pesquisar_por:
+                String[] array = getResources().getStringArray(R.array.pesquisar_por_array);
+                new AlertDialog.Builder(this)
+                        .setTitle(R.string.pesquisar_por)
+                        .setSingleChoiceItems(array, checkedItem, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                switch (which) {
+                                    case 0: prefixo = "intitle:";  break;
+                                    case 1: prefixo = "inauthor:"; break;
+                                    case 2: prefixo = "isbn:";     break;
+                                }
+                                set(dialog, which);
                             }
-                            set(dialog, which);
-                        }
-                        private void set(DialogInterface dialog, int checkedItem) {
-                            PesquisarActivity.this.checkedItem = checkedItem;
-                            atualizarLista();
-                            dialog.dismiss();
-                        }
-                    }).show();
+                            private void set(DialogInterface dialog, int checkedItem) {
+                                PesquisarActivity.this.checkedItem = checkedItem;
+                                atualizarLista();
+                                dialog.dismiss();
+                            }
+                        }).show();
+                break;
+
+            case R.id.action_add_manualmente:
+                // TODO: 02/02/2018
+                break;
         }
-        if (item.getItemId() == R.id.action_add_manualmente) {
-            // TODO: 02/02/2018  
-        }
+
         return true;
     }
     

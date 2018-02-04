@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="12dp"
-            android:background="#eeeeee">
+            android:background="#efebe9">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -76,9 +76,8 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/detalhes_nota"
                     android:textColor="#ffab40"
-                    android:background="@drawable/botao_detalhes_default"
-                    android:text="@string/carregando"
-                    style="@style/SelectableItemBackground"/>
+                    android:background="@drawable/botao_detalhes_selector"
+                    android:text="@string/carregando" />
 
             </LinearLayout>
 

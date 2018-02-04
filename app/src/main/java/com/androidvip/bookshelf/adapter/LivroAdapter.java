@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -41,9 +42,11 @@ public class LivroAdapter extends RecyclerView.Adapter<LivroAdapter.ViewHolder> 
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        TextView titulo, autores, data, nota;
+        TextView titulo, autores, data;
+        RatingBar nota;
         ImageView capa;
-        RelativeLayout cardLayout;
+        RelativeLayout cardLayout, notaLayout;
+
 
         ViewHolder(View v){
             super(v);
@@ -53,6 +56,7 @@ public class LivroAdapter extends RecyclerView.Adapter<LivroAdapter.ViewHolder> 
             nota = v.findViewById(R.id.lista_nota);
             capa = v.findViewById(R.id.lista_capa_livro);
             cardLayout = v.findViewById(R.id.card_layout);
+            notaLayout = v.findViewById(R.id.lista_layout_nota);
         }
     }
 
@@ -79,11 +83,12 @@ public class LivroAdapter extends RecyclerView.Adapter<LivroAdapter.ViewHolder> 
 
         holder.titulo.setText(livro.getTitulo());
         holder.autores.setText(livro.getAutores());
-        holder.nota.setText(livro.getNota() == 0 ? "?/5" : String.valueOf(livro.getNota()) + "/5");
+        holder.nota.setRating(livro.getNota());
         holder.data.setText(livrosFinalizados
                 ? Utils.dateToString(livro.getDataTerminoLeitura())
                 : Utils.dateToString(livro.getDataInicioLeitura())
         );
+
         holder.cardLayout.setOnLongClickListener(v -> {
             PopupMenu popup = new PopupMenu(activity, holder.cardLayout);
             popup.getMenuInflater().inflate(R.menu.popup, popup.getMenu());
@@ -114,6 +119,19 @@ public class LivroAdapter extends RecyclerView.Adapter<LivroAdapter.ViewHolder> 
             Intent intent = new Intent(activity, DetalhesActivity.class);
             intent.putExtra("livroId", livroBox.getId(livro));
             activity.startActivity(intent);
+        });
+
+        holder.notaLayout.setOnClickListener(v -> {
+            int checkedItem = livro.getNota() == 0 ? -1 : livro.getNota() -1;
+            String[] notas = activity.getResources().getStringArray(R.array.notas_array);
+            new AlertDialog.Builder(activity)
+                    .setTitle(R.string.nota)
+                    .setSingleChoiceItems(notas, checkedItem, (dialog, which) -> {
+                        livro.setNota(which + 1);
+                        livroBox.put(livro);
+                        holder.nota.setRating(which + 1);
+                        dialog.dismiss();
+                    }).show();
         });
     }
 

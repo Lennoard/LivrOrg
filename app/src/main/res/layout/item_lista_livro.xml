@@ -63,15 +63,22 @@
                 android:textSize="12sp"
                 android:gravity="start" />
 
-            <TextView
+            <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/lista_nota"
-                android:gravity="center_horizontal"
-                android:textSize="22sp"
-                android:padding="13dp"
-                android:textColor="@color/colorAccent"
-                style="@style/SelectableItemBackgroundBorderless"/>
+                android:id="@+id/lista_layout_nota"
+                style="@style/SelectableItemBackgroundBorderless">
+
+                <RatingBar
+                    android:id="@+id/lista_nota"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="22dp"
+                    android:paddingBottom="22dp"
+                    style="?android:attr/ratingBarStyleSmall"
+                    android:numStars="5"/>
+
+            </RelativeLayout>
 
         </LinearLayout>
 

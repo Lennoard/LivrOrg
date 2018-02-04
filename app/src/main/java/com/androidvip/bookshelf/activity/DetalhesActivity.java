@@ -1,7 +1,7 @@
 package com.androidvip.bookshelf.activity;
 
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -120,7 +120,9 @@ public class DetalhesActivity extends AppCompatActivity {
         livroBox = ((App) getApplication()).getBoxStore().boxFor(Livro.class);
         livro = new Livro();
         obterVolume(volumeId);
+        nota.setText(R.string.nota_sem_nota);
         nota.setEnabled(false);
+        nota.setTextColor(Color.parseColor("#9e9e9e"));
     }
 
     private void obterVolume(String volumeId) {
@@ -145,11 +147,10 @@ public class DetalhesActivity extends AppCompatActivity {
                 String desc = lidarComNulo(volumeInfo.getDescription()).equals("")
                         ? "Não foi possível encontrar uma descrição para o livro"
                         : lidarComNulo(volumeInfo.getDescription());
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
                     descricao.setText(Html.fromHtml(desc, Html.FROM_HTML_MODE_COMPACT));
-                } else {
+                else
                     descricao.setText(Html.fromHtml(desc));
-                }
 
                 if (volumeInfo.getImageLinks() != null)
                     Utils.carregarImagem(this, volumeInfo.getImageLinks().getThumbnail(), capa);
@@ -166,7 +167,7 @@ public class DetalhesActivity extends AppCompatActivity {
 
         estadoLeitura.setOnClickListener(estadoListener);
         nota.setOnClickListener(v -> {
-            int checkedItem = livro.getNota() == 0 ? -1 : livro.getNota();
+            int checkedItem = livro.getNota() == 0 ? -1 : livro.getNota() -1;
             String[] notas = getResources().getStringArray(R.array.notas_array);
             new AlertDialog.Builder(this)
                     .setTitle(R.string.nota)
@@ -179,8 +180,8 @@ public class DetalhesActivity extends AppCompatActivity {
         });
     }
 
-    private String lidarComNulo(@Nullable String stringNulavel) {
-        return stringNulavel == null ? "" : stringNulavel;
+    private String lidarComNulo(@Nullable String s) {
+        return s == null ? "" : s;
     }
 
     private String estadoLeituraToString(int estadoLeitura) {
@@ -209,7 +210,7 @@ public class DetalhesActivity extends AppCompatActivity {
     }
 
     private String notaToString(int nota) {
-        return nota == 0 ? getString(R.string.sem_nota) : getString(R.string.nota_format, nota);
+        return nota == 0 ? getString(R.string.nota_sem_nota) : getString(R.string.nota_format, nota);
     }
 
     private void bindViews() {

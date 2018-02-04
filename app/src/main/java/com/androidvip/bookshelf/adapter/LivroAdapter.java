@@ -99,9 +99,7 @@ public class LivroAdapter extends RecyclerView.Adapter<LivroAdapter.ViewHolder> 
                         new AlertDialog.Builder(activity)
                                 .setTitle(android.R.string.dialog_alert_title)
                                 .setMessage(activity.getString(R.string.aviso_remover_item, livro.getTitulo()))
-                                .setPositiveButton(android.R.string.yes, (dialog, which) -> {
-                                    removerLivro(livroParaRemover, position);
-                                })
+                                .setPositiveButton(android.R.string.yes, (dialog, which) -> removerLivro(livroParaRemover, position))
                                 .setNegativeButton(android.R.string.cancel, (dialog, which) -> {})
                                 .show();
                         break;

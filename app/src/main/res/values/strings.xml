@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Bookshelf</string>
+    <string name="app_name">LivrOrg</string>
     <string name="navigation_drawer_open">Abir menu de navegação</string>
     <string name="navigation_drawer_close">Fechar menu de navegação</string>
     <string name="pesquisar">Pesquisar</string>

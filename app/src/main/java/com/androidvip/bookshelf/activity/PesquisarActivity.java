@@ -96,6 +96,7 @@ public class PesquisarActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
+                break;
 
             case R.id.action_pesquisar_por:
                 String[] array = getResources().getStringArray(R.array.pesquisar_por_array);
@@ -123,7 +124,6 @@ public class PesquisarActivity extends AppCompatActivity {
                 // TODO: 02/02/2018
                 break;
         }
-
         return true;
     }
     

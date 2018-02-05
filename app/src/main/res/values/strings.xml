@@ -28,4 +28,9 @@
     <string name="add_lista">Adicionar à lista</string>
     <string name="carregando">Carregando…</string>
     <string name="descricao">Descrição</string>
+    <string name="desistencias">Desistências</string>
+    <string name="favoritos">Favoritos</string>
+    <string name="minha_colecao">Minha coleção</string>
+    <string name="acervo">Acervo</string>
+    <string name="finalizados">Finalizados</string>
 </resources>

@@ -19,8 +19,10 @@ import android.view.MenuItem;
 import com.androidvip.bookshelf.App;
 import com.androidvip.bookshelf.R;
 import com.androidvip.bookshelf.adapter.LivroAdapter;
-import com.androidvip.bookshelf.model.Comentario;
 import com.androidvip.bookshelf.model.Livro;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import io.objectbox.Box;
 
@@ -30,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     RecyclerView.Adapter mAdapter;
     private SwipeRefreshLayout swipeLayout;
     private Box<Livro> livroBox;
+    private List<Livro> listaFiltradaAtual;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +41,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(getString(R.string.app_name) + ": " + getString(R.string.estado_leitura_lendo));
+
+        livroBox = ((App) getApplication()).getBoxStore().boxFor(Livro.class);
+        listaFiltradaAtual = filtrarLivroPorEstadoLeitura(Livro.ESTADO_LENDO);
 
         configurarDrawer(toolbar);
 
@@ -56,23 +63,45 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onStart() {
         swipeLayout.setRefreshing(true);
-        livroBox = ((App) getApplication()).getBoxStore().boxFor(Livro.class);
-        configurarRecyclerView();
+        configurarRecyclerView(listaFiltradaAtual);
         super.onStart();
     }
 
     @Override
     public void onBackPressed() {
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
+        if (drawer.isDrawerOpen(GravityCompat.START))
             drawer.closeDrawer(GravityCompat.START);
-        } else {
+        else
             super.onBackPressed();
-        }
     }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.nav_lendo:
+                configurarRecyclerView(filtrarLivroPorEstadoLeitura(Livro.ESTADO_LENDO));
+                getSupportActionBar().setTitle(R.string.estado_leitura_lendo);
+                break;
+            case R.id.nav_lista_desejos:
+                configurarRecyclerView(filtrarLivroPorEstadoLeitura(Livro.ESTADO_DESEJADO));
+                getSupportActionBar().setTitle(R.string.estado_leitura_desejo);
+                break;
+            case R.id.nav_em_espera:
+                configurarRecyclerView(filtrarLivroPorEstadoLeitura(Livro.ESTADO_EM_ESPERA));
+                getSupportActionBar().setTitle(R.string.estado_leitura_em_espera);
+                break;
+            case R.id.nav_desistencias:
+                configurarRecyclerView(filtrarLivroPorEstadoLeitura(Livro.ESTADO_DESISTIDO));
+                getSupportActionBar().setTitle(R.string.desistencias);
+                break;
+            case R.id.nav_finalizados:
+                configurarRecyclerView(filtrarLivroPorEstadoLeitura(Livro.ESTADO_FINALIZADO));
+                getSupportActionBar().setTitle(R.string.finalizados);
+                break;
+            case R.id.nav_favoritos:
+                // TODO: 04/02/2018
+                getSupportActionBar().setTitle(R.string.favoritos);
+                break;
             case R.id.nav_pesquisar:
                 startActivity(new Intent(this, PesquisarActivity.class));
                 break;
@@ -80,6 +109,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private List<Livro> filtrarLivroPorEstadoLeitura(int estadoLeitura){
+        List<Livro> livrosFiltrados = new ArrayList<>();
+        for (Livro livro : livroBox.getAll())
+            if (livro.getEstadoLeitura() == estadoLeitura)
+                livrosFiltrados.add(livro);
+        listaFiltradaAtual = livrosFiltrados;
+        return livrosFiltrados;
     }
 
     private void configurarDrawer(Toolbar toolbar) {
@@ -94,13 +132,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setCheckedItem(R.id.nav_lendo);
     }
 
-    private void configurarRecyclerView() {
+    private void configurarRecyclerView(List<Livro> lista) {
         if (rv != null) {
-            mAdapter = new LivroAdapter(this, livroBox, false);
+            mAdapter = new LivroAdapter(this, lista, false);
             rv.setAdapter(mAdapter);
         } else {
             rv = findViewById(R.id.rv_main);
-            mAdapter = new LivroAdapter(this, livroBox, false);
+            mAdapter = new LivroAdapter(this, lista, false);
 
             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
             rv.setHasFixedSize(true);

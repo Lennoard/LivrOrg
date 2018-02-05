@@ -15,6 +15,7 @@ import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.androidvip.bookshelf.App;
 import com.androidvip.bookshelf.R;
 import com.androidvip.bookshelf.activity.DetalhesActivity;
 import com.androidvip.bookshelf.model.Livro;
@@ -33,12 +34,12 @@ public class LivroAdapter extends RecyclerView.Adapter<LivroAdapter.ViewHolder> 
     private boolean livrosFinalizados;
     private CoordinatorLayout cl;
 
-    public LivroAdapter(Activity activity, Box<Livro> list, boolean livrosFinalizados) {
+    public LivroAdapter(Activity activity, List<Livro> list, boolean livrosFinalizados) {
         this.activity = activity;
-        this.livroBox = list;
         this.livrosFinalizados = livrosFinalizados;
-        mDataSet = livroBox.getAll();
+        mDataSet = list;
         cl = activity.findViewById(R.id.cl);
+        livroBox = ((App) activity.getApplication()).getBoxStore().boxFor(Livro.class);
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -46,7 +47,6 @@ public class LivroAdapter extends RecyclerView.Adapter<LivroAdapter.ViewHolder> 
         RatingBar nota;
         ImageView capa;
         RelativeLayout cardLayout, notaLayout;
-
 
         ViewHolder(View v){
             super(v);

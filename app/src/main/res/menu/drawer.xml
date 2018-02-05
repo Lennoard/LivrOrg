@@ -3,35 +3,47 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/nav_lendo"
-            android:icon="@drawable/ic_livro"
-            android:title="Lendo" />
-        <item
-            android:id="@+id/nav_em_espera"
-            android:icon="@drawable/ic_em_espera"
-            android:title="Em espera" />
-        <item
-            android:id="@+id/nav_desistencias"
-            android:icon="@drawable/ic_desistencias"
-            android:title="Desistências" />
-        <item
-            android:id="@+id/nav_favoritos"
-            android:icon="@drawable/ic_favoritos"
-            android:title="Favoritos" />
-        <item
-            android:id="@+id/nav_lista_desejos"
-            android:icon="@drawable/ic_lista_desejos"
-            android:title="Lista de desejos" />
-        <item
-            android:id="@+id/nav_todos_livros"
-            android:icon="@drawable/ic_todos_livros"
-            android:title="Meus livros" />
-        <item
-            android:id="@+id/nav_pesquisar"
-            android:icon="@drawable/ic_pesquisa"
-            android:title="@string/pesquisar" />
-    </group>
+    <item android:title="@string/minha_colecao">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/nav_lendo"
+                    android:icon="@drawable/ic_livro"
+                    android:title="@string/estado_leitura_lendo" />
+                <item
+                    android:id="@+id/nav_lista_desejos"
+                    android:icon="@drawable/ic_lista_desejos"
+                    android:title="@string/estado_leitura_desejo" />
+                <item
+                    android:id="@+id/nav_em_espera"
+                    android:icon="@drawable/ic_em_espera"
+                    android:title="@string/estado_leitura_em_espera" />
+                <item
+                    android:id="@+id/nav_desistencias"
+                    android:icon="@drawable/ic_desistencias"
+                    android:title="@string/desistencias" />
+                <item
+                    android:id="@+id/nav_finalizados"
+                    android:icon="@drawable/ic_finalizados"
+                    android:title="@string/finalizados" />
+                <item
+                    android:id="@+id/nav_favoritos"
+                    android:icon="@drawable/ic_favoritos"
+                    android:title="@string/favoritos" />
+            </group>
+        </menu>
+    </item>
+
+    <item android:title="@string/acervo">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/nav_pesquisar"
+                    android:icon="@drawable/ic_pesquisa"
+                    android:title="@string/pesquisar" />
+            </group>
+        </menu>
+
+    </item>
 
 </menu>

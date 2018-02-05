@@ -34,8 +34,9 @@
         <activity
             android:name=".activity.DetalhesActivity"
             android:label="@string/detalhes"
-            android:windowSoftInputMode="stateHidden|stateAlwaysHidden"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden|stateAlwaysHidden" />
+        <activity android:name=".activity.LoginActivity"></activity>
     </application>
 
 </manifest>

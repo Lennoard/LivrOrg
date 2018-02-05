@@ -33,4 +33,6 @@
     <string name="minha_colecao">Minha coleção</string>
     <string name="acervo">Acervo</string>
     <string name="finalizados">Finalizados</string>
+    <string name="usuario">Usuário</string>
+    <string name="senha">Senha</string>
 </resources>

@@ -5,7 +5,8 @@ import io.objectbox.annotation.Id;
 
 @Entity
 public class Comentario {
-    @Id public long id;
+    @Id
+    private long id;
     private String texto;
     private int capitulo;
     private int pagina;
@@ -13,6 +14,10 @@ public class Comentario {
 
     public long getId() {
         return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getTexto() {

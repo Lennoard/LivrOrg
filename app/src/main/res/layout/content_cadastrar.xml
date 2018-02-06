@@ -7,7 +7,8 @@
     android:paddingLeft="@dimen/margem_padrao"
     android:paddingRight="@dimen/margem_padrao"
     android:paddingTop="16dp"
-    tools:context="com.androidvip.bookshelf.activity.LoginActivity">
+    tools:context="com.androidvip.bookshelf.activity.RegistrarActivity"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -23,7 +24,7 @@
             android:layout_marginTop="24dp"
             android:layout_marginBottom="24dp"
             android:gravity="center_horizontal"
-            android:text="@string/bem_vindo"/>
+            android:text="@string/registrarse"/>
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
@@ -51,35 +52,6 @@
                 android:hint="@string/senha" />
 
         </android.support.design.widget.TextInputLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            style="?attr/buttonBarStyle"
-            android:weightSum="2"
-            android:layout_marginTop="36dp"
-            android:layout_marginBottom="24dp">
-
-            <Button
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                style="?attr/buttonBarButtonStyle"
-                android:textColor="#212121"
-                android:layout_weight="1"
-                android:text="@string/registrarse"
-                android:onClick="registrar"/>
-
-            <Button
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/login_entrar"
-                style="?attr/buttonBarButtonStyle"
-                android:layout_weight="1"
-                android:text="@string/entrar"
-                android:onClick="entrar"/>
-
-        </LinearLayout>
 
     </LinearLayout>
 

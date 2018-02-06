@@ -10,8 +10,7 @@ import io.objectbox.annotation.Id;
 @Entity
 public class Livro {
     @Id
-    public long id;
-
+    private long id;
     private String titulo;
     private String autores;
     private int nota;
@@ -37,6 +36,10 @@ public class Livro {
 
     public long getId() {
         return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getTitulo() {

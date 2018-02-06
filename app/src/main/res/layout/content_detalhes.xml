@@ -41,6 +41,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/detalhes_tag_botao"
                     android:src="@drawable/ic_check"
+                    android:tint="#707070"
                     android:layout_gravity="end"
                     android:padding="8dp"
                     style="@style/SelectableItemBackgroundBorderless"/>

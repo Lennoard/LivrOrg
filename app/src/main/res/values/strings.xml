@@ -10,11 +10,14 @@
     <string name="remover_da_lista">Remover da lista</string>
     <string name="ver_no_google_books">Ver no Google Books</string>
     <string name="aviso_remover_item">Tem certeza que deseja remover \"%s\" da sua lista?</string>
+    <string name="aviso_atualizar_finalizado">Deseja atualizar o estado do livro para finalizado?</string>
     <string name="item_removido">%s foi removido</string>
     <string name="item_adicionado">%s foi adicionado à lista de desejos</string>
     <string name="desfazer">Desfazer</string>
     <string name="detalhes">Detalhes</string>
     <string name="detalhes_erro">Não foi possível carregar os detalhes do livro</string>
+    <string name="detalhes_erro_descricao">Não foi possível encontrar uma descrição para o livro</string>
+    <string name="detalhes_erro_categoria">Não foi possível encontrar uma categoria para o livro</string>
     <string name="nenhuma_tag">Nenhuma tag</string>
     <string name="nota">Nota</string>
     <string name="nota_sem_nota">Sem nota</string>
@@ -43,4 +46,11 @@
     <string name="login_erro_senha">Insira uma senha</string>
     <string name="confirmar_senha">Confirmar senha</string>
     <string name="cadastrar_erro_senha">As senhas não correspondem</string>
+    <string name="registros">Registros</string>
+    <string name="inicio_leitura">Início da leitura: %s</string>
+    <string name="termino_leitura">Término da leitura: %s</string>
+    <string name="categorias">Categorias</string>
+    <string name="data_publicacao">Publicado em %1$s por %2$s</string>
+    <string name="classificacoes">Classificações</string>
+    <string name="classificacoes_format">Nota: %1$.1f/5.0, baseada em %2$d avaliações.\nClassificação de maturidade: %3$s</string>
 </resources>

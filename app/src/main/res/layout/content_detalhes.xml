@@ -108,6 +108,7 @@
                 android:text="@string/carregando"
                 android:textSize="20sp"
                 android:paddingBottom="9dp"
+
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:maxLines="2" />
 
@@ -130,6 +131,21 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/detalhes_publicacao"
+                android:gravity="center"
+                android:text="@string/carregando"
+                android:padding="12dp"
+                android:background="#eeeeee"
+                android:textColor="#212121"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#ccc"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:text="@string/descricao"
                 android:textColor="@color/colorAccent"/>
@@ -143,18 +159,113 @@
                 android:textIsSelectable="true"
                 android:text="@string/carregando"/>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#ccc"/>
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text="@string/categorias"
                 android:layout_marginTop="12dp"
-                android:text="@string/comentarios"
                 android:textColor="@color/colorAccent"/>
 
-            <android.support.v7.widget.RecyclerView
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/detalhes_categorias"
                 android:layout_marginTop="8dp"
-                android:id="@+id/rv_detalhes"/>
+                android:layout_marginBottom="12dp"
+                android:text="@string/carregando"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#ccc"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/classificacoes"
+                android:layout_marginTop="12dp"
+                android:textColor="@color/colorAccent"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/detalhes_classificacoes"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="12dp"
+                android:text="@string/carregando"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#ccc"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/detalhes_layout_mais_detalhes"
+                android:visibility="gone"
+                android:orientation="vertical">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#ccc"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="@string/registros"
+                    android:textColor="@color/colorAccent"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/detalhes_inicio_leitura"
+                    android:layout_marginTop="8dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    android:textColor="#212121"
+                    android:text="@string/inicio_leitura"
+                    android:drawableEnd="@drawable/ic_editar"
+                    style="@style/SelectableItemBackground"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/detalhes_fim_leitura"
+                    android:layout_marginTop="8dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    android:textColor="#212121"
+                    android:text="@string/termino_leitura"
+                    android:drawableEnd="@drawable/ic_editar"
+                    style="@style/SelectableItemBackground"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#ccc"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="@string/comentarios"
+                    android:textColor="@color/colorAccent" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:id="@+id/rv_detalhes"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 

@@ -101,8 +101,6 @@ public class VolumeAdapter extends RecyclerView.Adapter<VolumeAdapter.ViewHolder
         }
     }
 
-
-
     @Override
     public int getItemCount(){
         return mDataSet == null ? 0 : mDataSet.size();

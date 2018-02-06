@@ -58,7 +58,7 @@ public class LoginActivity extends AppCompatActivity {
         String usuarioEstatico = sp.getString("usuario", "");
         String senhaEstatica = sp.getString("senha", "");
         if (getText(usuario).equals(usuarioEstatico) && getText(senha).equals(senhaEstatica)){
-            valido = true;;
+            valido = true;
         } else {
             valido = false;
             Toast.makeText(this, "Usuário ou senha inválidos", Toast.LENGTH_SHORT).show();

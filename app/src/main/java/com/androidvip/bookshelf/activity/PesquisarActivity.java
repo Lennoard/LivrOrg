@@ -66,9 +66,9 @@ public class PesquisarActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (adicionarActivity)
-            getMenuInflater().inflate(R.menu.adicionar, menu);
+            getMenuInflater().inflate(R.menu.adicionar_livro, menu);
         else
-            getMenuInflater().inflate(R.menu.pesquisar, menu);
+            getMenuInflater().inflate(R.menu.pesquisar_livro, menu);
 
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.action_pesquisar).getActionView();

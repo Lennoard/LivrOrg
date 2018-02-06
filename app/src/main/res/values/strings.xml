@@ -35,4 +35,7 @@
     <string name="finalizados">Finalizados</string>
     <string name="usuario">Usuário</string>
     <string name="senha">Senha</string>
+    <string name="registrarse">Registrar-se</string>
+    <string name="entrar">Entrar</string>
+    <string name="bem_vindo">Bem-vindo</string>
 </resources>

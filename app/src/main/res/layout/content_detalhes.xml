@@ -16,7 +16,10 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="12dp"
+            android:paddingLeft="@dimen/margem_padrao"
+            android:paddingRight="@dimen/margem_padrao"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
             android:background="#efebe9">
 
             <LinearLayout
@@ -91,7 +94,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="12dp"
+            android:paddingLeft="@dimen/margem_padrao"
+            android:paddingRight="@dimen/margem_padrao"
+            android:paddingTop="16dp"
             android:orientation="vertical">
 
             <TextView

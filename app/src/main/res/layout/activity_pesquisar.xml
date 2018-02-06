@@ -40,6 +40,8 @@
                 <android.support.v7.widget.RecyclerView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:paddingLeft="@dimen/margem_reclycler"
+                    android:paddingRight="@dimen/margem_reclycler"
                     android:id="@+id/rv_pesquisar">
 
                 </android.support.v7.widget.RecyclerView>

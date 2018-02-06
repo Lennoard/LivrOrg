@@ -84,19 +84,37 @@ public class DetalhesActivity extends AppCompatActivity {
             DatePickerDialog dialog = new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
                 Date novaData = new GregorianCalendar(year, month, dayOfMonth).getTime();
                 if (inicio) {
+                    if (livro.getEstadoLeitura() != Livro.ESTADO_LENDO) {
+                        new AlertDialog.Builder(DetalhesActivity.this)
+                                .setTitle(R.string.registros)
+                                .setMessage(R.string.aviso_atualizar_lendo)
+                                .setPositiveButton(android.R.string.yes, (dialog1, which) -> {
+                                    livro.setEstadoLeitura(Livro.ESTADO_LENDO);
+                                    estadoLeitura.setText(estadoLeituraToString(Livro.ESTADO_LENDO));
+                                    livroBox.put(livro);
+                                })
+                                .setNegativeButton(android.R.string.no, (dialog12, which) -> {})
+                                .show();
+                    }
                     inicioLeitura.setText(getString(R.string.inicio_leitura, Utils.dateToString(novaData)));
                     livro.setDataInicioLeitura(novaData);
+                    livroBox.put(livro);
                 } else {
-                    new AlertDialog.Builder(DetalhesActivity.this)
-                            .setTitle(R.string.registros)
-                            .setMessage(R.string.aviso_atualizar_finalizado)
-                            .setPositiveButton(android.R.string.yes, (dialog1, which) -> {
-                                livro.setEstadoLeitura(Livro.ESTADO_FINALIZADO);
-                            })
-                            .setNegativeButton(android.R.string.no, (dialog12, which) -> {})
-                            .show();
+                    if (livro.getEstadoLeitura() != Livro.ESTADO_FINALIZADO) {
+                        new AlertDialog.Builder(DetalhesActivity.this)
+                                .setTitle(R.string.registros)
+                                .setMessage(R.string.aviso_atualizar_finalizado)
+                                .setPositiveButton(android.R.string.yes, (dialog1, which) -> {
+                                    livro.setEstadoLeitura(Livro.ESTADO_FINALIZADO);
+                                    estadoLeitura.setText(estadoLeituraToString(Livro.ESTADO_FINALIZADO));
+                                    livroBox.put(livro);
+                                })
+                                .setNegativeButton(android.R.string.no, (dialog12, which) -> {})
+                                .show();
+                    }
                     terminoLeitura.setText(getString(R.string.termino_leitura, Utils.dateToString(novaData)));
                     livro.setDataTerminoLeitura(novaData);
+                    livroBox.put(livro);
                 }
             }, hoje.get(Calendar.YEAR), hoje.get(Calendar.MONTH), hoje.get(Calendar.DAY_OF_MONTH));
             dialog.show();
@@ -140,6 +158,7 @@ public class DetalhesActivity extends AppCompatActivity {
                             livro.setDataTerminoLeitura(new Date(System.currentTimeMillis()));
                             break;
                     }
+                    DetalhesActivity.this.estadoLeitura.setText(estadoLeituraToString(which + 1));
                     dialog.dismiss();
                     livroBox.put(livro);
                 }).show();

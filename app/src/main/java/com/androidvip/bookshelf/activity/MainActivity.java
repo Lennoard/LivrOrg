@@ -20,6 +20,7 @@ import com.androidvip.bookshelf.App;
 import com.androidvip.bookshelf.R;
 import com.androidvip.bookshelf.adapter.LivroAdapter;
 import com.androidvip.bookshelf.model.Livro;
+import com.androidvip.bookshelf.model.Livro_;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onStart() {
         livroBox = ((App) getApplication()).getBoxStore().boxFor(Livro.class);
         swipeLayout.setRefreshing(true);
-        switchItems(idNavAtual);
+        trocarNavItems(idNavAtual);
         super.onStart();
     }
 
@@ -77,12 +78,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        switchItems(item.getItemId());
-        drawer.closeDrawer(GravityCompat.START);
+        trocarNavItems(item.getItemId());
         return true;
     }
 
-    private void switchItems(int itemId) {
+    private void trocarNavItems(int itemId) {
         switch (itemId) {
             case R.id.nav_lendo:
                 idNavAtual = R.id.nav_lendo;
@@ -118,22 +118,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(new Intent(this, PesquisarActivity.class));
                 break;
         }
+        if (drawer.isDrawerOpen(drawer))
+            drawer.closeDrawer(GravityCompat.START);
     }
 
     private List<Livro> filtrarLivroPorEstadoLeitura(int estadoLeitura){
-        List<Livro> livrosFiltrados = new ArrayList<>();
-        for (Livro livro : livroBox.getAll())
-            if (livro.getEstadoLeitura() == estadoLeitura)
-                livrosFiltrados.add(livro);
-        return livrosFiltrados;
+       return livroBox.query().equal(Livro_.estadoLeitura, estadoLeitura).build().find();
     }
 
     private List<Livro> filtrarLivroFavoritos(){
-        List<Livro> livrosFiltrados = new ArrayList<>();
-        for (Livro livro : livroBox.getAll())
-            if (livro.isFavorito())
-                livrosFiltrados.add(livro);
-        return livrosFiltrados;
+        return livroBox.query().equal(Livro_.favorito, true).build().find();
     }
 
     private void configurarDrawer(Toolbar toolbar) {

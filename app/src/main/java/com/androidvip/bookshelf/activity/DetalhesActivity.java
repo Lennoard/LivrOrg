@@ -1,7 +1,6 @@
 package com.androidvip.bookshelf.activity;
 
 import android.app.DatePickerDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
@@ -14,7 +13,6 @@ import android.text.Html;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -38,10 +36,11 @@ public class DetalhesActivity extends AppCompatActivity {
     private TextView titulo, autores, descricao, publicacao, estadoLeitura, nota;
     private TextView categorias, classificacoes, inicioLeitura, terminoLeitura;
     EditText tags;
-    ImageView capa, salvarTags;
+    ImageView capa, salvarTags, favorito;
     Livro livro = null;
     Volume volume;
     private Box<Livro> livroBox;
+    private boolean favoritado;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -238,6 +237,12 @@ public class DetalhesActivity extends AppCompatActivity {
                     ? getString(R.string.termino_leitura, "-")
                     : getString(R.string.termino_leitura, fimStr));
 
+            favorito.setVisibility(View.VISIBLE);
+            if (livro.isFavorito())
+                favorito.setColorFilter(R.color.vermelho);
+            else
+                favorito.setColorFilter(R.color.desativado);
+
             // TODO: 06/02/2018 comentários
         } else {
             livro = new Livro();
@@ -260,10 +265,16 @@ public class DetalhesActivity extends AppCompatActivity {
                         dialog.dismiss();
                     }).show();
         });
-    }
-
-    private String lidarComNulo(@Nullable String s) {
-        return s == null ? "" : s;
+        favorito.setOnClickListener(view -> {
+            if (favoritado) {
+               livro.setFavorito(false);
+               favorito.setColorFilter(R.color.desativado);
+            } else {
+                livro.setFavorito(true);
+                favorito.setColorFilter(R.color.vermelho);
+            }
+            livroBox.put(livro);
+        });
     }
 
     private String estadoLeituraToString(int estadoLeitura) {
@@ -295,6 +306,10 @@ public class DetalhesActivity extends AppCompatActivity {
         return nota == 0 ? getString(R.string.nota_sem_nota) : getString(R.string.nota_format, nota);
     }
 
+    private String lidarComNulo(@Nullable String s) {
+        return s == null ? "" : s;
+    }
+
     private void bindViews() {
         titulo = findViewById(R.id.detalhes_titulo);
         autores = findViewById(R.id.detalhes_autores);
@@ -309,6 +324,7 @@ public class DetalhesActivity extends AppCompatActivity {
         classificacoes = findViewById(R.id.detalhes_classificacoes);
         inicioLeitura = findViewById(R.id.detalhes_inicio_leitura);
         terminoLeitura = findViewById(R.id.detalhes_fim_leitura);
+        favorito = findViewById(R.id.detalhes_favorito);
     }
 
 }

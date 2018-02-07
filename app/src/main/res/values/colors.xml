@@ -3,4 +3,6 @@
     <color name="colorPrimary">#5D4037</color>
     <color name="colorPrimaryDark">#4E342E</color>
     <color name="colorAccent">#FF9100</color>
+    <color name="vermelho">#EF5350</color>
+    <color name="desativado">#BDBDBD</color>
 </resources>

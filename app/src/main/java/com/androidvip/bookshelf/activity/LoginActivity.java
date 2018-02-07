@@ -45,22 +45,17 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private boolean validarFormulario(){
-        boolean valido = true;
-        if (getText(usuario).equals("")) {
-            valido = false;
-            usuario.setError(getString(R.string.login_erro_usuario));
-        }
-        if (getText(senha).equals("")) {
-            valido = false;
-            senha.setError(getString(R.string.login_erro_senha));
-        }
-
+        boolean valido;
         String usuarioEstatico = sp.getString("usuario", "");
         String senhaEstatica = sp.getString("senha", "");
-        if (getText(usuario).equals(usuarioEstatico) && getText(senha).equals(senhaEstatica)){
+        if (getText(usuario).equals(usuarioEstatico) && getText(senha).equals(senhaEstatica))
             valido = true;
-        } else {
+        else {
             valido = false;
+            if (getText(usuario).equals(""))
+                usuario.setError(getString(R.string.login_erro_usuario));
+            if (getText(senha).equals(""))
+                senha.setError(getString(R.string.login_erro_senha));
             Toast.makeText(this, "Usuário ou senha inválidos", Toast.LENGTH_SHORT).show();
         }
 

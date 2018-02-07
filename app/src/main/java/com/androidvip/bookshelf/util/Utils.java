@@ -34,7 +34,7 @@ public final class Utils {
 
     public static List<Volume> pesquisarVolumes(JsonFactory jsonFactory, String query) throws Exception {
         final Books books = new Books.Builder(new ApacheHttpTransport(), jsonFactory, null)
-                .setApplicationName("Bookshelf-AndroidVIP")
+                .setApplicationName("LivrOrg-AndroidVIP")
                 .setGoogleClientRequestInitializer(new BooksRequestInitializer(K.API_KEY))
                 .build();
 

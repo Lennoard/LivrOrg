@@ -15,6 +15,7 @@ public class Livro {
     private String autores;
     private int nota;
     private String tags;
+    private boolean favorito;
     private long comentarioId;
     private String googleBooksId;
     private Date dataInicioLeitura;
@@ -72,6 +73,14 @@ public class Livro {
 
     public void setTags(String tags) {
         this.tags = tags;
+    }
+
+    public boolean isFavorito() {
+        return favorito;
+    }
+
+    public void setFavorito(boolean favorito) {
+        this.favorito = favorito;
     }
 
     public long getComentarioId() {

@@ -58,12 +58,12 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="138dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:layout_marginStart="12dp"
-                android:gravity=""
                 android:layout_toEndOf="@id/detalhes_capa"
                 android:layout_below="@id/detalhes_tag_layout"
+                android:animateLayoutChanges="true"
                 android:orientation="vertical">
 
                 <Button
@@ -73,6 +73,8 @@
                     android:textColor="#ffab40"
                     android:background="@drawable/botao_detalhes_selector"
                     android:layout_marginBottom="8dp"
+                    android:maxLines="1"
+                    android:ellipsize="end"
                     android:text="@string/carregando" />
 
                 <Button
@@ -81,7 +83,21 @@
                     android:id="@+id/detalhes_nota"
                     android:textColor="#ffab40"
                     android:background="@drawable/botao_detalhes_selector"
+                    android:maxLines="1"
+                    android:ellipsize="end"
                     android:text="@string/carregando" />
+
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/detalhes_favorito"
+                    android:src="@drawable/ic_favoritos"
+                    android:tint="@color/desativado"
+                    android:visibility="gone"
+                    android:layout_marginTop="8dp"
+                    android:layout_gravity="end"
+                    android:padding="10dp"
+                    style="@style/SelectableItemBackgroundBorderless" />
 
             </LinearLayout>
 

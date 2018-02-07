@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     RecyclerView.Adapter mAdapter;
     private SwipeRefreshLayout swipeLayout;
     private Box<Livro> livroBox;
-    private List<Livro> listaFiltradaAtual;
+    private int idNavAtual;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +43,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(getString(R.string.app_name) + ": " + getString(R.string.estado_leitura_lendo));
 
-        livroBox = ((App) getApplication()).getBoxStore().boxFor(Livro.class);
-        listaFiltradaAtual = filtrarLivroPorEstadoLeitura(Livro.ESTADO_LENDO);
+        idNavAtual = R.id.nav_lendo;
 
         configurarDrawer(toolbar);
 
@@ -62,8 +61,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     protected void onStart() {
+        livroBox = ((App) getApplication()).getBoxStore().boxFor(Livro.class);
         swipeLayout.setRefreshing(true);
-        configurarRecyclerView(listaFiltradaAtual);
+        switchItems(idNavAtual);
         super.onStart();
     }
 
@@ -77,38 +77,47 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
+        switchItems(item.getItemId());
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    private void switchItems(int itemId) {
+        switch (itemId) {
             case R.id.nav_lendo:
+                idNavAtual = R.id.nav_lendo;
                 configurarRecyclerView(filtrarLivroPorEstadoLeitura(Livro.ESTADO_LENDO));
                 getSupportActionBar().setTitle(R.string.estado_leitura_lendo);
                 break;
             case R.id.nav_lista_desejos:
+                idNavAtual = R.id.nav_lista_desejos;
                 configurarRecyclerView(filtrarLivroPorEstadoLeitura(Livro.ESTADO_DESEJADO));
                 getSupportActionBar().setTitle(R.string.estado_leitura_desejo);
                 break;
             case R.id.nav_em_espera:
+                idNavAtual = R.id.nav_em_espera;
                 configurarRecyclerView(filtrarLivroPorEstadoLeitura(Livro.ESTADO_EM_ESPERA));
                 getSupportActionBar().setTitle(R.string.estado_leitura_em_espera);
                 break;
             case R.id.nav_desistencias:
+                idNavAtual = R.id.nav_desistencias;
                 configurarRecyclerView(filtrarLivroPorEstadoLeitura(Livro.ESTADO_DESISTIDO));
                 getSupportActionBar().setTitle(R.string.desistencias);
                 break;
             case R.id.nav_finalizados:
+                idNavAtual = R.id.nav_finalizados;
                 configurarRecyclerView(filtrarLivroPorEstadoLeitura(Livro.ESTADO_FINALIZADO));
                 getSupportActionBar().setTitle(R.string.finalizados);
                 break;
             case R.id.nav_favoritos:
-                // TODO: 04/02/2018
+                idNavAtual = R.id.nav_favoritos;
+                configurarRecyclerView(filtrarLivroFavoritos());
                 getSupportActionBar().setTitle(R.string.favoritos);
                 break;
             case R.id.nav_pesquisar:
                 startActivity(new Intent(this, PesquisarActivity.class));
                 break;
         }
-
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
     }
 
     private List<Livro> filtrarLivroPorEstadoLeitura(int estadoLeitura){
@@ -116,7 +125,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         for (Livro livro : livroBox.getAll())
             if (livro.getEstadoLeitura() == estadoLeitura)
                 livrosFiltrados.add(livro);
-        listaFiltradaAtual = livrosFiltrados;
+        return livrosFiltrados;
+    }
+
+    private List<Livro> filtrarLivroFavoritos(){
+        List<Livro> livrosFiltrados = new ArrayList<>();
+        for (Livro livro : livroBox.getAll())
+            if (livro.isFavorito())
+                livrosFiltrados.add(livro);
         return livrosFiltrados;
     }
 

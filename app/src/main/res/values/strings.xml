@@ -9,7 +9,8 @@
     <string name="add_manualmente">Adicionar manualmente</string>
     <string name="remover_da_lista">Remover da lista</string>
     <string name="ver_no_google_books">Ver no Google Books</string>
-    <string name="aviso_remover_item">Tem certeza que deseja remover \"%s\" da sua lista?</string>
+    <string name="aviso_remover_livro">Tem certeza que deseja remover \"%s\" da sua lista?</string>
+    <string name="aviso_remover_comentario">Tem certeza que deseja remover esse comentário?</string>
     <string name="aviso_atualizar_finalizado">Deseja atualizar o estado do livro para \"finalizado\"?</string>
     <string name="aviso_atualizar_lendo">Deseja atualizar o estado do livro para \"lendo\"?</string>
     <string name="item_removido">%s foi removido</string>
@@ -24,6 +25,7 @@
     <string name="nota_sem_nota">Sem nota</string>
     <string name="nota_format">Nota: %d</string>
     <string name="comentarios">Comentários</string>
+    <string name="comentario">Comentário</string>
     <string name="estado_leitura_lendo">Lendo</string>
     <string name="estado_leitura_desejo">Lista de desejos</string>
     <string name="estado_leitura_desistido">Desistido</string>
@@ -42,7 +44,6 @@
     <string name="registrarse">Registrar-se</string>
     <string name="entrar">Entrar</string>
     <string name="bem_vindo">Bem-vindo</string>
-    <string name="title_activity_cadastrar">CadastrarActivity</string>
     <string name="login_erro_usuario">Insira um nome de usuário</string>
     <string name="login_erro_senha">Insira uma senha</string>
     <string name="confirmar_senha">Confirmar senha</string>
@@ -54,4 +55,9 @@
     <string name="data_publicacao">Publicado em %1$s por %2$s</string>
     <string name="classificacoes">Classificações</string>
     <string name="classificacoes_format">Nota: %1$.1f/5.0, baseada em %2$d avaliações.\nClassificação de maturidade: %3$s</string>
+    <string name="capitulo">Capítulo</string>
+    <string name="pagina">Página</string>
+    <string name="comentarios_erro">Ocorreu um erro ao exibir os comentários</string>
+    <string name="erro">Erro</string>
+    <string name="erro_text_fields">Algo deu errado ao coletar os dados, verifique os campos de texto e tente novamente</string>
 </resources>

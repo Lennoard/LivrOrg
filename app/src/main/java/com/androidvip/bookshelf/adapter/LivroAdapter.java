@@ -98,7 +98,7 @@ public class LivroAdapter extends RecyclerView.Adapter<LivroAdapter.ViewHolder> 
                         Livro livroParaRemover = mDataSet.get(position);
                         new AlertDialog.Builder(activity)
                                 .setTitle(android.R.string.dialog_alert_title)
-                                .setMessage(activity.getString(R.string.aviso_remover_item, livro.getTitulo()))
+                                .setMessage(activity.getString(R.string.aviso_remover_livro, livro.getTitulo()))
                                 .setPositiveButton(android.R.string.yes, (dialog, which) -> removerLivro(livroParaRemover, position))
                                 .setNegativeButton(android.R.string.cancel, (dialog, which) -> {})
                                 .show();
@@ -134,7 +134,7 @@ public class LivroAdapter extends RecyclerView.Adapter<LivroAdapter.ViewHolder> 
     }
 
     private void removerLivro(Livro livro, int position) {
-        livroBox.remove(mDataSet.get(position));
+        livroBox.remove(livro);
         mDataSet.remove(position);
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, getItemCount());

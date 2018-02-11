@@ -18,13 +18,14 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".activity.MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.PesquisarActivity"
             android:label="@string/pesquisar"
@@ -40,12 +41,30 @@
             android:windowSoftInputMode="stateHidden|stateAlwaysHidden" />
         <activity
             android:name=".activity.RegistrarActivity"
-            android:label="@string/title_activity_cadastrar"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:parentActivityName=".activity.LoginActivity">
+            android:label="Cadastrar"
+            android:parentActivityName=".activity.LoginActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.LoginActivity"/>
+                android:value=".activity.LoginActivity" />
+        </activity>
+        <activity
+            android:name=".activity.ComentariosActivity"
+            android:label="@string/comentarios"
+            android:parentActivityName=".activity.DetalhesActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.androidvip.bookshelf.activity.DetalhesActivity" />
+        </activity>
+        <activity
+            android:name=".activity.ComentariosDetalhesActivity"
+            android:label="@string/comentario"
+            android:parentActivityName=".activity.ComentariosActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.androidvip.bookshelf.activity.ComentariosActivity" />
         </activity>
     </application>
 

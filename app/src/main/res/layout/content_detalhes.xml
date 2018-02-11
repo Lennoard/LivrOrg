@@ -225,6 +225,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/detalhes_layout_mais_detalhes"
                 android:visibility="gone"
+                android:layout_marginBottom="12dp"
                 android:orientation="vertical">
 
                 <View
@@ -273,13 +274,12 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
                     android:text="@string/comentarios"
-                    android:textColor="@color/colorAccent" />
-
-                <android.support.v7.widget.RecyclerView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:id="@+id/rv_detalhes"/>
+                    android:textColor="#212121"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="16dp"
+                    android:drawableEnd="@drawable/ic_chevron_right"
+                    android:onClick="comentarios"
+                    style="@style/SelectableItemBackground"/>
 
             </LinearLayout>
 

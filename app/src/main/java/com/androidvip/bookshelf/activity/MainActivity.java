@@ -118,8 +118,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(new Intent(this, PesquisarActivity.class));
                 break;
         }
-        if (drawer.isDrawerOpen(drawer))
-            drawer.closeDrawer(GravityCompat.START);
+        drawer.closeDrawer(GravityCompat.START);
     }
 
     private List<Livro> filtrarLivroPorEstadoLeitura(int estadoLeitura){

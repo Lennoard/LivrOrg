@@ -192,18 +192,18 @@ public class DetalhesActivity extends AppCompatActivity {
         if (volume != null) {
             Volume.VolumeInfo volumeInfo = volume.getVolumeInfo();
             if (volumeInfo != null) {
-                titulo.setText(lidarComNulo(volumeInfo.getTitle()));
+                titulo.setText(notNull(volumeInfo.getTitle()));
                 if (volumeInfo.getAuthors() != null)
                     autores.setText(TextUtils.join(", ", volumeInfo.getAuthors()));
 
                 publicacao.setText(getString(R.string.data_publicacao,
-                        lidarComNulo(volumeInfo.getPublishedDate()), lidarComNulo(volumeInfo.getPublisher())));
+                        notNull(volumeInfo.getPublishedDate()), notNull(volumeInfo.getPublisher())));
 
                 classificacoes.setText(getString(R.string.classificacoes_format,
                         volumeInfo.getAverageRating() == null ? 0 : volumeInfo.getAverageRating().floatValue(),
-                        volumeInfo.getRatingsCount(), lidarComNulo(volumeInfo.getMaturityRating())));
+                        volumeInfo.getRatingsCount(), notNull(volumeInfo.getMaturityRating())));
 
-                final String desc = lidarComNulo(volumeInfo.getDescription());
+                final String desc = notNull(volumeInfo.getDescription());
                 String descFinal = desc.equals("") ? getString(R.string.detalhes_erro_descricao) : desc;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
                     descricao.setText(Html.fromHtml(descFinal, Html.FROM_HTML_MODE_COMPACT));
@@ -226,7 +226,7 @@ public class DetalhesActivity extends AppCompatActivity {
 
             estadoLeitura.setText(estadoLeituraToString(livro.getEstadoLeitura()));
             nota.setText(notaToString(livro.getNota()));
-            tags.setText(lidarComNulo(livro.getTags()));
+            tags.setText(notNull(livro.getTags()));
 
             String inicioStr = Utils.dateToString(livro.getDataInicioLeitura());
             String fimStr = Utils.dateToString(livro.getDataTerminoLeitura());
@@ -242,8 +242,6 @@ public class DetalhesActivity extends AppCompatActivity {
                 favorito.setColorFilter(R.color.vermelho);
             else
                 favorito.setColorFilter(R.color.desativado);
-
-            // TODO: 06/02/2018 comentários
         } else {
             livro = new Livro();
             estadoLeitura.setText(R.string.add_lista);
@@ -277,6 +275,13 @@ public class DetalhesActivity extends AppCompatActivity {
         });
     }
 
+    //onClick
+    public void comentarios(View view) {
+        Intent intent = new Intent(this, ComentariosActivity.class);
+        intent.putExtra("livroId", livro.getId());
+        startActivity(intent);
+    }
+
     private String estadoLeituraToString(int estadoLeitura) {
         String ret;
         switch (estadoLeitura) {
@@ -306,7 +311,7 @@ public class DetalhesActivity extends AppCompatActivity {
         return nota == 0 ? getString(R.string.nota_sem_nota) : getString(R.string.nota_format, nota);
     }
 
-    private String lidarComNulo(@Nullable String s) {
+    private String notNull(@Nullable String s) {
         return s == null ? "" : s;
     }
 
@@ -326,5 +331,4 @@ public class DetalhesActivity extends AppCompatActivity {
         terminoLeitura = findViewById(R.id.detalhes_fim_leitura);
         favorito = findViewById(R.id.detalhes_favorito);
     }
-
 }

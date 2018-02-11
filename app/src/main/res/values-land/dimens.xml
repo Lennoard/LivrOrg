@@ -2,4 +2,5 @@
 <resources>
     <dimen name="margem_padrao">64dp</dimen>
     <dimen name="margem_reclycler">48dp</dimen>
+    <dimen name="fab_margin">48dp</dimen>
 </resources>

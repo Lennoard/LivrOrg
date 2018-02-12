@@ -22,6 +22,7 @@ import com.androidvip.bookshelf.model.Livro;
 import com.androidvip.bookshelf.util.Utils;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.books.model.Volume;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -74,8 +75,13 @@ public class LivroAdapter extends RecyclerView.Adapter<LivroAdapter.ViewHolder> 
         new Thread(() -> {
             try {
                 Volume volume = Utils.obterVolume(JacksonFactory.getDefaultInstance(), livro.getGoogleBooksId());
-                if (volume.getVolumeInfo().getImageLinks() != null)
-                    Utils.carregarImagem(activity, volume.getVolumeInfo().getImageLinks().getThumbnail(), holder.capa);
+                activity.runOnUiThread(() -> {
+                    if (volume.getVolumeInfo().getImageLinks() != null)
+                        Picasso.with(activity)
+                                .load(volume.getVolumeInfo().getImageLinks().getThumbnail())
+                                .placeholder(R.drawable.carregando_imagem)
+                                .into(holder.capa);
+                });
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -25,6 +25,7 @@ import com.androidvip.bookshelf.model.Livro;
 import com.androidvip.bookshelf.util.Utils;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.books.model.Volume;
+import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -217,7 +218,10 @@ public class DetalhesActivity extends AppCompatActivity {
                     categorias.setText(R.string.detalhes_erro_categoria);
 
                 if (volumeInfo.getImageLinks() != null)
-                    Utils.carregarImagem(this, volumeInfo.getImageLinks().getThumbnail(), capa);
+                    Picasso.with(this)
+                            .load(volumeInfo.getImageLinks().getThumbnail())
+                            .placeholder(R.drawable.carregando_imagem)
+                            .into(capa);
             }
         }
         if (livro != null) {
@@ -239,9 +243,10 @@ public class DetalhesActivity extends AppCompatActivity {
 
             favorito.setVisibility(View.VISIBLE);
             if (livro.isFavorito())
-                favorito.setColorFilter(R.color.vermelho);
+                favorito.setImageResource(R.drawable.ic_favorito_ativado);
             else
-                favorito.setColorFilter(R.color.desativado);
+                favorito.setImageResource(R.drawable.ic_favorito);
+            favoritado = livro.isFavorito();
         } else {
             livro = new Livro();
             estadoLeitura.setText(R.string.add_lista);
@@ -266,10 +271,14 @@ public class DetalhesActivity extends AppCompatActivity {
         favorito.setOnClickListener(view -> {
             if (favoritado) {
                livro.setFavorito(false);
-               favorito.setColorFilter(R.color.desativado);
+               favorito.setColorFilter(null);
+                favorito.setImageResource(R.drawable.ic_favorito);
+               favoritado = false;
             } else {
                 livro.setFavorito(true);
-                favorito.setColorFilter(R.color.vermelho);
+                favorito.setColorFilter(null);
+                favorito.setImageResource(R.drawable.ic_favorito_ativado);
+                favoritado = true;
             }
             livroBox.put(livro);
         });

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">LivrOrg</string>
+    <string name="titulo">Title</string>
+    <string name="autor">Author</string>
+    <string name="pesquisar">Search</string>
+    <string name="add_manualmente">Add manually</string>
+    <string name="remover_da_lista">Remove from list</string>
+    <string name="pesquisar_por">Search by</string>
+    <string name="desfazer">Undo</string>
+    <string name="detalhes">Details</string>
+    <string name="nenhuma_tag">No tag</string>
+    <string name="nota">Score</string>
+    <string name="nota_sem_nota">No score</string>
+    <string name="estado_leitura_lendo">Reading</string>
+    <string name="estado_leitura_desejo">Wish list</string>
+    <string name="estado_leitura_desistido">Dropped</string>
+    <string name="estado_leitura_finalizado">Finished</string>
+    <string name="estado_leitura_em_espera">On hold</string>
+    <string name="add_lista">Add to my list</string>
+    <string name="senha">Password</string>
+    <string name="usuario">Username</string>
+    <string name="finalizados">Finished</string>
+    <string name="entrar">Log in</string>
+    <string name="bem_vindo">Welcome</string>
+    <string name="cadastrar_erro_senha">Passwords do not match</string>
+    <string name="registros">Records</string>
+    <string name="capitulo">Chapter</string>
+    <string name="pagina">Page</string>
+    <string name="erro">Error</string>
+    <string name="comentario_novo">New comment</string>
+    <string name="comentarios">Comments</string>
+    <string name="comentario">Comment</string>
+    <string name="nota_format">Score: %d</string>
+</resources>

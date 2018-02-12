@@ -1,16 +1,11 @@
 package com.androidvip.bookshelf.util;
 
-import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.api.client.http.apache.ApacheHttpTransport;
@@ -20,7 +15,6 @@ import com.google.api.services.books.BooksRequestInitializer;
 import com.google.api.services.books.model.Volume;
 import com.google.api.services.books.model.Volumes;
 
-import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -55,23 +49,6 @@ public final class Utils {
         Books.Volumes.Get get = books.volumes().get(volumeId);
 
         return get.execute();
-    }
-
-    public static synchronized void carregarImagem(Activity activity, String capaUrl, ImageView imageView) {
-        if (capaUrl != null) {
-            new Thread(() -> {
-                URL url;
-                final Bitmap capaBitmap;
-                try {
-                    url = new URL(capaUrl);
-                    capaBitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-                    if (activity != null)
-                        activity.runOnUiThread(() -> imageView.setImageDrawable(new BitmapDrawable(activity.getResources(), capaBitmap)));
-                } catch (Exception ignored) {
-
-                }
-            }).start();
-        }
     }
 
     public static String dateToString(Date date) {

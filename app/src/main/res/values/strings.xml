@@ -54,10 +54,14 @@
     <string name="categorias">Categorias</string>
     <string name="data_publicacao">Publicado em %1$s por %2$s</string>
     <string name="classificacoes">Classificações</string>
-    <string name="classificacoes_format">Nota: %1$.1f/5.0, baseada em %2$d avaliações.\nClassificação de maturidade: %3$s</string>
+    <string name="classificacoes_format">Nota: %1$.1f/5,0, baseada em %2$d avaliações.\nClassificação de maturidade: %3$s</string>
     <string name="capitulo">Capítulo</string>
     <string name="pagina">Página</string>
     <string name="comentarios_erro">Ocorreu um erro ao exibir os comentários</string>
     <string name="erro">Erro</string>
     <string name="erro_text_fields">Algo deu errado ao coletar os dados, verifique os campos de texto e tente novamente</string>
+    <string name="comentario_salvo">Comentário salvo</string>
+    <string name="comentario_falha_salvar">Falha ao salvar comentário</string>
+    <string name="comentario_novo">Novo comentário</string>
+    <string name="input_required">Preencha este campo</string>
 </resources>

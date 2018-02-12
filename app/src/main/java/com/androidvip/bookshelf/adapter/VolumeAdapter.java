@@ -20,6 +20,7 @@ import com.androidvip.bookshelf.activity.DetalhesActivity;
 import com.androidvip.bookshelf.model.Livro;
 import com.androidvip.bookshelf.util.Utils;
 import com.google.api.services.books.model.Volume;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -74,7 +75,10 @@ public class VolumeAdapter extends RecyclerView.Adapter<VolumeAdapter.ViewHolder
                     ? 0F : Float.parseFloat(volumeInfo.getAverageRating().toString()));
 
             if (volumeInfo.getImageLinks() != null)
-                Utils.carregarImagem(activity, volumeInfo.getImageLinks().getThumbnail(), holder.capa);
+                Picasso.with(activity)
+                        .load(volumeInfo.getImageLinks().getThumbnail())
+                        .placeholder(R.drawable.carregando_imagem)
+                        .into(holder.capa);
 
             holder.cardLayout.setOnLongClickListener(v -> {
                 String titulo = volumeInfo.getTitle();

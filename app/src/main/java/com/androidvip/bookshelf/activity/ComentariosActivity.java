@@ -10,12 +10,14 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.androidvip.bookshelf.App;
 import com.androidvip.bookshelf.R;
 import com.androidvip.bookshelf.adapter.ComentarioAdapter;
 import com.androidvip.bookshelf.model.Comentario;
+import com.androidvip.bookshelf.model.Comentario_;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,16 +77,23 @@ public class ComentariosActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         Box<Comentario> comentarioBox = ((App) getApplication()).getBoxStore().boxFor(Comentario.class);
-        lista.clear();
         swipeLayout.setRefreshing(true);
 
-        for (Comentario comentario : comentarioBox.getAll())
-            if (comentario.getLivroId() == livroId)
-                lista.add(comentario);
+        lista = comentarioBox.query().equal(Comentario_.livroId, livroId).build().find();
 
         configurarRecyclerView(lista);
         swipeLayout.setRefreshing(false);
         super.onStart();
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                finish();
+        }
+        return true;
     }
 
     private void configurarRecyclerView(List<Comentario> lista) {

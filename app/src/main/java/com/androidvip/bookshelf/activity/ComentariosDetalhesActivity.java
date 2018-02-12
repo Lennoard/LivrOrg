@@ -1,5 +1,6 @@
 package com.androidvip.bookshelf.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -7,6 +8,9 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -45,10 +49,12 @@ public class ComentariosDetalhesActivity extends AppCompatActivity {
                 comentario = comentarioBox.get(id);
                 livroId = comentario.getLivroId();
                 popular();
-            }
+            } else
+                getSupportActionBar().setTitle(R.string.comentario_novo);
         }
 
-        fab.setOnClickListener(view -> {
+        fab.setOnClickListener(v -> {
+            esconderTeclado();
             Comentario novoComentario;
             if (comentario != null)
                 novoComentario = gerarComentario(comentario);
@@ -57,10 +63,28 @@ public class ComentariosDetalhesActivity extends AppCompatActivity {
 
             if (novoComentario != null) {
                 comentarioBox.put(novoComentario);
-                Snackbar.make(fab, "Comentário salvo", Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(fab, R.string.comentario_salvo, Snackbar.LENGTH_SHORT).show();
             } else
-                Snackbar.make(fab, "Falha ao salvar comentário", Snackbar.LENGTH_LONG).show();
+                Snackbar.make(fab, R.string.comentario_falha_salvar, Snackbar.LENGTH_LONG).show();
         });
+    }
+
+    private void esconderTeclado() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+        View view = getCurrentFocus();
+        if (view == null)
+            view = new View(this);
+        if (imm != null)
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                finish();
+        }
+        return true;
     }
 
     private Comentario gerarComentario(Comentario coment) {
@@ -100,7 +124,7 @@ public class ComentariosDetalhesActivity extends AppCompatActivity {
     private String getText(EditText editText) throws Exception {
         String s = editText.getText().toString().trim();
         if (s.equals("")){
-            editText.setError("Preencha este campo");
+            editText.setError(getString(R.string.input_required));
             throw new Exception();
         }
         return s;

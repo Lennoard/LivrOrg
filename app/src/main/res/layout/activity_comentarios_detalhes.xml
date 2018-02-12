@@ -49,8 +49,9 @@
                     android:id="@+id/detalhes_comentario_titulo"
                     android:hint="@string/titulo"
                     android:padding="4dp"
-                    android:textSize="20sp"
+                    android:textSize="24sp"
                     android:inputType="text"
+                    android:fontFamily="sans-serif-condensed"
                     android:layout_marginBottom="8dp"
                     android:background="@null"/>
 
@@ -71,7 +72,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="#212121"
+                        android:textColor="#616161"
                         android:textSize="18sp"
                         android:text="@string/capitulo"/>
 
@@ -79,7 +80,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/detalhes_comentario_cap"
-                        android:hint="@string/capitulo"
+                        android:hint="00"
                         android:gravity="end"
                         android:inputType="number"
                         android:background="@null"
@@ -98,7 +99,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="#212121"
+                        android:textColor="#616161"
                         android:textSize="18sp"
                         android:text="@string/pagina"/>
 
@@ -106,7 +107,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/detalhes_comentario_pagina"
-                        android:hint="@string/pagina"
+                        android:hint="00"
                         android:gravity="end"
                         android:inputType="number"
                         android:background="@null"
@@ -127,6 +128,7 @@
                     android:hint="@string/comentarios"
                     android:textColor="#757575"
                     android:padding="4dp"
+                    android:fontFamily="sans-serif-light"
                     android:inputType="textMultiLine"
                     android:layout_marginBottom="8dp"
                     android:background="@null"/>

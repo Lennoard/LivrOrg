@@ -28,7 +28,7 @@
                     android:title="@string/finalizados" />
                 <item
                     android:id="@+id/nav_favoritos"
-                    android:icon="@drawable/ic_favoritos"
+                    android:icon="@drawable/ic_favorito"
                     android:title="@string/favoritos" />
             </group>
         </menu>

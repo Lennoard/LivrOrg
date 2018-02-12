@@ -31,5 +31,6 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     implementation 'com.google.apis:google-api-services-books:v1-rev95-1.23.0'
     implementation "io.objectbox:objectbox-android:$objectboxVersion"
+    implementation 'com.squareup.picasso:picasso:2.5.2'
     annotationProcessor "io.objectbox:objectbox-processor:$objectboxVersion"
 }

@@ -27,9 +27,10 @@
 
         </android.support.design.widget.AppBarLayout>
 
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:animateLayoutChanges="true"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <android.support.v4.widget.SwipeRefreshLayout
@@ -48,7 +49,15 @@
 
             </android.support.v4.widget.SwipeRefreshLayout>
 
-        </LinearLayout>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/detalhes_img_offline"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:src="@drawable/ic_offline"/>
+
+        </FrameLayout>
 
     </android.support.design.widget.CoordinatorLayout>
 

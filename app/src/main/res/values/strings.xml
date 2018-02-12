@@ -64,4 +64,5 @@
     <string name="comentario_falha_salvar">Falha ao salvar comentário</string>
     <string name="comentario_novo">Novo comentário</string>
     <string name="input_required">Preencha este campo</string>
+    <string name="erro_sem_conexao">Você está offline</string>
 </resources>

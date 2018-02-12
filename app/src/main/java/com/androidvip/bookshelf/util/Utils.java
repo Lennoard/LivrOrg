@@ -72,7 +72,7 @@ public final class Utils {
         }
     }
 
-    public static boolean temConexao(Context contexto) {
+    public static boolean isOnline(Context contexto) {
         ConnectivityManager cm = (ConnectivityManager)contexto.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo redeAtiva = cm.getActiveNetworkInfo();
         return redeAtiva != null && redeAtiva.isConnectedOrConnecting();

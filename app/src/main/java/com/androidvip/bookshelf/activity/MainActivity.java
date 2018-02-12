@@ -1,10 +1,16 @@
 package com.androidvip.bookshelf.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -14,6 +20,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.androidvip.bookshelf.App;
@@ -21,8 +28,8 @@ import com.androidvip.bookshelf.R;
 import com.androidvip.bookshelf.adapter.LivroAdapter;
 import com.androidvip.bookshelf.model.Livro;
 import com.androidvip.bookshelf.model.Livro_;
+import com.androidvip.bookshelf.util.Utils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import io.objectbox.Box;
@@ -34,6 +41,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private SwipeRefreshLayout swipeLayout;
     private Box<Livro> livroBox;
     private int idNavAtual;
+    private Snackbar snackNet;
+
+    private BroadcastReceiver netReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
+                ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo networkInfo = connectivityManager != null ? connectivityManager.getActiveNetworkInfo() : null;
+                if (networkInfo != null && networkInfo.getDetailedState() == NetworkInfo.DetailedState.CONNECTED) {
+                    onStart();
+                    snackNet.dismiss();
+                } else
+                    snackNet.show();
+            }
+        }
+    };
+
+    // TODO: 12/02/18 Log off
+    // TODO: 12/02/18 Flag clear history 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +71,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         getSupportActionBar().setTitle(getString(R.string.app_name) + ": " + getString(R.string.estado_leitura_lendo));
 
         idNavAtual = R.id.nav_lendo;
+        snackNet = Snackbar.make(findViewById(R.id.cl), R.string.erro_sem_conexao, Snackbar.LENGTH_INDEFINITE);
+        if (!Utils.isOnline(this))
+            snackNet.show();
 
+        registerReceiver(netReceiver, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
         configurarDrawer(toolbar);
 
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -66,6 +96,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         swipeLayout.setRefreshing(true);
         trocarNavItems(idNavAtual);
         super.onStart();
+    }
+
+    @Override
+    protected void onDestroy() {
+        try {
+            unregisterReceiver(netReceiver);
+        } catch (Exception ignored){}
+        super.onDestroy();
     }
 
     @Override

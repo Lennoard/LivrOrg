@@ -1,11 +1,17 @@
 package com.androidvip.bookshelf.activity;
 
 import android.app.SearchManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +21,8 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 
 import com.androidvip.bookshelf.R;
 import com.androidvip.bookshelf.adapter.VolumeAdapter;
@@ -36,6 +44,29 @@ public class PesquisarActivity extends AppCompatActivity {
     private String queryAtual = "";
     private int checkedItem = 0;
     private boolean adicionarActivity = false;
+    private Snackbar snackNet;
+
+    private BroadcastReceiver netReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            ImageView offline = findViewById(R.id.detalhes_img_offline);
+            RecyclerView recyclerView = findViewById(R.id.rv_pesquisar);
+            if (intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
+                ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo networkInfo = connectivityManager != null ? connectivityManager.getActiveNetworkInfo() : null;
+                if (networkInfo != null && networkInfo.getDetailedState() == NetworkInfo.DetailedState.CONNECTED) {
+                    snackNet.dismiss();
+                    offline.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.VISIBLE);
+                } else {
+                    snackNet.show();
+                    offline.setVisibility(View.VISIBLE);
+                    recyclerView.setVisibility(View.GONE);
+                }
+            }
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,8 +90,26 @@ public class PesquisarActivity extends AppCompatActivity {
         swipeLayout.setOnRefreshListener(this::atualizarLista);
         jsonFactory = JacksonFactory.getDefaultInstance();
 
-        atualizarLista();
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        snackNet = Snackbar.make(findViewById(R.id.cl), R.string.erro_sem_conexao, Snackbar.LENGTH_INDEFINITE);
+        if (!Utils.isOnline(this))
+            snackNet.show();
+
+        registerReceiver(netReceiver, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+
+        atualizarLista();
+    }
+
+    @Override
+    protected void onStop() {
+        try {
+            unregisterReceiver(netReceiver);
+        } catch (Exception ignored){}
+        super.onStop();
     }
 
     @Override

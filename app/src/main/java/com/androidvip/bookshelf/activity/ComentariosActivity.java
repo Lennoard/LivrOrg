@@ -46,7 +46,7 @@ public class ComentariosActivity extends AppCompatActivity {
                 Toast.makeText(this, R.string.comentarios_erro, Toast.LENGTH_LONG).show();
                 finish();
             }
-        }else {
+        } else {
             Toast.makeText(this, R.string.comentarios_erro, Toast.LENGTH_LONG).show();
             finish();
         }

@@ -1,11 +1,18 @@
 package com.androidvip.bookshelf.activity;
 
 import android.app.DatePickerDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -13,6 +20,7 @@ import android.text.Html;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -34,14 +42,46 @@ import java.util.GregorianCalendar;
 import io.objectbox.Box;
 
 public class DetalhesActivity extends AppCompatActivity {
-    private TextView titulo, autores, descricao, publicacao, estadoLeitura, nota;
+    private TextView titulo, autores, descricao, publicacao;
     private TextView categorias, classificacoes, inicioLeitura, terminoLeitura;
+    private Button estadoLeitura, nota;
     EditText tags;
     ImageView capa, salvarTags, favorito;
     Livro livro = null;
     Volume volume;
     private Box<Livro> livroBox;
     private boolean favoritado;
+    private Snackbar snackNet;
+
+    private BroadcastReceiver netReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            ImageView offline = findViewById(R.id.detalhes_img_offline);
+            NestedScrollView scroll = findViewById(R.id.detalhes_scroll);
+            if (intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
+                ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo networkInfo = connectivityManager != null ? connectivityManager.getActiveNetworkInfo() : null;
+                if (networkInfo != null && networkInfo.getDetailedState() == NetworkInfo.DetailedState.CONNECTED) {
+                    checarIntent();
+                    snackNet.dismiss();
+                    scroll.setVisibility(View.VISIBLE);
+                    offline.setVisibility(View.GONE);
+                    favorito.setEnabled(true);
+                    nota.setEnabled(true);
+                    nota.setTextColor(Color.parseColor("#ffab40"));
+                    estadoLeitura.setEnabled(true);
+                    estadoLeitura.setTextColor(Color.parseColor("#ffab40"));
+                } else {
+                    snackNet.show();
+                    favorito.setEnabled(false);
+                    nota.setEnabled(false);
+                    nota.setTextColor(Color.parseColor("#9e9e9e"));
+                    estadoLeitura.setEnabled(false);
+                    estadoLeitura.setTextColor(Color.parseColor("#9e9e9e"));
+                }
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +93,45 @@ public class DetalhesActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         bindViews();
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        snackNet = Snackbar.make(findViewById(R.id.cl), R.string.erro_sem_conexao, Snackbar.LENGTH_INDEFINITE);
+        if (!Utils.isOnline(this))
+            snackNet.show();
+
+        registerReceiver(netReceiver, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+
+        checarIntent();
+    }
+
+    @Override
+    protected void onStop() {
+        try {
+            unregisterReceiver(netReceiver);
+        } catch (Exception ignored){}
+        super.onStop();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                finish();
+        }
+        return true;
+    }
+
+    //onClick
+    public void comentarios(View view) {
+        Intent intent = new Intent(this, ComentariosActivity.class);
+        intent.putExtra("livroId", livro.getId());
+        startActivity(intent);
+    }
+
+    private void checarIntent() {
         Intent intent = getIntent();
         if (intent != null) {
             long livroId = intent.getLongExtra("livroId", 0);
@@ -66,15 +144,6 @@ public class DetalhesActivity extends AppCompatActivity {
             else
                 Toast.makeText(this, R.string.detalhes_erro, Toast.LENGTH_LONG).show();
         }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case android.R.id.home:
-                finish();
-        }
-        return true;
     }
 
     private View.OnClickListener dataListener(boolean inicio) {
@@ -171,25 +240,76 @@ public class DetalhesActivity extends AppCompatActivity {
     }
 
     private void configurarBox(String volumeId) {
-        livroBox = ((App) getApplication()).getBoxStore().boxFor(Livro.class);
-        obterVolume(volumeId);
-        nota.setText(R.string.nota_sem_nota);
-        nota.setEnabled(false);
-        nota.setTextColor(Color.parseColor("#9e9e9e"));
+        if (Utils.isOnline(this)) {
+            livroBox = ((App) getApplication()).getBoxStore().boxFor(Livro.class);
+            obterVolume(volumeId);
+            nota.setText(R.string.nota_sem_nota);
+            nota.setEnabled(false);
+            nota.setTextColor(Color.parseColor("#9e9e9e"));
+        } else {
+            ImageView offline = findViewById(R.id.detalhes_img_offline);
+            NestedScrollView scroll = findViewById(R.id.detalhes_scroll);
+            scroll.setVisibility(View.GONE);
+            offline.setVisibility(View.VISIBLE);
+        }
     }
 
     private void obterVolume(String volumeId) {
-        new Thread(() -> {
-            try {
-                volume = Utils.obterVolume(JacksonFactory.getDefaultInstance(), volumeId);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            runOnUiThread(this::popular);
-        }).start();
+        if(!Utils.isOnline(this) && livro != null) {
+            popularOffline();
+        } else {
+            new Thread(() -> {
+                try {
+                    volume = Utils.obterVolume(JacksonFactory.getDefaultInstance(), volumeId);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                runOnUiThread(this::popular);
+            }).start();
+        }
+    }
+
+    private void popularOffline() {
+        titulo.setText(notNull(livro.getTitulo()).equals("")
+                ? getString(R.string.carregando)
+                : notNull(livro.getTitulo()));
+        if (!Utils.isOnline(this)){
+            descricao.setText(R.string.detalhes_erro_descricao);
+            categorias.setText(R.string.detalhes_erro_categoria);
+        }
+        autores.setText(notNull(livro.getAutores()));
+        LinearLayout maisDetalhesLayout = findViewById(R.id.detalhes_layout_mais_detalhes);
+        maisDetalhesLayout.setVisibility(View.VISIBLE);
+
+        estadoLeitura.setText(estadoLeituraToString(livro.getEstadoLeitura()));
+        nota.setText(notaToString(livro.getNota()));
+        tags.setText(notNull(livro.getTags()));
+
+        String inicioStr = Utils.dateToString(livro.getDataInicioLeitura());
+        String fimStr = Utils.dateToString(livro.getDataTerminoLeitura());
+        inicioLeitura.setText(inicioStr.equals("")
+                ? getString(R.string.inicio_leitura, "-")
+                : getString(R.string.inicio_leitura, inicioStr));
+        terminoLeitura.setText(fimStr.equals("")
+                ? getString(R.string.termino_leitura, "-")
+                : getString(R.string.termino_leitura, fimStr));
+
+        favorito.setVisibility(View.VISIBLE);
+        if (livro.isFavorito())
+            favorito.setImageResource(R.drawable.ic_favorito_ativado);
+        else
+            favorito.setImageResource(R.drawable.ic_favorito);
+        favoritado = livro.isFavorito();
     }
 
     private void popular() {
+        if (livro != null)
+            popularOffline();
+        else {
+            livro = new Livro();
+            estadoLeitura.setText(R.string.add_lista);
+            nota.setText(notaToString(0));
+        }
         if (volume != null) {
             Volume.VolumeInfo volumeInfo = volume.getVolumeInfo();
             if (volumeInfo != null) {
@@ -224,34 +344,6 @@ public class DetalhesActivity extends AppCompatActivity {
                             .into(capa);
             }
         }
-        if (livro != null) {
-            LinearLayout maisDetalhesLayout = findViewById(R.id.detalhes_layout_mais_detalhes);
-            maisDetalhesLayout.setVisibility(View.VISIBLE);
-
-            estadoLeitura.setText(estadoLeituraToString(livro.getEstadoLeitura()));
-            nota.setText(notaToString(livro.getNota()));
-            tags.setText(notNull(livro.getTags()));
-
-            String inicioStr = Utils.dateToString(livro.getDataInicioLeitura());
-            String fimStr = Utils.dateToString(livro.getDataTerminoLeitura());
-            inicioLeitura.setText(inicioStr.equals("")
-                    ? getString(R.string.inicio_leitura, "-")
-                    : getString(R.string.inicio_leitura, inicioStr));
-            terminoLeitura.setText(fimStr.equals("")
-                    ? getString(R.string.termino_leitura, "-")
-                    : getString(R.string.termino_leitura, fimStr));
-
-            favorito.setVisibility(View.VISIBLE);
-            if (livro.isFavorito())
-                favorito.setImageResource(R.drawable.ic_favorito_ativado);
-            else
-                favorito.setImageResource(R.drawable.ic_favorito);
-            favoritado = livro.isFavorito();
-        } else {
-            livro = new Livro();
-            estadoLeitura.setText(R.string.add_lista);
-            nota.setText(notaToString(0));
-        }
 
         estadoLeitura.setOnClickListener(estadoListener);
         inicioLeitura.setOnClickListener(dataListener(true));
@@ -270,10 +362,10 @@ public class DetalhesActivity extends AppCompatActivity {
         });
         favorito.setOnClickListener(view -> {
             if (favoritado) {
-               livro.setFavorito(false);
-               favorito.setColorFilter(null);
+                livro.setFavorito(false);
+                favorito.setColorFilter(null);
                 favorito.setImageResource(R.drawable.ic_favorito);
-               favoritado = false;
+                favoritado = false;
             } else {
                 livro.setFavorito(true);
                 favorito.setColorFilter(null);
@@ -282,13 +374,10 @@ public class DetalhesActivity extends AppCompatActivity {
             }
             livroBox.put(livro);
         });
-    }
-
-    //onClick
-    public void comentarios(View view) {
-        Intent intent = new Intent(this, ComentariosActivity.class);
-        intent.putExtra("livroId", livro.getId());
-        startActivity(intent);
+        favorito.setOnLongClickListener(view -> {
+            Toast.makeText(DetalhesActivity.this, "Favoritar / Desfavoritar", Toast.LENGTH_SHORT).show();
+            return true;
+        });
     }
 
     private String estadoLeituraToString(int estadoLeitura) {

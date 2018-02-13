@@ -1,13 +1,17 @@
 package com.androidvip.bookshelf.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.EditText;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.androidvip.bookshelf.R;
@@ -25,19 +29,40 @@ public class LoginActivity extends AppCompatActivity {
         senha = findViewById(R.id.login_senha);
         sp = PreferenceManager.getDefaultSharedPreferences(this);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(Color.parseColor("#A1887F"));
+        }
+
         if (sp.getBoolean("logado", false))
-            startActivity(new Intent(this, MainActivity.class));
+            logIn();
     }
 
     public void entrar(View view) {
-        if (validarFormulario()) {
-            sp.edit().putBoolean("logado", true).apply();
-            startActivity(new Intent(this, MainActivity.class));
-        }
+        if (validarFormulario())
+            logIn();
     }
 
     public void registrar(View view) {
         startActivity(new Intent(this, RegistrarActivity.class));
+    }
+
+    private void logIn() {
+        ProgressDialog pd = new ProgressDialog(this);
+        pd.setMessage(getString(R.string.logging_in));
+        pd.show();
+        sp.edit().putBoolean("logado", true).apply();
+        new Thread(() -> {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ignored) {}
+            runOnUiThread(() -> {
+                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                finish();
+            });
+        }).start();
     }
 
     private String getText(TextInputEditText editText) {

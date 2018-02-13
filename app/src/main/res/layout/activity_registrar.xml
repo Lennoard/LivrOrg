@@ -35,24 +35,20 @@
             android:paddingRight="@dimen/margem_padrao"
             android:paddingTop="16dp"
             tools:context="com.androidvip.bookshelf.activity.RegistrarActivity"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            android:orientation="vertical">
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <TextView
+                <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-light"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textSize="36sp"
-                    android:layout_marginTop="24dp"
-                    android:layout_marginBottom="24dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
                     android:gravity="center_horizontal"
-                    android:text="@string/registrarse"/>
+                    android:src="@drawable/ic_conta"/>
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"

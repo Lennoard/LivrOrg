@@ -23,6 +23,15 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".activity.RegistrarActivity"
+            android:label="@string/registrarse"
+            android:parentActivityName=".activity.LoginActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.LoginActivity" />
+        </activity>
+        <activity
             android:name=".activity.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -40,15 +49,6 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden|stateAlwaysHidden" />
         <activity
-            android:name=".activity.RegistrarActivity"
-            android:label="Cadastrar"
-            android:parentActivityName=".activity.LoginActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.LoginActivity" />
-        </activity>
-        <activity
             android:name=".activity.ComentariosActivity"
             android:label="@string/comentarios"
             android:parentActivityName=".activity.DetalhesActivity"
@@ -61,11 +61,20 @@
             android:name=".activity.ComentariosDetalhesActivity"
             android:label="@string/comentario"
             android:parentActivityName=".activity.ComentariosActivity"
-            android:windowSoftInputMode="stateHidden|stateAlwaysHidden"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden|stateAlwaysHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.androidvip.bookshelf.activity.ComentariosActivity" />
+        </activity>
+        <activity
+            android:name=".activity.SobreActivity"
+            android:label="@string/sobre"
+            android:parentActivityName=".activity.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.androidvip.bookshelf.activity.MainActivity" />
         </activity>
     </application>
 

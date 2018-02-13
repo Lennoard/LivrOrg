@@ -110,7 +110,7 @@ public class LivroAdapter extends RecyclerView.Adapter<LivroAdapter.ViewHolder> 
                                 .show();
                         break;
                     case R.id.popup_books:
-                        Utils.paginaWeb(activity, "https://books.google.com.br/books?id=" + livro.getGoogleBooksId());
+                        Utils.webPage(activity, "https://books.google.com.br/books?id=" + livro.getGoogleBooksId());
                         break;
                 }
                 return true;

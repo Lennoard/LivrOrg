@@ -21,7 +21,7 @@
     <string name="senha">Password</string>
     <string name="usuario">Username</string>
     <string name="finalizados">Finished</string>
-    <string name="entrar">Log in</string>
+    <string name="log_in">Log in</string>
     <string name="bem_vindo">Welcome</string>
     <string name="cadastrar_erro_senha">Passwords do not match</string>
     <string name="registros">Records</string>

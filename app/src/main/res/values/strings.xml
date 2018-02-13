@@ -42,10 +42,12 @@
     <string name="usuario">Usuário</string>
     <string name="senha">Senha</string>
     <string name="registrarse">Registrar-se</string>
-    <string name="entrar">Entrar</string>
     <string name="bem_vindo">Bem-vindo</string>
+    <string name="log_in">Entrar</string>
+    <string name="log_out">Sair</string>
     <string name="login_erro_usuario">Insira um nome de usuário</string>
     <string name="login_erro_senha">Insira uma senha</string>
+    <string name="logging_in">Entrando…</string>
     <string name="confirmar_senha">Confirmar senha</string>
     <string name="cadastrar_erro_senha">As senhas não correspondem</string>
     <string name="registros">Registros</string>
@@ -65,4 +67,8 @@
     <string name="comentario_novo">Novo comentário</string>
     <string name="input_required">Preencha este campo</string>
     <string name="erro_sem_conexao">Você está offline</string>
+    <string name="sobre">Sobre</string>
+    <string name="configuracoes">Configurações</string>
+    <string name="app_desc_curta">Organize sua biblioteca numa estante virtual</string>
+    <string name="app_desc">Organize sua biblioteca numa estante virtual.\nLivrOrg permite a você adicionar livros a partir de um vasto acervo e organizá-los de acordo com o seu estado atual de leitura.\nAdicione, remova, atualize, favorite, comente, compartilhe, descubra!</string>
 </resources>

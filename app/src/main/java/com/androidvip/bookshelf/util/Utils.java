@@ -62,13 +62,13 @@ public final class Utils {
         return s;
     }
 
-    public static void paginaWeb(Context contexto, String url){
+    public static void webPage(Context context, String url){
         Uri uri = Uri.parse(url);
         try {
             Intent i = new Intent(Intent.ACTION_VIEW, uri);
-            contexto.startActivity(i);
+            context.startActivity(i);
         } catch (ActivityNotFoundException e) {
-            Toast.makeText(contexto, "Não foi possível iniciar o navegador: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Não foi possível iniciar o navegador: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 

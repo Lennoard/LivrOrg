@@ -76,7 +76,7 @@
                 android:id="@+id/login_entrar"
                 style="?attr/buttonBarButtonStyle"
                 android:layout_weight="1"
-                android:text="@string/entrar"
+                android:text="@string/log_in"
                 android:onClick="entrar"/>
 
         </LinearLayout>

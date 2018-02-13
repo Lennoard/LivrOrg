@@ -1,5 +1,6 @@
 package com.androidvip.bookshelf.activity;
 
+import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -7,6 +8,7 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -19,8 +21,10 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import com.androidvip.bookshelf.App;
@@ -58,8 +62,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     };
 
-    // TODO: 12/02/18 Log off
-    // TODO: 12/02/18 Flag clear history 
+    // TODO: 13/02/18 showcaseview
+    // TODO: 13/02/18 add manual
+    // TODO: 13/02/18 localização
+    // TODO: 13/02/18 Utils.nn
+    // TODO: 13/02/18 licences
+    // TODO: 13/02/18 icon
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +112,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             unregisterReceiver(netReceiver);
         } catch (Exception ignored){}
         super.onDestroy();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent i;
+        switch (item.getItemId()) {
+            case R.id.action_sobre:
+                startActivity(new Intent(this, SobreActivity.class));
+                break;
+            case R.id.action_log_out:
+                PreferenceManager.getDefaultSharedPreferences(this)
+                        .edit().putBoolean("logado", false).apply();
+                i = new Intent(this, LoginActivity.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(i);
+                break;
+        }
+        return true;
     }
 
     @Override

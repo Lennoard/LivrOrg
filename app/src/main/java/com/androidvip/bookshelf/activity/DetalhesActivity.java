@@ -66,11 +66,16 @@ public class DetalhesActivity extends AppCompatActivity {
                     snackNet.dismiss();
                     scroll.setVisibility(View.VISIBLE);
                     offline.setVisibility(View.GONE);
-                    favorito.setEnabled(true);
-                    nota.setEnabled(true);
-                    nota.setTextColor(Color.parseColor("#ffab40"));
-                    estadoLeitura.setEnabled(true);
-                    estadoLeitura.setTextColor(Color.parseColor("#ffab40"));
+                    if (!favorito.isEnabled())
+                        favorito.setEnabled(true);
+                    if (!nota.isEnabled()) {
+                        nota.setEnabled(true);
+                        nota.setTextColor(Color.parseColor("#ffab40"));
+                    }
+                    if (!estadoLeitura.isEnabled()) {
+                        estadoLeitura.setEnabled(true);
+                        estadoLeitura.setTextColor(Color.parseColor("#ffab40"));
+                    }
                 } else {
                     snackNet.show();
                     favorito.setEnabled(false);
@@ -243,9 +248,6 @@ public class DetalhesActivity extends AppCompatActivity {
         if (Utils.isOnline(this)) {
             livroBox = ((App) getApplication()).getBoxStore().boxFor(Livro.class);
             obterVolume(volumeId);
-            nota.setText(R.string.nota_sem_nota);
-            nota.setEnabled(false);
-            nota.setTextColor(Color.parseColor("#9e9e9e"));
         } else {
             ImageView offline = findViewById(R.id.detalhes_img_offline);
             NestedScrollView scroll = findViewById(R.id.detalhes_scroll);
@@ -309,6 +311,8 @@ public class DetalhesActivity extends AppCompatActivity {
             livro = new Livro();
             estadoLeitura.setText(R.string.add_lista);
             nota.setText(notaToString(0));
+            nota.setEnabled(false);
+            nota.setTextColor(Color.parseColor("#9e9e9e"));
         }
         if (volume != null) {
             Volume.VolumeInfo volumeInfo = volume.getVolumeInfo();

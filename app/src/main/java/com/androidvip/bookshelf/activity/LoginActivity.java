@@ -59,6 +59,7 @@ public class LoginActivity extends AppCompatActivity {
                 Thread.sleep(1000);
             } catch (InterruptedException ignored) {}
             runOnUiThread(() -> {
+                pd.dismiss();
                 startActivity(new Intent(LoginActivity.this, MainActivity.class));
                 finish();
             });

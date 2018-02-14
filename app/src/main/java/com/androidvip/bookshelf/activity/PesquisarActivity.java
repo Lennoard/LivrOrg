@@ -6,13 +6,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,7 +28,10 @@ import android.widget.ImageView;
 
 import com.androidvip.bookshelf.R;
 import com.androidvip.bookshelf.adapter.VolumeAdapter;
+import com.androidvip.bookshelf.util.K;
 import com.androidvip.bookshelf.util.Utils;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.books.model.Volume;
@@ -45,6 +50,7 @@ public class PesquisarActivity extends AppCompatActivity {
     private int checkedItem = 0;
     private boolean adicionarActivity = false;
     private Snackbar snackNet;
+    private SharedPreferences sp;
 
     private BroadcastReceiver netReceiver = new BroadcastReceiver() {
         @Override
@@ -72,24 +78,22 @@ public class PesquisarActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pesquisar);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        sp = PreferenceManager.getDefaultSharedPreferences(this);
 
         Intent intent = getIntent();
         if (intent != null)
             adicionarActivity = intent.getBooleanExtra("add", false);
 
-        if (adicionarActivity) {
-            getSupportActionBar().setTitle("Adicionar");
-            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        }
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setUpToolBar(toolbar);
 
         swipeLayout = findViewById(R.id.swipe_rv_pesquisar);
         swipeLayout.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorAccent));
         swipeLayout.setOnRefreshListener(this::atualizarLista);
         jsonFactory = JacksonFactory.getDefaultInstance();
 
+
+        atualizarLista();
     }
 
     @Override
@@ -100,8 +104,6 @@ public class PesquisarActivity extends AppCompatActivity {
             snackNet.show();
 
         registerReceiver(netReceiver, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
-
-        atualizarLista();
     }
 
     @Override
@@ -119,6 +121,36 @@ public class PesquisarActivity extends AppCompatActivity {
         else
             getMenuInflater().inflate(R.menu.pesquisar_livro, menu);
 
+        setUpSearch(menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        setUpMenuItemAction(item);
+        return true;
+    }
+
+    private void setUpToolBar(Toolbar toolbar) {
+        if (!sp.getBoolean(K.PREF.TAP_TARGET_SEARCH, false)) {
+            toolbar.inflateMenu(adicionarActivity ? R.menu.adicionar_livro : R.menu.pesquisar_livro);
+            toolbar.setTitle(adicionarActivity ? R.string.add : R.string.pesquisar);
+            showTapTarget(toolbar);
+            toolbar.setOnMenuItemClickListener(item -> {
+                setUpMenuItemAction(item);
+                return true;
+            });
+            setUpSearch(toolbar.getMenu());
+        } else {
+            setSupportActionBar(toolbar);
+            ActionBar actionBar = getSupportActionBar();
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle(adicionarActivity ? R.string.add : R.string.pesquisar);
+        }
+    }
+
+    private void setUpSearch(Menu menu) {
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.action_pesquisar).getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
@@ -133,15 +165,17 @@ public class PesquisarActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                if (newText.length() > 3) {
+                    queryAtual = newText;
+                    atualizarLista();
+                    return true;
+                }
                 return false;
             }
         });
-
-        return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    private void setUpMenuItemAction(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
@@ -173,7 +207,35 @@ public class PesquisarActivity extends AppCompatActivity {
                 // TODO: 02/02/2018
                 break;
         }
-        return true;
+    }
+
+    private void showTapTarget(Toolbar toolbar) {
+        if (!sp.getBoolean(K.PREF.TAP_TARGET_SEARCH, false)) {
+            new TapTargetSequence(this)
+                    .continueOnCancel(true)
+                    .targets(
+                            TapTarget.forToolbarMenuItem(toolbar, R.id.action_pesquisar,
+                                    getString(R.string.pesquisar), getString(R.string.tap_target_pesquisa)).id(1),
+                            TapTarget.forToolbarMenuItem(toolbar, R.id.action_pesquisar_por,
+                                    getString(R.string.pesquisar_por), getString(R.string.tap_target_pesquisar_por)).id(2)
+                    ).listener(new TapTargetSequence.Listener() {
+                @Override
+                public void onSequenceFinish() {
+                    sp.edit().putBoolean(K.PREF.TAP_TARGET_SEARCH, true).apply();
+                    setUpToolBar(toolbar);
+                }
+
+                @Override
+                public void onSequenceStep(TapTarget lastTarget, boolean targetClicked) {
+
+                }
+
+                @Override
+                public void onSequenceCanceled(TapTarget lastTarget) {
+
+                }
+            }).start();
+        }
     }
     
     private void configurarRecyclerView() {
@@ -197,9 +259,7 @@ public class PesquisarActivity extends AppCompatActivity {
             new Thread(() -> {
                 try {
                     volumesLista = Utils.pesquisarVolumes(jsonFactory, prefixo + queryAtual);
-                } catch (Exception ignored) {
-
-                }
+                } catch (Exception ignored) {}
                 runOnUiThread(() -> {
                     swipeLayout.setRefreshing(false);
                     configurarRecyclerView();

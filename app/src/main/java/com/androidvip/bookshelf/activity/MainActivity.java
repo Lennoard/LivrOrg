@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -32,7 +33,10 @@ import com.androidvip.bookshelf.R;
 import com.androidvip.bookshelf.adapter.LivroAdapter;
 import com.androidvip.bookshelf.model.Livro;
 import com.androidvip.bookshelf.model.Livro_;
+import com.androidvip.bookshelf.util.K;
 import com.androidvip.bookshelf.util.Utils;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetSequence;
 
 import java.util.List;
 
@@ -46,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Box<Livro> livroBox;
     private int idNavAtual;
     private Snackbar snackNet;
+    private SharedPreferences sp;
 
     private BroadcastReceiver netReceiver = new BroadcastReceiver() {
         @Override
@@ -61,30 +66,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         }
     };
-
-    // TODO: 13/02/18 showcaseview
+    
     // TODO: 13/02/18 add manual
     // TODO: 13/02/18 localização
     // TODO: 13/02/18 Utils.nn
     // TODO: 13/02/18 licences
-    // TODO: 13/02/18 icon
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        sp = PreferenceManager.getDefaultSharedPreferences(this);
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(getString(R.string.app_name) + ": " + getString(R.string.estado_leitura_lendo));
-
-        idNavAtual = R.id.nav_lendo;
-        snackNet = Snackbar.make(findViewById(R.id.cl), R.string.erro_sem_conexao, Snackbar.LENGTH_INDEFINITE);
-        if (!Utils.isOnline(this))
-            snackNet.show();
-
-        registerReceiver(netReceiver, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
-        configurarDrawer(toolbar);
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(view -> {
@@ -93,9 +90,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             startActivity(intent);
         });
 
+        idNavAtual = R.id.nav_lendo;
+
+        registerReceiver(netReceiver, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+        configurarDrawer(toolbar);
+
         swipeLayout = findViewById(R.id.swipe_rv_main);
         swipeLayout.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorAccent));
         swipeLayout.setOnRefreshListener(this::onStart);
+
+        showTapTarget(toolbar, fab);
+
+        snackNet = Snackbar.make(findViewById(R.id.cl), R.string.erro_sem_conexao, Snackbar.LENGTH_INDEFINITE);
+        if (!Utils.isOnline(this))
+            snackNet.show();
     }
 
     @Override
@@ -151,6 +159,34 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         trocarNavItems(item.getItemId());
         return true;
+    }
+
+    private void showTapTarget(Toolbar toolbar, FloatingActionButton fab) {
+        if (!sp.getBoolean(K.PREF.TAP_TARGET_MAIN, false)) {
+            new TapTargetSequence(this)
+                    .continueOnCancel(true)
+                    .targets(
+                            TapTarget.forToolbarNavigationIcon(toolbar, "Menu", "Toque aqui para abrir o menu com seu catálogo organizado").id(1),
+                            TapTarget.forView(fab, "Adicionar", "Toque aqui para procurar e adicionar um livro")
+                                    .tintTarget(false)
+                                    .id(2)
+                    ).listener(new TapTargetSequence.Listener() {
+                        @Override
+                        public void onSequenceFinish() {
+                            sp.edit().putBoolean(K.PREF.TAP_TARGET_MAIN, true).apply();
+                        }
+
+                        @Override
+                        public void onSequenceStep(TapTarget lastTarget, boolean targetClicked) {
+
+                        }
+
+                        @Override
+                        public void onSequenceCanceled(TapTarget lastTarget) {
+
+                        }
+            }).start();
+        }
     }
 
     private void trocarNavItems(int itemId) {

@@ -51,7 +51,7 @@ public class SobreActivity extends AppCompatActivity {
     public void email(View view) {
         Intent i = new Intent(Intent.ACTION_SEND);
         i.setType("message/rfc822");
-        i.putExtra(Intent.EXTRA_EMAIL  , new String[]{"lennoardrai@gmail.com"});
+        i.putExtra(Intent.EXTRA_EMAIL, new String[]{"lennoardrai@gmail.com"});
         i.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name));
         try {
             startActivity(Intent.createChooser(i, "Enviar email"));

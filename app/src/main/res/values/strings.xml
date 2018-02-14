@@ -74,4 +74,5 @@
     <string name="add">Adicionar</string>
     <string name="tap_target_pesquisa">Toque aqui para inserir o termo de pesquisa, use o botão do seu teclado para pesquisar</string>
     <string name="tap_target_pesquisar_por">Toque aqui para alterar o modo de pesquisa</string>
+    <string name="search_no_book_found">Nehum livro encontrado</string>
 </resources>

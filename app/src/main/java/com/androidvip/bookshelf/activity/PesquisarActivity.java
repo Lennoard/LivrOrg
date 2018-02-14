@@ -89,11 +89,11 @@ public class PesquisarActivity extends AppCompatActivity {
 
         swipeLayout = findViewById(R.id.swipe_rv_pesquisar);
         swipeLayout.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorAccent));
-        swipeLayout.setOnRefreshListener(this::atualizarLista);
+        swipeLayout.setOnRefreshListener(() -> refreshList(true));
         jsonFactory = JacksonFactory.getDefaultInstance();
 
 
-        atualizarLista();
+        refreshList(false);
     }
 
     @Override
@@ -159,15 +159,15 @@ public class PesquisarActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 queryAtual = query;
-                atualizarLista();
+                refreshList(true);
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                if (newText.length() > 3) {
+                if (newText.length() > 6) {
                     queryAtual = newText;
-                    atualizarLista();
+                    refreshList(false);
                     return true;
                 }
                 return false;
@@ -197,7 +197,7 @@ public class PesquisarActivity extends AppCompatActivity {
                             }
                             private void set(DialogInterface dialog, int checkedItem) {
                                 PesquisarActivity.this.checkedItem = checkedItem;
-                                atualizarLista();
+                                refreshList(true);
                                 dialog.dismiss();
                             }
                         }).show();
@@ -253,9 +253,9 @@ public class PesquisarActivity extends AppCompatActivity {
         }
     }
 
-    private void atualizarLista() {
+    private void refreshList(boolean fromUser) {
         if (!queryAtual.equals("")) {
-            swipeLayout.setRefreshing(true);
+            swipeLayout.setRefreshing(fromUser);
             new Thread(() -> {
                 try {
                     volumesLista = Utils.pesquisarVolumes(jsonFactory, prefixo + queryAtual);
@@ -263,6 +263,9 @@ public class PesquisarActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     swipeLayout.setRefreshing(false);
                     configurarRecyclerView();
+                    if (volumesLista == null) {
+                        Snackbar.make(findViewById(R.id.cl), R.string.search_no_book_found, Snackbar.LENGTH_LONG).show();
+                    }
                 });
             }).start();
         }

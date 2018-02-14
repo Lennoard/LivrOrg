@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         }
     };
-    
+
     // TODO: 13/02/18 add manual
     // TODO: 13/02/18 localização
     // TODO: 13/02/18 Utils.nn

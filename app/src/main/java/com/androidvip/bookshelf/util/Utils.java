@@ -1,11 +1,14 @@
 package com.androidvip.bookshelf.util;
 
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.google.api.client.http.apache.ApacheHttpTransport;
@@ -70,6 +73,15 @@ public final class Utils {
         } catch (ActivityNotFoundException e) {
             Toast.makeText(context, "Não foi possível iniciar o navegador: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public static void hideKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        View view = activity.getCurrentFocus();
+        if (view == null)
+            view = new View(activity);
+        if (imm != null)
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     public static boolean isOnline(Context contexto) {

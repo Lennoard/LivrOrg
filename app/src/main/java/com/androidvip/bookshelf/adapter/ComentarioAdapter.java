@@ -1,7 +1,6 @@
 package com.androidvip.bookshelf.adapter;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;

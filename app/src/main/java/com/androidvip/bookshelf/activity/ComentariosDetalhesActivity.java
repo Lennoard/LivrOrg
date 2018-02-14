@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.androidvip.bookshelf.App;
 import com.androidvip.bookshelf.R;
 import com.androidvip.bookshelf.model.Comentario;
+import com.androidvip.bookshelf.util.Utils;
 
 import java.util.Date;
 
@@ -54,7 +55,7 @@ public class ComentariosDetalhesActivity extends AppCompatActivity {
         }
 
         fab.setOnClickListener(v -> {
-            esconderTeclado();
+            Utils.hideKeyboard(ComentariosDetalhesActivity.this);
             Comentario novoComentario;
             if (comentario != null)
                 novoComentario = gerarComentario(comentario);
@@ -67,15 +68,6 @@ public class ComentariosDetalhesActivity extends AppCompatActivity {
             } else
                 Snackbar.make(fab, R.string.comentario_falha_salvar, Snackbar.LENGTH_LONG).show();
         });
-    }
-
-    private void esconderTeclado() {
-        InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
-        View view = getCurrentFocus();
-        if (view == null)
-            view = new View(this);
-        if (imm != null)
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     @Override

@@ -263,7 +263,8 @@ public class PesquisarActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     swipeLayout.setRefreshing(false);
                     configurarRecyclerView();
-                    if (volumesLista == null) {
+                    if (volumesLista == null && fromUser) {
+                        Utils.hideKeyboard(PesquisarActivity.this);
                         Snackbar.make(findViewById(R.id.cl), R.string.search_no_book_found, Snackbar.LENGTH_LONG).show();
                     }
                 });

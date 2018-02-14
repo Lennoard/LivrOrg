@@ -122,7 +122,6 @@ public class PesquisarActivity extends AppCompatActivity {
             getMenuInflater().inflate(R.menu.pesquisar_livro, menu);
 
         setUpSearch(menu);
-
         return true;
     }
 
@@ -162,7 +161,6 @@ public class PesquisarActivity extends AppCompatActivity {
                 refreshList(true);
                 return true;
             }
-
             @Override
             public boolean onQueryTextChange(String newText) {
                 if (newText.length() > 6) {
@@ -215,7 +213,7 @@ public class PesquisarActivity extends AppCompatActivity {
                     .continueOnCancel(true)
                     .targets(
                             TapTarget.forToolbarMenuItem(toolbar, R.id.action_pesquisar,
-                                    getString(R.string.pesquisar), getString(R.string.tap_target_pesquisa)).id(1),
+                                    getString(R.string.pesquisar), getString(R.string.tap_target_pesquisa, new String(Character.toChars(0x1F50D)))).id(1),
                             TapTarget.forToolbarMenuItem(toolbar, R.id.action_pesquisar_por,
                                     getString(R.string.pesquisar_por), getString(R.string.tap_target_pesquisar_por)).id(2)
                     ).listener(new TapTargetSequence.Listener() {

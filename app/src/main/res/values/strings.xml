@@ -70,9 +70,9 @@
     <string name="sobre">Sobre</string>
     <string name="configuracoes">Configurações</string>
     <string name="app_desc_curta">Organize sua biblioteca numa estante virtual</string>
-    <string name="app_desc">Organize sua biblioteca numa estante virtual.\nLivrOrg permite a você adicionar livros a partir de um vasto acervo e organizá-los de acordo com o seu estado atual de leitura.\nAdicione, remova, atualize, favorite, comente, compartilhe, descubra!</string>
+    <string name="app_desc">LivrOrg permite a você adicionar livros a partir de um vasto acervo e organizá-los de acordo com o seu estado atual de leitura. Adicione, remova, atualize, favorite, comente, compartilhe, descubra!</string>
     <string name="add">Adicionar</string>
-    <string name="tap_target_pesquisa">Toque aqui para inserir o termo de pesquisa, use o botão do seu teclado para pesquisar</string>
+    <string name="tap_target_pesquisa">Toque aqui para inserir o termo de pesquisa, use o botão %s do seu teclado para pesquisar</string>
     <string name="tap_target_pesquisar_por">Toque aqui para alterar o modo de pesquisa</string>
     <string name="search_no_book_found">Nehum livro encontrado</string>
 </resources>

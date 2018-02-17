@@ -1,6 +1,5 @@
 package com.androidvip.bookshelf.activity;
 
-import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -18,13 +17,12 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -51,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private int idNavAtual;
     private Snackbar snackNet;
     private SharedPreferences sp;
+    private ActionBar actionBar;
 
     private BroadcastReceiver netReceiver = new BroadcastReceiver() {
         @Override
@@ -69,7 +68,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     // TODO: 13/02/18 add manual
     // TODO: 13/02/18 localização
-    // TODO: 13/02/18 Utils.nn
     // TODO: 13/02/18 licences
     // TODO: 14/02/2018 tags
 
@@ -82,7 +80,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(getString(R.string.app_name) + ": " + getString(R.string.estado_leitura_lendo));
+        actionBar = getSupportActionBar();
+        actionBar.setTitle(getString(R.string.app_name) + ": " + getString(R.string.estado_leitura_lendo));
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(view -> {
@@ -195,32 +194,32 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_lendo:
                 idNavAtual = R.id.nav_lendo;
                 configurarRecyclerView(filtrarLivroPorEstadoLeitura(Livro.ESTADO_LENDO));
-                getSupportActionBar().setTitle(R.string.estado_leitura_lendo);
+                actionBar.setTitle(R.string.estado_leitura_lendo);
                 break;
             case R.id.nav_lista_desejos:
                 idNavAtual = R.id.nav_lista_desejos;
                 configurarRecyclerView(filtrarLivroPorEstadoLeitura(Livro.ESTADO_DESEJADO));
-                getSupportActionBar().setTitle(R.string.estado_leitura_desejo);
+                actionBar.setTitle(R.string.estado_leitura_desejo);
                 break;
             case R.id.nav_em_espera:
                 idNavAtual = R.id.nav_em_espera;
                 configurarRecyclerView(filtrarLivroPorEstadoLeitura(Livro.ESTADO_EM_ESPERA));
-                getSupportActionBar().setTitle(R.string.estado_leitura_em_espera);
+                actionBar.setTitle(R.string.estado_leitura_em_espera);
                 break;
             case R.id.nav_desistencias:
                 idNavAtual = R.id.nav_desistencias;
                 configurarRecyclerView(filtrarLivroPorEstadoLeitura(Livro.ESTADO_DESISTIDO));
-                getSupportActionBar().setTitle(R.string.desistencias);
+                actionBar.setTitle(R.string.desistencias);
                 break;
             case R.id.nav_finalizados:
                 idNavAtual = R.id.nav_finalizados;
                 configurarRecyclerView(filtrarLivroPorEstadoLeitura(Livro.ESTADO_FINALIZADO));
-                getSupportActionBar().setTitle(R.string.finalizados);
+                actionBar.setTitle(R.string.finalizados);
                 break;
             case R.id.nav_favoritos:
                 idNavAtual = R.id.nav_favoritos;
                 configurarRecyclerView(filtrarLivroFavoritos());
-                getSupportActionBar().setTitle(R.string.favoritos);
+                actionBar.setTitle(R.string.favoritos);
                 break;
             case R.id.nav_pesquisar:
                 startActivity(new Intent(this, PesquisarActivity.class));

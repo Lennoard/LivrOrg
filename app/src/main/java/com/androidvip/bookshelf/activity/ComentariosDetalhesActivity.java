@@ -92,9 +92,7 @@ public class ComentariosDetalhesActivity extends AppCompatActivity {
             new AlertDialog.Builder(this)
                     .setTitle(R.string.erro)
                     .setMessage(R.string.erro_text_fields)
-                    .setPositiveButton(android.R.string.ok, (dialog, which) -> {
-
-                    })
+                    .setPositiveButton(android.R.string.ok, (dialog, which) -> {})
                     .show();
             return null;
         }

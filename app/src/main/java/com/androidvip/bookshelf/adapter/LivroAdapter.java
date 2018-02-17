@@ -80,7 +80,10 @@ public class LivroAdapter extends RecyclerView.Adapter<LivroAdapter.ViewHolder> 
                         Picasso.with(activity)
                                 .load(volume.getVolumeInfo().getImageLinks().getThumbnail())
                                 .placeholder(R.drawable.carregando_imagem)
+                                .error(R.drawable.broken_image)
                                 .into(holder.capa);
+                    else
+                        Picasso.with(activity).load(R.drawable.broken_image).into(holder.capa);
                 });
             } catch (Exception e) {
                 e.printStackTrace();

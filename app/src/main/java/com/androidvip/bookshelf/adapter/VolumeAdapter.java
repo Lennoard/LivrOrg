@@ -78,7 +78,10 @@ public class VolumeAdapter extends RecyclerView.Adapter<VolumeAdapter.ViewHolder
                 Picasso.with(activity)
                         .load(volumeInfo.getImageLinks().getThumbnail())
                         .placeholder(R.drawable.carregando_imagem)
+                        .error(R.drawable.broken_image)
                         .into(holder.capa);
+            else
+                Picasso.with(activity).load(R.drawable.broken_image).into(holder.capa);
 
             holder.cardLayout.setOnLongClickListener(v -> {
                 String titulo = volumeInfo.getTitle();

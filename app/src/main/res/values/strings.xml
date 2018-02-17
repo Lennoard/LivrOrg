@@ -20,6 +20,10 @@
     <string name="detalhes_erro">Não foi possível carregar os detalhes do livro</string>
     <string name="detalhes_erro_descricao">Não foi possível encontrar uma descrição para o livro</string>
     <string name="detalhes_erro_categoria">Não foi possível encontrar uma categoria para o livro</string>
+    <string name="detalhes_erro_autor">Autor desconhecido</string>
+    <string name="detalhes_erro_data_publicacao">data desconhecida</string>
+    <string name="detalhes_erro_publicador">publicador desconhecido</string>
+    <string name="detalhes_erro_maturidade">nenhuma classificação de maturidade disponível</string>
     <string name="nenhuma_tag">Nenhuma tag</string>
     <string name="nota">Nota</string>
     <string name="nota_sem_nota">Sem nota</string>
@@ -56,7 +60,7 @@
     <string name="categorias">Categorias</string>
     <string name="data_publicacao">Publicado em %1$s por %2$s</string>
     <string name="classificacoes">Classificações</string>
-    <string name="classificacoes_format">Nota: %1$.1f/5,0, baseada em %2$d avaliações.\nClassificação de maturidade: %3$s</string>
+    <string name="classificacoes_format">Nota: %1$.1f/5,0\n(baseada em %2$d avaliações).\n\nClassificação de maturidade: %3$s</string>
     <string name="capitulo">Capítulo</string>
     <string name="pagina">Página</string>
     <string name="comentarios_erro">Ocorreu um erro ao exibir os comentários</string>
@@ -75,4 +79,5 @@
     <string name="tap_target_pesquisa">Toque aqui para inserir o termo de pesquisa, use o botão %s do seu teclado para pesquisar</string>
     <string name="tap_target_pesquisar_por">Toque aqui para alterar o modo de pesquisa</string>
     <string name="search_no_book_found">Nehum livro encontrado</string>
+    <string name="hint_comentario">Digite alguma coisa…</string>
 </resources>

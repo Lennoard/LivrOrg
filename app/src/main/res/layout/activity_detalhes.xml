@@ -1,50 +1,147 @@
-<?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.androidvip.bookshelf.activity.DetalhesActivity">
+    android:id="@+id/cl"
+    tools:context="com.androidvip.bookshelf.activity.SobreActivity">
 
-    <android.support.design.widget.CoordinatorLayout
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/app_bar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/cl"
-        android:fitsSystemWindows="false">
+        android:layout_height="288dp"
+        android:fitsSystemWindows="true"
+        android:theme="@style/AppTheme.AppBarOverlay">
 
-        <android.support.design.widget.AppBarLayout
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/toolbar_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:theme="@style/AppTheme.AppBarOverlay">
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
+            app:contentScrim="?attr/colorPrimary"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:toolbarId="@+id/toolbar">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="@dimen/margem_detalhes"
+                android:paddingRight="@dimen/margem_detalhes"
+                android:paddingBottom="12dp"
+                android:background="#ebe6e4">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/detalhes_tag_layout"
+                    android:layout_marginTop="44dp"
+                    android:gravity="center_vertical">
+
+                    <EditText
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/detalhes_tag_edit"
+                        android:textColor="#424242"
+                        android:textColorHint="#40212121"
+                        android:layout_weight="1"
+                        android:background="@null"
+                        android:hint="Tags"/>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/detalhes_tag_botao"
+                        android:src="@drawable/ic_check"
+                        android:tint="#707070"
+                        android:layout_gravity="end"
+                        android:padding="8dp"
+                        style="@style/SelectableItemBackgroundBorderless"/>
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="113dp"
+                    android:layout_height="151dp"
+                    android:id="@+id/detalhes_capa"
+                    android:src="@drawable/carregando_imagem"
+                    android:layout_marginTop="12dp"
+                    android:layout_below="@id/detalhes_tag_layout"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginStart="12dp"
+                    android:layout_toEndOf="@id/detalhes_capa"
+                    android:layout_below="@id/detalhes_tag_layout"
+                    android:animateLayoutChanges="true"
+                    android:orientation="vertical">
+
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/detalhes_estado"
+                        android:textColor="#ffab40"
+                        android:background="@drawable/botao_detalhes_selector"
+                        android:layout_marginBottom="8dp"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:text="@string/carregando" />
+
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/detalhes_nota"
+                        android:textColor="#ffab40"
+                        android:background="@drawable/botao_detalhes_selector"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:text="@string/carregando" />
+
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="match_parent"
+                        android:id="@+id/detalhes_favorito"
+                        android:src="@drawable/ic_favorito"
+                        android:visibility="visible"
+                        android:layout_marginTop="8dp"
+                        android:layout_gravity="end"
+                        android:padding="10dp"
+                        style="@style/SelectableItemBackgroundBorderless" />
+
+                </LinearLayout>
+
+            </RelativeLayout>
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
+                app:layout_collapseMode="pin"
                 app:popupTheme="@style/AppTheme.PopupOverlay" />
 
-        </android.support.design.widget.AppBarLayout>
+        </android.support.design.widget.CollapsingToolbarLayout>
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:animateLayoutChanges="true"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    </android.support.design.widget.AppBarLayout>
 
-            <include layout="@layout/content_detalhes" />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/detalhes_img_offline"
-                android:layout_gravity="center"
-                android:visibility="gone"
-                android:src="@drawable/ic_offline"/>
+        <include layout="@layout/content_detalhes" />
 
-        </FrameLayout>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/detalhes_img_offline"
+            android:layout_marginTop="64dp"
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone"
+            android:src="@drawable/ic_offline"/>
 
-    </android.support.design.widget.CoordinatorLayout>
+    </FrameLayout>
 
 </android.support.design.widget.CoordinatorLayout>

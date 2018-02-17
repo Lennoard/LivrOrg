@@ -10,7 +10,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AlertDialog;
@@ -41,6 +41,8 @@ import java.util.GregorianCalendar;
 
 import io.objectbox.Box;
 
+import static com.androidvip.bookshelf.util.Utils.notNull;
+
 public class DetalhesActivity extends AppCompatActivity {
     private TextView titulo, autores, descricao, publicacao;
     private TextView categorias, classificacoes, inicioLeitura, terminoLeitura;
@@ -56,16 +58,12 @@ public class DetalhesActivity extends AppCompatActivity {
     private BroadcastReceiver netReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            ImageView offline = findViewById(R.id.detalhes_img_offline);
-            NestedScrollView scroll = findViewById(R.id.detalhes_scroll);
             if (intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
                 ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
                 NetworkInfo networkInfo = connectivityManager != null ? connectivityManager.getActiveNetworkInfo() : null;
                 if (networkInfo != null && networkInfo.getDetailedState() == NetworkInfo.DetailedState.CONNECTED) {
                     checarIntent();
                     snackNet.dismiss();
-                    scroll.setVisibility(View.VISIBLE);
-                    offline.setVisibility(View.GONE);
                     if (!favorito.isEnabled())
                         favorito.setEnabled(true);
                     if (!nota.isEnabled()) {
@@ -96,6 +94,11 @@ public class DetalhesActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        CollapsingToolbarLayout toolbarLayout = findViewById(R.id.toolbar_layout);
+        if (toolbarLayout != null) {
+            toolbarLayout.setExpandedTitleColor(Color.parseColor("#00ebe6e4"));
+        }
 
         bindViews();
     }
@@ -248,11 +251,6 @@ public class DetalhesActivity extends AppCompatActivity {
         if (Utils.isOnline(this)) {
             livroBox = ((App) getApplication()).getBoxStore().boxFor(Livro.class);
             obterVolume(volumeId);
-        } else {
-            ImageView offline = findViewById(R.id.detalhes_img_offline);
-            NestedScrollView scroll = findViewById(R.id.detalhes_scroll);
-            scroll.setVisibility(View.GONE);
-            offline.setVisibility(View.VISIBLE);
         }
     }
 
@@ -272,20 +270,16 @@ public class DetalhesActivity extends AppCompatActivity {
     }
 
     private void popularOffline() {
-        titulo.setText(notNull(livro.getTitulo()).equals("")
-                ? getString(R.string.carregando)
-                : notNull(livro.getTitulo()));
+        titulo.setText(notNull(livro.getTitulo(), getString(R.string.carregando)));
         if (!Utils.isOnline(this)){
             descricao.setText(R.string.detalhes_erro_descricao);
             categorias.setText(R.string.detalhes_erro_categoria);
         }
-        autores.setText(notNull(livro.getAutores()));
-        LinearLayout maisDetalhesLayout = findViewById(R.id.detalhes_layout_mais_detalhes);
-        maisDetalhesLayout.setVisibility(View.VISIBLE);
+        autores.setText(notNull(livro.getAutores(), getString(R.string.detalhes_erro_autor)));
 
         estadoLeitura.setText(estadoLeituraToString(livro.getEstadoLeitura()));
         nota.setText(notaToString(livro.getNota()));
-        tags.setText(notNull(livro.getTags()));
+        tags.setText(notNull(livro.getTags(), ""));
 
         String inicioStr = Utils.dateToString(livro.getDataInicioLeitura());
         String fimStr = Utils.dateToString(livro.getDataTerminoLeitura());
@@ -308,6 +302,9 @@ public class DetalhesActivity extends AppCompatActivity {
         if (livro != null)
             popularOffline();
         else {
+            LinearLayout maisDetalhesLayout = findViewById(R.id.detalhes_layout_mais_detalhes);
+            maisDetalhesLayout.setVisibility(View.GONE);
+
             livro = new Livro();
             estadoLeitura.setText(R.string.add_lista);
             nota.setText(notaToString(0));
@@ -317,23 +314,24 @@ public class DetalhesActivity extends AppCompatActivity {
         if (volume != null) {
             Volume.VolumeInfo volumeInfo = volume.getVolumeInfo();
             if (volumeInfo != null) {
-                titulo.setText(notNull(volumeInfo.getTitle()));
+                titulo.setText(notNull(volumeInfo.getTitle(), getString(R.string.carregando)));
                 if (volumeInfo.getAuthors() != null)
                     autores.setText(TextUtils.join(", ", volumeInfo.getAuthors()));
 
                 publicacao.setText(getString(R.string.data_publicacao,
-                        notNull(volumeInfo.getPublishedDate()), notNull(volumeInfo.getPublisher())));
+                        notNull(volumeInfo.getPublishedDate(), getString(R.string.detalhes_erro_data_publicacao)),
+                        notNull(volumeInfo.getPublisher(), getString(R.string.detalhes_erro_publicador))));
 
                 classificacoes.setText(getString(R.string.classificacoes_format,
                         volumeInfo.getAverageRating() == null ? 0 : volumeInfo.getAverageRating().floatValue(),
-                        volumeInfo.getRatingsCount(), notNull(volumeInfo.getMaturityRating())));
+                        volumeInfo.getRatingsCount() == null ? 0 : volumeInfo.getRatingsCount(),
+                        notNull(volumeInfo.getMaturityRating(), getString(R.string.detalhes_erro_maturidade))));
 
-                final String desc = notNull(volumeInfo.getDescription());
-                String descFinal = desc.equals("") ? getString(R.string.detalhes_erro_descricao) : desc;
+                final String desc = notNull(volumeInfo.getDescription(), getString(R.string.detalhes_erro_descricao));
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                    descricao.setText(Html.fromHtml(descFinal, Html.FROM_HTML_MODE_COMPACT));
+                    descricao.setText(Html.fromHtml(desc, Html.FROM_HTML_MODE_COMPACT));
                 else
-                    descricao.setText(Html.fromHtml(descFinal));
+                    descricao.setText(Html.fromHtml(desc));
 
                 if (volumeInfo.getCategories() != null) {
                     String cats = TextUtils.join(", ", volumeInfo.getCategories());
@@ -345,7 +343,10 @@ public class DetalhesActivity extends AppCompatActivity {
                     Picasso.with(this)
                             .load(volumeInfo.getImageLinks().getThumbnail())
                             .placeholder(R.drawable.carregando_imagem)
+                            .error(R.drawable.broken_image)
                             .into(capa);
+                else
+                    Picasso.with(this).load(R.drawable.broken_image).into(capa);
             }
         }
 
@@ -411,10 +412,6 @@ public class DetalhesActivity extends AppCompatActivity {
 
     private String notaToString(int nota) {
         return nota == 0 ? getString(R.string.nota_sem_nota) : getString(R.string.nota_format, nota);
-    }
-
-    private String notNull(@Nullable String s) {
-        return s == null ? "" : s;
     }
 
     private void bindViews() {

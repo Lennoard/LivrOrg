@@ -163,7 +163,7 @@ public class PesquisarActivity extends AppCompatActivity {
             }
             @Override
             public boolean onQueryTextChange(String newText) {
-                if (newText.length() > 6) {
+                if (newText.length() > 12) {
                     queryAtual = newText;
                     refreshList(false);
                     return true;

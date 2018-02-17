@@ -125,7 +125,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/detalhes_comentario_coment"
-                    android:hint="@string/comentarios"
+                    android:hint="@string/hint_comentario"
                     android:textColor="#757575"
                     android:padding="4dp"
                     android:fontFamily="sans-serif-light"

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="margem_padrao">72dp</dimen>
+    <dimen name="margem_reclycler">72dp</dimen>
+    <dimen name="fab_margin">48dp</dimen>
+    <dimen name="margem_detalhes">90dp</dimen>
+</resources>

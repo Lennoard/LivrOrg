@@ -112,5 +112,4 @@ public class ComentariosActivity extends AppCompatActivity {
         }
         swipeLayout.setRefreshing(false);
     }
-
 }

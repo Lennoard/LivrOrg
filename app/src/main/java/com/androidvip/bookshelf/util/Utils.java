@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
@@ -88,5 +90,9 @@ public final class Utils {
         ConnectivityManager cm = (ConnectivityManager)contexto.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo redeAtiva = cm.getActiveNetworkInfo();
         return redeAtiva != null && redeAtiva.isConnectedOrConnecting();
+    }
+
+    public static String notNull(@Nullable String s, @NonNull String defaultValue) {
+        return s == null || s.trim().equals("null") || s.trim().equals("")  ? defaultValue : s;
     }
 }

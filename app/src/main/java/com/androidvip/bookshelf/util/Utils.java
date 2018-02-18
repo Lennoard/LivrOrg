@@ -121,6 +121,6 @@ public final class Utils {
     }
 
     public static String notNull(@Nullable String s, @NonNull String defaultValue) {
-        return s == null || s.trim().equals("null") || s.trim().equals("")  ? defaultValue : s;
+        return s == null || s.trim().equals("") ? defaultValue : s;
     }
 }

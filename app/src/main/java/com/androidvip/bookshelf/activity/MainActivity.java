@@ -1,5 +1,6 @@
 package com.androidvip.bookshelf.activity;
 
+import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +16,7 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
@@ -22,6 +24,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -36,9 +39,11 @@ import com.androidvip.bookshelf.util.Utils;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.objectbox.Box;
+import io.objectbox.query.QueryFilter;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     DrawerLayout drawer;
@@ -46,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     RecyclerView.Adapter mAdapter;
     private SwipeRefreshLayout swipeLayout;
     private Box<Livro> livroBox;
+    private List<Livro> listaAtual;
     private int idNavAtual;
     private Snackbar snackNet;
     private SharedPreferences sp;
@@ -68,7 +74,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     // TODO: 13/02/18 localização
     // TODO: 13/02/18 licences
-    // TODO: 14/02/2018 tags
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,6 +129,40 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
+
+        MenuItem itemPesquisar = menu.findItem(R.id.action_filtrar);
+
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) itemPesquisar.getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
+        itemPesquisar.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String query) {
+                        configurarRecyclerView(filtrarPorMatch(query));
+                        return true;
+                    }
+                    @Override
+                    public boolean onQueryTextChange(String newText) {
+                        if (newText.length() > 3) {
+                            configurarRecyclerView(filtrarPorMatch(newText));
+                            return true;
+                        }
+                        return false;
+                    }
+                });
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                configurarRecyclerView(listaAtual);
+                return true;
+            }
+        });
         return true;
     }
 
@@ -131,6 +170,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent i;
         switch (item.getItemId()) {
+            case R.id.action_filtrar:
+                // TODO: 18/02/2018
+                break;
             case R.id.action_sobre:
                 startActivity(new Intent(this, SobreActivity.class));
                 break;
@@ -192,32 +234,32 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (itemId) {
             case R.id.nav_lendo:
                 idNavAtual = R.id.nav_lendo;
-                configurarRecyclerView(filtrarLivroPorEstadoLeitura(Livro.ESTADO_LENDO));
+                configurarRecyclerView(filtrarPorEstadoLeitura(Livro.ESTADO_LENDO));
                 actionBar.setTitle(R.string.estado_leitura_lendo);
                 break;
             case R.id.nav_lista_desejos:
                 idNavAtual = R.id.nav_lista_desejos;
-                configurarRecyclerView(filtrarLivroPorEstadoLeitura(Livro.ESTADO_DESEJADO));
+                configurarRecyclerView(filtrarPorEstadoLeitura(Livro.ESTADO_DESEJADO));
                 actionBar.setTitle(R.string.estado_leitura_desejo);
                 break;
             case R.id.nav_em_espera:
                 idNavAtual = R.id.nav_em_espera;
-                configurarRecyclerView(filtrarLivroPorEstadoLeitura(Livro.ESTADO_EM_ESPERA));
+                configurarRecyclerView(filtrarPorEstadoLeitura(Livro.ESTADO_EM_ESPERA));
                 actionBar.setTitle(R.string.estado_leitura_em_espera);
                 break;
             case R.id.nav_desistencias:
                 idNavAtual = R.id.nav_desistencias;
-                configurarRecyclerView(filtrarLivroPorEstadoLeitura(Livro.ESTADO_DESISTIDO));
+                configurarRecyclerView(filtrarPorEstadoLeitura(Livro.ESTADO_DESISTIDO));
                 actionBar.setTitle(R.string.desistencias);
                 break;
             case R.id.nav_finalizados:
                 idNavAtual = R.id.nav_finalizados;
-                configurarRecyclerView(filtrarLivroPorEstadoLeitura(Livro.ESTADO_FINALIZADO));
+                configurarRecyclerView(filtrarPorEstadoLeitura(Livro.ESTADO_FINALIZADO));
                 actionBar.setTitle(R.string.finalizados);
                 break;
             case R.id.nav_favoritos:
                 idNavAtual = R.id.nav_favoritos;
-                configurarRecyclerView(filtrarLivroFavoritos());
+                configurarRecyclerView(filtrarPorFavorito());
                 actionBar.setTitle(R.string.favoritos);
                 break;
             case R.id.nav_pesquisar:
@@ -227,12 +269,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer.closeDrawer(GravityCompat.START);
     }
 
-    private List<Livro> filtrarLivroPorEstadoLeitura(int estadoLeitura){
-       return livroBox.query().equal(Livro_.estadoLeitura, estadoLeitura).build().find();
+    private List<Livro> filtrarPorEstadoLeitura(int estadoLeitura){
+        List<Livro> l = livroBox.query().equal(Livro_.estadoLeitura, estadoLeitura).build().find();
+        listaAtual = l;
+        return l;
     }
 
-    private List<Livro> filtrarLivroFavoritos(){
-        return livroBox.query().equal(Livro_.favorito, true).build().find();
+    private List<Livro> filtrarPorFavorito(){
+        List<Livro> l = livroBox.query().equal(Livro_.favorito, true).build().find();
+        listaAtual = l;
+        return l;
+    }
+
+    private List<Livro> filtrarPorMatch(String match) {
+        List<Livro> l = new ArrayList<>();
+        for (Livro livro : listaAtual)
+            if (livro.getTitulo().toLowerCase().contains(match.toLowerCase()) ||
+                    Utils.notNull(livro.getTags().toLowerCase(), "").contains(match.toLowerCase()) ||
+                    Utils.notNull(livro.getAutores().toLowerCase(), "").contains(match.toLowerCase()))
+                l.add(livro);
+        return l;
     }
 
     private void configurarDrawer(Toolbar toolbar) {

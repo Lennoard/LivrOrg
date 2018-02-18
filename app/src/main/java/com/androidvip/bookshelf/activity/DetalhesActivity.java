@@ -113,6 +113,8 @@ public class DetalhesActivity extends AppCompatActivity {
         maisDetalhesLayout.setVisibility(View.GONE);
 
         bindViews();
+        
+        titulo.setText(getString(R.string.carregando));
     }
 
     @Override
@@ -122,7 +124,6 @@ public class DetalhesActivity extends AppCompatActivity {
         if (!Utils.isOnline(this))
             snackNet.show();
 
-        titulo.setText(getString(R.string.carregando));
         autores.setText("");
         registerReceiver(netReceiver, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
 
@@ -162,6 +163,8 @@ public class DetalhesActivity extends AppCompatActivity {
             if (volumeId != null && !volumeId.equals("")) {
                 configurarBox(volumeId);
                 presenteEmLista = false;
+                tags.setVisibility(View.INVISIBLE);
+                salvarTags.setVisibility(View.INVISIBLE);
             } else {
                 if (livroId > 0) {
                    configurarBox(livroId);
@@ -324,8 +327,9 @@ public class DetalhesActivity extends AppCompatActivity {
             else
                 favorito.setImageResource(R.drawable.ic_favorito);
             favoritado = livro.isFavorito();
-        } else
+        } else {
             favorito.setVisibility(View.INVISIBLE);
+        }
     }
 
     private void popular() {

@@ -7,6 +7,12 @@
         app:showAsAction="never"/>
      -->
 
+    <item android:id="@+id/action_filtrar"
+        android:title="@string/filtrar"
+        android:icon="@drawable/ic_filtrar"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="collapseActionView|ifRoom"/>
+
     <item android:id="@+id/action_sobre"
         android:title="@string/sobre"
         app:showAsAction="never"/>

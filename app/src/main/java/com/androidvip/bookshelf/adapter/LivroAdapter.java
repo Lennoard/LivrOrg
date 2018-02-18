@@ -85,8 +85,8 @@ public class LivroAdapter extends RecyclerView.Adapter<LivroAdapter.ViewHolder> 
                     else
                         holder.capa.setImageResource(R.drawable.broken_image);
                 });
-            } catch (Exception e ){
-                holder.capa.setImageResource(R.drawable.broken_image);
+            } catch (Exception e){
+                activity.runOnUiThread(() -> holder.capa.setImageResource(R.drawable.broken_image));
             }
         }).start();
 

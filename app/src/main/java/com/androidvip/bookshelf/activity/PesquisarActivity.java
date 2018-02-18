@@ -202,7 +202,7 @@ public class PesquisarActivity extends AppCompatActivity {
                 break;
 
             case R.id.action_add_manualmente:
-                // TODO: 02/02/2018
+                startActivity(new Intent(this, AddManualActivity.class));
                 break;
         }
     }

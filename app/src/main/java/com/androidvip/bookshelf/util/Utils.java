@@ -13,6 +13,8 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+import com.androidvip.bookshelf.R;
+import com.androidvip.bookshelf.model.Livro;
 import com.google.api.client.http.apache.ApacheHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.services.books.Books;
@@ -27,6 +29,7 @@ import java.util.List;
 import java.util.Locale;
 
 public final class Utils {
+
     private Utils() {
 
     }
@@ -54,6 +57,31 @@ public final class Utils {
         Books.Volumes.Get get = books.volumes().get(volumeId);
 
         return get.execute();
+    }
+
+    public static String estadoLeituraToString(int estadoLeitura, Context context) {
+        String ret;
+        switch (estadoLeitura) {
+            case Livro.ESTADO_LENDO:
+                ret = context.getString(R.string.estado_leitura_lendo);
+                break;
+            case Livro.ESTADO_DESEJADO:
+                ret = context.getString(R.string.estado_leitura_desejo);
+                break;
+            case Livro.ESTADO_EM_ESPERA:
+                ret = context.getString(R.string.estado_leitura_em_espera);
+                break;
+            case Livro.ESTADO_DESISTIDO:
+                ret = context.getString(R.string.estado_leitura_desistido);
+                break;
+            case Livro.ESTADO_FINALIZADO:
+                ret = context.getString(R.string.estado_leitura_finalizado);
+                break;
+            default:
+                ret = context.getString(R.string.add_lista);
+                break;
+        }
+        return ret;
     }
 
     public static String dateToString(Date date) {

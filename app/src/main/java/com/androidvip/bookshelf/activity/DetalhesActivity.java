@@ -6,26 +6,30 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewSwitcher;
 
 import com.androidvip.bookshelf.App;
 import com.androidvip.bookshelf.R;
@@ -41,10 +45,13 @@ import java.util.GregorianCalendar;
 
 import io.objectbox.Box;
 
+import static android.view.animation.AnimationUtils.loadAnimation;
+import static com.androidvip.bookshelf.util.Utils.estadoLeituraToString;
 import static com.androidvip.bookshelf.util.Utils.notNull;
 
 public class DetalhesActivity extends AppCompatActivity {
-    private TextView titulo, autores, descricao, publicacao;
+    private TextSwitcher titulo, autores;
+    private TextView descricao, publicacao;
     private TextView categorias, classificacoes, inicioLeitura, terminoLeitura;
     private Button estadoLeitura, nota;
     EditText tags;
@@ -54,6 +61,8 @@ public class DetalhesActivity extends AppCompatActivity {
     private Box<Livro> livroBox;
     private boolean favoritado;
     private Snackbar snackNet;
+    private LinearLayout maisDetalhesLayout;
+    private boolean presenteEmLista;
 
     private BroadcastReceiver netReceiver = new BroadcastReceiver() {
         @Override
@@ -100,6 +109,9 @@ public class DetalhesActivity extends AppCompatActivity {
             toolbarLayout.setExpandedTitleColor(Color.parseColor("#00ebe6e4"));
         }
 
+        maisDetalhesLayout = findViewById(R.id.detalhes_layout_mais_detalhes);
+        maisDetalhesLayout.setVisibility(View.GONE);
+
         bindViews();
     }
 
@@ -110,6 +122,8 @@ public class DetalhesActivity extends AppCompatActivity {
         if (!Utils.isOnline(this))
             snackNet.show();
 
+        titulo.setText(getString(R.string.carregando));
+        autores.setText("");
         registerReceiver(netReceiver, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
 
         checarIntent();
@@ -145,12 +159,18 @@ public class DetalhesActivity extends AppCompatActivity {
             long livroId = intent.getLongExtra("livroId", 0);
             String volumeId = intent.getStringExtra("volumeId");
 
-            if (volumeId != null && !volumeId.equals(""))
+            if (volumeId != null && !volumeId.equals("")) {
                 configurarBox(volumeId);
-            else if (livroId > 0)
-                configurarBox(livroId);
-            else
-                Toast.makeText(this, R.string.detalhes_erro, Toast.LENGTH_LONG).show();
+                presenteEmLista = false;
+            } else {
+                if (livroId > 0) {
+                   configurarBox(livroId);
+                   presenteEmLista = true;
+                } else {
+                    Toast.makeText(this, R.string.detalhes_erro, Toast.LENGTH_LONG).show();
+                    finish();
+                }
+            }
         }
     }
 
@@ -167,7 +187,7 @@ public class DetalhesActivity extends AppCompatActivity {
                                 .setMessage(R.string.aviso_atualizar_lendo)
                                 .setPositiveButton(android.R.string.yes, (dialog1, which) -> {
                                     livro.setEstadoLeitura(Livro.ESTADO_LENDO);
-                                    estadoLeitura.setText(estadoLeituraToString(Livro.ESTADO_LENDO));
+                                    estadoLeitura.setText(estadoLeituraToString(Livro.ESTADO_LENDO, DetalhesActivity.this));
                                     livroBox.put(livro);
                                 })
                                 .setNegativeButton(android.R.string.no, (dialog12, which) -> {})
@@ -183,7 +203,7 @@ public class DetalhesActivity extends AppCompatActivity {
                                 .setMessage(R.string.aviso_atualizar_finalizado)
                                 .setPositiveButton(android.R.string.yes, (dialog1, which) -> {
                                     livro.setEstadoLeitura(Livro.ESTADO_FINALIZADO);
-                                    estadoLeitura.setText(estadoLeituraToString(Livro.ESTADO_FINALIZADO));
+                                    estadoLeitura.setText(estadoLeituraToString(Livro.ESTADO_FINALIZADO, DetalhesActivity.this));
                                     livroBox.put(livro);
                                 })
                                 .setNegativeButton(android.R.string.no, (dialog12, which) -> {})
@@ -206,8 +226,10 @@ public class DetalhesActivity extends AppCompatActivity {
                 .setTitle(R.string.add_lista)
                 .setSingleChoiceItems(R.array.estado_leitura_array, checkedItem, (dialog, which) -> {
                     if (estadoLeitura == 0){
-                        livro.setTitulo(titulo.getText().toString());
-                        livro.setAutores(autores.getText().toString());
+                        TextView tituloView = (TextView)titulo.getCurrentView();
+                        TextView autoresView = (TextView)autores.getCurrentView();
+                        livro.setTitulo(tituloView.getText().toString());
+                        livro.setAutores(autoresView.getText().toString());
                         livro.setGoogleBooksId(volume.getId());
                     }
                     switch (which) {
@@ -215,27 +237,27 @@ public class DetalhesActivity extends AppCompatActivity {
                             livro.setEstadoLeitura(Livro.ESTADO_LENDO);
                             livro.setDataInicioLeitura(new Date(System.currentTimeMillis()));
                             livro.setDataTerminoLeitura(null);
-                            DetalhesActivity.this.estadoLeitura.setText(estadoLeituraToString(Livro.ESTADO_LENDO));
+                            DetalhesActivity.this.estadoLeitura.setText(estadoLeituraToString(Livro.ESTADO_LENDO, DetalhesActivity.this));
                             break;
                         case 1:
                             livro.setEstadoLeitura(Livro.ESTADO_DESEJADO);
-                            DetalhesActivity.this.estadoLeitura.setText(estadoLeituraToString(Livro.ESTADO_DESEJADO));
+                            DetalhesActivity.this.estadoLeitura.setText(estadoLeituraToString(Livro.ESTADO_DESEJADO, DetalhesActivity.this));
                             break;
                         case 2:
                             livro.setEstadoLeitura(Livro.ESTADO_EM_ESPERA);
-                            DetalhesActivity.this.estadoLeitura.setText(estadoLeituraToString(Livro.ESTADO_EM_ESPERA));
+                            DetalhesActivity.this.estadoLeitura.setText(estadoLeituraToString(Livro.ESTADO_EM_ESPERA, DetalhesActivity.this));
                             break;
                         case 3:
                             livro.setEstadoLeitura(Livro.ESTADO_DESISTIDO);
-                            DetalhesActivity.this.estadoLeitura.setText(estadoLeituraToString(Livro.ESTADO_DESISTIDO));
+                            DetalhesActivity.this.estadoLeitura.setText(estadoLeituraToString(Livro.ESTADO_DESISTIDO, DetalhesActivity.this));
                             break;
                         case 4:
                             livro.setEstadoLeitura(Livro.ESTADO_FINALIZADO);
-                            DetalhesActivity.this.estadoLeitura.setText(estadoLeituraToString(Livro.ESTADO_FINALIZADO));
+                            DetalhesActivity.this.estadoLeitura.setText(estadoLeituraToString(Livro.ESTADO_FINALIZADO, DetalhesActivity.this));
                             livro.setDataTerminoLeitura(new Date(System.currentTimeMillis()));
                             break;
                     }
-                    DetalhesActivity.this.estadoLeitura.setText(estadoLeituraToString(which + 1));
+                    DetalhesActivity.this.estadoLeitura.setText(estadoLeituraToString(which + 1, DetalhesActivity.this));
                     dialog.dismiss();
                     livroBox.put(livro);
                 }).show();
@@ -244,6 +266,7 @@ public class DetalhesActivity extends AppCompatActivity {
     private void configurarBox(long livroId) {
         livroBox = ((App) getApplication()).getBoxStore().boxFor(Livro.class);
         livro = livroBox.get(livroId);
+
         obterVolume(livro.getGoogleBooksId());
     }
 
@@ -255,29 +278,30 @@ public class DetalhesActivity extends AppCompatActivity {
     }
 
     private void obterVolume(String volumeId) {
-        if(!Utils.isOnline(this) && livro != null) {
-            popularOffline();
+        if (volumeId != null && !volumeId.equals("")) {
+            // Google Book id é válido
+            if (!Utils.isOnline(this) && livro != null) {
+                popularOffline();
+            } else {
+                new Thread(() -> {
+                    try {
+                        volume = Utils.obterVolume(JacksonFactory.getDefaultInstance(), volumeId);
+                    } catch (Exception ignored) {}
+                    runOnUiThread(this::popular);
+                }).start();
+            }
         } else {
-            new Thread(() -> {
-                try {
-                    volume = Utils.obterVolume(JacksonFactory.getDefaultInstance(), volumeId);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                runOnUiThread(this::popular);
-            }).start();
+            popularOffline();
         }
     }
 
     private void popularOffline() {
         titulo.setText(notNull(livro.getTitulo(), getString(R.string.carregando)));
-        if (!Utils.isOnline(this)){
-            descricao.setText(R.string.detalhes_erro_descricao);
-            categorias.setText(R.string.detalhes_erro_categoria);
-        }
         autores.setText(notNull(livro.getAutores(), getString(R.string.detalhes_erro_autor)));
+        descricao.setText(R.string.detalhes_erro_descricao);
+        categorias.setText(R.string.detalhes_erro_categoria);
 
-        estadoLeitura.setText(estadoLeituraToString(livro.getEstadoLeitura()));
+        estadoLeitura.setText(estadoLeituraToString(livro.getEstadoLeitura(), DetalhesActivity.this));
         nota.setText(notaToString(livro.getNota()));
         tags.setText(notNull(livro.getTags(), ""));
 
@@ -290,27 +314,34 @@ public class DetalhesActivity extends AppCompatActivity {
                 ? getString(R.string.termino_leitura, "-")
                 : getString(R.string.termino_leitura, fimStr));
 
-        favorito.setVisibility(View.VISIBLE);
-        if (livro.isFavorito())
-            favorito.setImageResource(R.drawable.ic_favorito_ativado);
-        else
-            favorito.setImageResource(R.drawable.ic_favorito);
-        favoritado = livro.isFavorito();
+        if (presenteEmLista) {
+            configurarListeners();
+            maisDetalhesLayout.setVisibility(View.VISIBLE);
+            capa.setImageResource(R.drawable.broken_image);
+            favorito.setVisibility(View.VISIBLE);
+            if (livro.isFavorito())
+                favorito.setImageResource(R.drawable.ic_favorito_ativado);
+            else
+                favorito.setImageResource(R.drawable.ic_favorito);
+            favoritado = livro.isFavorito();
+        } else
+            favorito.setVisibility(View.INVISIBLE);
     }
 
     private void popular() {
-        if (livro != null)
-            popularOffline();
-        else {
-            LinearLayout maisDetalhesLayout = findViewById(R.id.detalhes_layout_mais_detalhes);
-            maisDetalhesLayout.setVisibility(View.GONE);
-
+        if (livro == null) {
             livro = new Livro();
             estadoLeitura.setText(R.string.add_lista);
             nota.setText(notaToString(0));
             nota.setEnabled(false);
             nota.setTextColor(Color.parseColor("#9e9e9e"));
+        } else {
+            popularOffline();
         }
+
+        if (presenteEmLista)
+            maisDetalhesLayout.setVisibility(View.VISIBLE);
+
         if (volume != null) {
             Volume.VolumeInfo volumeInfo = volume.getVolumeInfo();
             if (volumeInfo != null) {
@@ -327,7 +358,7 @@ public class DetalhesActivity extends AppCompatActivity {
                         volumeInfo.getRatingsCount() == null ? 0 : volumeInfo.getRatingsCount(),
                         notNull(volumeInfo.getMaturityRating(), getString(R.string.detalhes_erro_maturidade))));
 
-                final String desc = notNull(volumeInfo.getDescription(), getString(R.string.detalhes_erro_descricao));
+                String desc = notNull(volumeInfo.getDescription(), getString(R.string.detalhes_erro_descricao));
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
                     descricao.setText(Html.fromHtml(desc, Html.FROM_HTML_MODE_COMPACT));
                 else
@@ -349,7 +380,10 @@ public class DetalhesActivity extends AppCompatActivity {
                     Picasso.with(this).load(R.drawable.broken_image).into(capa);
             }
         }
+        configurarListeners();
+    }
 
+    private void configurarListeners() {
         estadoLeitura.setOnClickListener(estadoListener);
         inicioLeitura.setOnClickListener(dataListener(true));
         terminoLeitura.setOnClickListener(dataListener(false));
@@ -383,31 +417,10 @@ public class DetalhesActivity extends AppCompatActivity {
             Toast.makeText(DetalhesActivity.this, "Favoritar / Desfavoritar", Toast.LENGTH_SHORT).show();
             return true;
         });
-    }
-
-    private String estadoLeituraToString(int estadoLeitura) {
-        String ret;
-        switch (estadoLeitura) {
-            case Livro.ESTADO_LENDO:
-                ret = getString(R.string.estado_leitura_lendo);
-                break;
-            case Livro.ESTADO_DESEJADO:
-                ret = getString(R.string.estado_leitura_desejo);
-                break;
-            case Livro.ESTADO_EM_ESPERA:
-                ret = getString(R.string.estado_leitura_em_espera);
-                break;
-            case Livro.ESTADO_DESISTIDO:
-                ret = getString(R.string.estado_leitura_desistido);
-                break;
-            case Livro.ESTADO_FINALIZADO:
-                ret = getString(R.string.estado_leitura_finalizado);
-                break;
-            default:
-                ret = getString(R.string.add_lista);
-                break;
-        }
-        return ret;
+        salvarTags.setOnClickListener(v -> {
+            livro.setTags(tags.getText().toString());
+            livroBox.put(livro);
+        });
     }
 
     private String notaToString(int nota) {
@@ -429,5 +442,40 @@ public class DetalhesActivity extends AppCompatActivity {
         inicioLeitura = findViewById(R.id.detalhes_inicio_leitura);
         terminoLeitura = findViewById(R.id.detalhes_fim_leitura);
         favorito = findViewById(R.id.detalhes_favorito);
+
+        configurarAnimacoes();
+    }
+
+    private void configurarAnimacoes() {
+        titulo.setFactory(() -> {
+            TextView textView = new TextView(DetalhesActivity.this);
+            textView.setGravity(Gravity.CENTER_HORIZONTAL);
+            textView.setTextSize(20);
+            textView.setMaxLines(2);
+            textView.setEllipsize(TextUtils.TruncateAt.END);
+            textView.setTextColor(Color.parseColor("#212121"));
+            return textView;
+        });
+
+        autores.setFactory(() -> {
+            TextView textView = new TextView(DetalhesActivity.this);
+            textView.setGravity(Gravity.CENTER_HORIZONTAL);
+            textView.setTextSize(14);
+            textView.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
+            textView.setSingleLine();
+            textView.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+            textView.setSelected(true);
+            return textView;
+        });
+
+        Animation in = loadAnimation(this, android.R.anim.fade_in);
+        Animation out = loadAnimation(this, android.R.anim.fade_out);
+        in.setDuration(1000);
+        out.setDuration(320);
+
+        titulo.setInAnimation(in);
+        titulo.setOutAnimation(out);
+        autores.setInAnimation(in);
+        autores.setOutAnimation(out);
     }
 }

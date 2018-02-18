@@ -25,26 +25,25 @@
             android:paddingTop="16dp"
             android:orientation="vertical">
 
-            <TextView
+            <TextSwitcher
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:id="@+id/detalhes_titulo"
-                android:text="@string/carregando"
                 android:textSize="20sp"
-                android:paddingBottom="9dp"
+                android:paddingBottom="8dp"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:maxLines="2" />
 
-            <TextView
+            <TextSwitcher
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/detalhes_autores"
                 android:fontFamily="sans-serif-light"
                 android:gravity="center_horizontal"
-                android:maxLines="1"
-                android:ellipsize="end"
-                android:paddingBottom="12dp"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:paddingBottom="14dp"
                 android:text="" />
 
             <View
@@ -132,7 +131,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/detalhes_layout_mais_detalhes"
-                android:visibility="visible"
+                android:visibility="gone"
                 android:layout_marginBottom="12dp"
                 android:orientation="vertical">
 

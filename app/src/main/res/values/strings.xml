@@ -80,4 +80,6 @@
     <string name="tap_target_pesquisar_por">Toque aqui para alterar o modo de pesquisa</string>
     <string name="search_no_book_found">Nehum livro encontrado</string>
     <string name="hint_comentario">Digite alguma coisa…</string>
+    <string name="estado_leitura">Estado de leitura</string>
+    <string name="livro_adicionado">Livro adicionado</string>
 </resources>

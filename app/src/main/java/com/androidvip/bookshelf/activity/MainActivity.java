@@ -74,6 +74,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     // TODO: 13/02/18 localização
     // TODO: 13/02/18 licences
+    // TODO: 18/02/2018 fix login 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

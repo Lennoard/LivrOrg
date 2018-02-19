@@ -171,9 +171,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent i;
         switch (item.getItemId()) {
-            case R.id.action_filtrar:
-                // TODO: 18/02/2018
-                break;
             case R.id.action_sobre:
                 startActivity(new Intent(this, SobreActivity.class));
                 break;

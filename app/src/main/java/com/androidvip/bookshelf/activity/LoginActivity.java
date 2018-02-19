@@ -40,9 +40,11 @@ public class LoginActivity extends AppCompatActivity {
             logIn();
     }
 
-    public void entrar(View view) {
-        if (validarFormulario())
+    public void logInBotao(View view) {
+        if (getText(usuario).length() > 3 && getText(senha).length() > 3 && validarFormulario())
             logIn();
+        else
+            Toast.makeText(this, "Insira um usuário válido", Toast.LENGTH_SHORT).show();
     }
 
     public void registrar(View view) {
@@ -70,10 +72,11 @@ public class LoginActivity extends AppCompatActivity {
         return editText.getText().toString().trim();
     }
 
-    private boolean validarFormulario(){
+    private boolean validarFormulario() {
         boolean valido;
         String usuarioEstatico = sp.getString("usuario", "");
         String senhaEstatica = sp.getString("senha", "");
+
         if (getText(usuario).equals(usuarioEstatico) && getText(senha).equals(senhaEstatica))
             valido = true;
         else {
@@ -82,7 +85,7 @@ public class LoginActivity extends AppCompatActivity {
                 usuario.setError(getString(R.string.login_erro_usuario));
             if (getText(senha).equals(""))
                 senha.setError(getString(R.string.login_erro_senha));
-            Toast.makeText(this, "Usuário ou senha inválidos", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.usuario_invalido, Toast.LENGTH_SHORT).show();
         }
 
         return valido;

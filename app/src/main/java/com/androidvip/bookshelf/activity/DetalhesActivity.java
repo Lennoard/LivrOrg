@@ -29,7 +29,6 @@ import android.widget.LinearLayout;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ViewSwitcher;
 
 import com.androidvip.bookshelf.App;
 import com.androidvip.bookshelf.R;
@@ -263,6 +262,7 @@ public class DetalhesActivity extends AppCompatActivity {
                     DetalhesActivity.this.estadoLeitura.setText(estadoLeituraToString(which + 1, DetalhesActivity.this));
                     dialog.dismiss();
                     livroBox.put(livro);
+
                 }).show();
     };
 

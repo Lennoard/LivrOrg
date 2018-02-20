@@ -1,13 +1,20 @@
 package com.androidvip.bookshelf.activity;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.Window;
+import android.webkit.WebChromeClient;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,16 +33,7 @@ public class SobreActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
+        
         TextView versao = findViewById(R.id.sobre_versao);
         versao.setText("v" + BuildConfig.VERSION_NAME);
     }
@@ -58,5 +56,41 @@ public class SobreActivity extends AppCompatActivity {
         } catch (android.content.ActivityNotFoundException ex) {
             Toast.makeText(this, "Falha ao enviar email", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public void lic(View view) {
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_web);
+        dialog.setCancelable(true);
+
+        final TextView txt = dialog.findViewById(R.id.dialog_text);
+        final WebView webView = dialog.findViewById(R.id.webview_dialog);
+        final ProgressBar pb = dialog.findViewById(R.id.pb_web_dialog);
+
+        txt.setText(R.string.licencas_open_source);
+
+        final SwipeRefreshLayout swipeLayout = dialog.findViewById(R.id.swipeToRefresh);
+        swipeLayout.setColorSchemeResources(R.color.colorAccent);
+        swipeLayout.setOnRefreshListener(webView::reload);
+        webView.loadUrl("file:///android_res/raw/lic.html");
+        webView.setWebViewClient(new WebViewClient(){
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                swipeLayout.setRefreshing(false);
+            }
+        });
+        webView.setWebChromeClient(new WebChromeClient() {
+            public void onProgressChanged(WebView view, int progress) {
+                pb.setProgress(progress);
+                if (progress == 100) {
+                    pb.setVisibility(View.GONE);
+                    swipeLayout.setRefreshing(false);
+                } else
+                    pb.setVisibility(View.VISIBLE);
+            }
+
+        });
+        dialog.show();
     }
 }

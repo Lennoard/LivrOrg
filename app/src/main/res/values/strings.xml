@@ -49,6 +49,7 @@
     <string name="bem_vindo">Bem-vindo</string>
     <string name="log_in">Entrar</string>
     <string name="log_out">Sair</string>
+    <string name="login_erro_usuario_invalido">Insira um usuário válido</string>
     <string name="login_erro_usuario">Insira um nome de usuário</string>
     <string name="login_erro_senha">Insira uma senha</string>
     <string name="logging_in">Entrando…</string>
@@ -76,12 +77,16 @@
     <string name="app_desc_curta">Organize sua biblioteca numa estante virtual</string>
     <string name="app_desc">LivrOrg permite a você adicionar livros a partir de um vasto acervo e organizá-los de acordo com o seu estado atual de leitura. Adicione, remova, atualize, favorite, comente, compartilhe, descubra!</string>
     <string name="add">Adicionar</string>
-    <string name="tap_target_pesquisa">Toque aqui para inserir o termo de pesquisa, use o botão %s do seu teclado para pesquisar</string>
-    <string name="tap_target_pesquisar_por">Toque aqui para alterar o modo de pesquisa</string>
     <string name="search_no_book_found">Nehum livro encontrado</string>
     <string name="hint_comentario">Digite alguma coisa…</string>
     <string name="estado_leitura">Estado de leitura</string>
     <string name="livro_adicionado">Livro adicionado</string>
     <string name="filtrar">Filtrar</string>
     <string name="usuario_invalido">Usuário ou senha inválidos</string>
+    <string name="menu">Menu</string>
+    <string name="tap_target_pesquisa">Toque aqui para inserir o termo de pesquisa, use o botão %s do seu teclado para pesquisar</string>
+    <string name="tap_target_pesquisar_por">Toque aqui para alterar o modo de pesquisa</string>
+    <string name="tap_target_menu">Toque aqui para abrir o menu com seu catálogo organizado</string>
+    <string name="tap_target_add">Toque aqui para procurar e adicionar um livro</string>
+    <string name="licencas_open_source">Licenças de código aberto</string>
 </resources>

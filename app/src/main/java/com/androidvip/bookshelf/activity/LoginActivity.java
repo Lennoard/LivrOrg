@@ -41,10 +41,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void logInBotao(View view) {
-        if (getText(usuario).length() > 3 && getText(senha).length() > 3 && validarFormulario())
+        if (getText(usuario).length() > 0 && getText(senha).length() > 0 && validarFormulario())
             logIn();
         else
-            Toast.makeText(this, "Insira um usuário válido", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.login_erro_usuario_invalido, Toast.LENGTH_SHORT).show();
     }
 
     public void registrar(View view) {

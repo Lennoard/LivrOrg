@@ -16,7 +16,6 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
@@ -43,7 +42,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.objectbox.Box;
-import io.objectbox.query.QueryFilter;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     DrawerLayout drawer;
@@ -73,7 +71,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     };
 
     // TODO: 13/02/18 localização
-    // TODO: 13/02/18 licences
+    // TODO: 20/02/18 icon filtrar por
+    // TODO: 20/02/2018 add ic_me git
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -204,14 +203,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             new TapTargetSequence(this)
                     .continueOnCancel(true)
                     .targets(
-                            TapTarget.forToolbarNavigationIcon(toolbar, "Menu", "Toque aqui para abrir o menu com seu catálogo organizado").id(1),
-                            TapTarget.forView(fab, "Adicionar", "Toque aqui para procurar e adicionar um livro")
+                            TapTarget.forToolbarNavigationIcon(toolbar, getString(R.string.menu), getString(R.string.tap_target_menu)).id(1),
+                            TapTarget.forView(fab, getString(R.string.add), getString(R.string.tap_target_add))
                                     .tintTarget(false)
+                                    .cancelable(false)
                                     .id(2)
                     ).listener(new TapTargetSequence.Listener() {
                         @Override
                         public void onSequenceFinish() {
                             sp.edit().putBoolean(K.PREF.TAP_TARGET_MAIN, true).apply();
+                            Intent intent = new Intent(MainActivity.this, PesquisarActivity.class);
+                            intent.putExtra("add", true);
+                            startActivity(intent);
                         }
 
                         @Override

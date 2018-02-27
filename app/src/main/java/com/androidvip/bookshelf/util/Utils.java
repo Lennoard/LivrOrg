@@ -31,13 +31,13 @@ import java.util.Locale;
 
 /**
  * Utility class. Its methods are often used statically through the whole Java codes,
- * thus, we might will not to supply {@link Context} in those methods
+ * thus, we might need not to supply {@link Context} in those methods
  * Nobody shall inherit from it.
  */
 public final class Utils {
 
     private Utils() {
-        // Do not let anyone else instantiate this class
+        // Do not let anyone instantiate this class
     }
 
     /**

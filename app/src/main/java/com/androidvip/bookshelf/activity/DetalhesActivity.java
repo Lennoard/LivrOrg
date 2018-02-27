@@ -32,7 +32,7 @@ import android.widget.Toast;
 
 import com.androidvip.bookshelf.App;
 import com.androidvip.bookshelf.R;
-import com.androidvip.bookshelf.model.Livro;
+import com.androidvip.bookshelf.model.Book;
 import com.androidvip.bookshelf.util.Utils;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.books.model.Volume;
@@ -45,7 +45,7 @@ import java.util.GregorianCalendar;
 import io.objectbox.Box;
 
 import static android.view.animation.AnimationUtils.loadAnimation;
-import static com.androidvip.bookshelf.util.Utils.estadoLeituraToString;
+import static com.androidvip.bookshelf.util.Utils.readingStateToString;
 import static com.androidvip.bookshelf.util.Utils.notNull;
 
 public class DetalhesActivity extends AppCompatActivity {
@@ -55,9 +55,9 @@ public class DetalhesActivity extends AppCompatActivity {
     private Button estadoLeitura, nota;
     EditText tags;
     ImageView capa, salvarTags, favorito;
-    Livro livro = null;
+    Book book = null;
     Volume volume;
-    private Box<Livro> livroBox;
+    private Box<Book> livroBox;
     private boolean favoritado;
     private Snackbar snackNet;
     private LinearLayout maisDetalhesLayout;
@@ -149,7 +149,7 @@ public class DetalhesActivity extends AppCompatActivity {
     //onClick
     public void comentarios(View view) {
         Intent intent = new Intent(this, ComentariosActivity.class);
-        intent.putExtra("livroId", livro.getId());
+        intent.putExtra("livroId", book.getId());
         startActivity(intent);
     }
 
@@ -183,112 +183,112 @@ public class DetalhesActivity extends AppCompatActivity {
             DatePickerDialog dialog = new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
                 Date novaData = new GregorianCalendar(year, month, dayOfMonth).getTime();
                 if (inicio) {
-                    if (livro.getEstadoLeitura() != Livro.ESTADO_LENDO) {
+                    if (book.getReadingState() != Book.STATE_READING) {
                         new AlertDialog.Builder(DetalhesActivity.this)
                                 .setTitle(R.string.registros)
                                 .setMessage(R.string.aviso_atualizar_lendo)
                                 .setPositiveButton(android.R.string.yes, (dialog1, which) -> {
-                                    livro.setEstadoLeitura(Livro.ESTADO_LENDO);
-                                    estadoLeitura.setText(estadoLeituraToString(Livro.ESTADO_LENDO, DetalhesActivity.this));
-                                    livroBox.put(livro);
+                                    book.setReadingState(Book.STATE_READING);
+                                    estadoLeitura.setText(readingStateToString(Book.STATE_READING, DetalhesActivity.this));
+                                    livroBox.put(book);
                                 })
                                 .setNegativeButton(android.R.string.no, (dialog12, which) -> {})
                                 .show();
                     }
                     inicioLeitura.setText(getString(R.string.inicio_leitura, Utils.dateToString(novaData)));
-                    livro.setDataInicioLeitura(novaData);
-                    livroBox.put(livro);
+                    book.setReadingStartDate(novaData);
+                    livroBox.put(book);
                 } else {
-                    if (livro.getEstadoLeitura() != Livro.ESTADO_FINALIZADO) {
+                    if (book.getReadingState() != Book.STATE_FINISHED) {
                         new AlertDialog.Builder(DetalhesActivity.this)
                                 .setTitle(R.string.registros)
                                 .setMessage(R.string.aviso_atualizar_finalizado)
                                 .setPositiveButton(android.R.string.yes, (dialog1, which) -> {
-                                    livro.setEstadoLeitura(Livro.ESTADO_FINALIZADO);
-                                    estadoLeitura.setText(estadoLeituraToString(Livro.ESTADO_FINALIZADO, DetalhesActivity.this));
-                                    livroBox.put(livro);
+                                    book.setReadingState(Book.STATE_FINISHED);
+                                    estadoLeitura.setText(readingStateToString(Book.STATE_FINISHED, DetalhesActivity.this));
+                                    livroBox.put(book);
                                 })
                                 .setNegativeButton(android.R.string.no, (dialog12, which) -> {})
                                 .show();
                     }
                     terminoLeitura.setText(getString(R.string.termino_leitura, Utils.dateToString(novaData)));
-                    livro.setDataTerminoLeitura(novaData);
-                    livroBox.put(livro);
+                    book.setReadingEndDate(novaData);
+                    livroBox.put(book);
                 }
             }, hoje.get(Calendar.YEAR), hoje.get(Calendar.MONTH), hoje.get(Calendar.DAY_OF_MONTH));
             dialog.show();
-            livroBox.put(livro);
+            livroBox.put(book);
         };
     }
 
     private View.OnClickListener estadoListener = v -> {
-        int estadoLeitura = livro.getEstadoLeitura();
-        int checkedItem = estadoLeitura == 0 ? -1 : livro.getEstadoLeitura() - 1;
+        int estadoLeitura = book.getReadingState();
+        int checkedItem = estadoLeitura == 0 ? -1 : book.getReadingState() - 1;
         new AlertDialog.Builder(this)
                 .setTitle(R.string.add_lista)
                 .setSingleChoiceItems(R.array.estado_leitura_array, checkedItem, (dialog, which) -> {
                     if (estadoLeitura == 0){
                         TextView tituloView = (TextView)titulo.getCurrentView();
                         TextView autoresView = (TextView)autores.getCurrentView();
-                        livro.setTitulo(tituloView.getText().toString());
-                        livro.setAutores(autoresView.getText().toString());
-                        livro.setGoogleBooksId(volume.getId());
+                        book.setTitle(tituloView.getText().toString());
+                        book.setAuthors(autoresView.getText().toString());
+                        book.setGoogleBooksId(volume.getId());
                     }
                     switch (which) {
                         case 0:
-                            livro.setEstadoLeitura(Livro.ESTADO_LENDO);
-                            livro.setDataInicioLeitura(new Date(System.currentTimeMillis()));
-                            livro.setDataTerminoLeitura(null);
-                            DetalhesActivity.this.estadoLeitura.setText(estadoLeituraToString(Livro.ESTADO_LENDO, DetalhesActivity.this));
+                            book.setReadingState(Book.STATE_READING);
+                            book.setReadingStartDate(new Date(System.currentTimeMillis()));
+                            book.setReadingEndDate(null);
+                            DetalhesActivity.this.estadoLeitura.setText(readingStateToString(Book.STATE_READING, DetalhesActivity.this));
                             break;
                         case 1:
-                            livro.setEstadoLeitura(Livro.ESTADO_DESEJADO);
-                            DetalhesActivity.this.estadoLeitura.setText(estadoLeituraToString(Livro.ESTADO_DESEJADO, DetalhesActivity.this));
+                            book.setReadingState(Book.STATE_WISH);
+                            DetalhesActivity.this.estadoLeitura.setText(readingStateToString(Book.STATE_WISH, DetalhesActivity.this));
                             break;
                         case 2:
-                            livro.setEstadoLeitura(Livro.ESTADO_EM_ESPERA);
-                            DetalhesActivity.this.estadoLeitura.setText(estadoLeituraToString(Livro.ESTADO_EM_ESPERA, DetalhesActivity.this));
+                            book.setReadingState(Book.STATE_ON_HOLD);
+                            DetalhesActivity.this.estadoLeitura.setText(readingStateToString(Book.STATE_ON_HOLD, DetalhesActivity.this));
                             break;
                         case 3:
-                            livro.setEstadoLeitura(Livro.ESTADO_DESISTIDO);
-                            DetalhesActivity.this.estadoLeitura.setText(estadoLeituraToString(Livro.ESTADO_DESISTIDO, DetalhesActivity.this));
+                            book.setReadingState(Book.STATE_DROPPED);
+                            DetalhesActivity.this.estadoLeitura.setText(readingStateToString(Book.STATE_DROPPED, DetalhesActivity.this));
                             break;
                         case 4:
-                            livro.setEstadoLeitura(Livro.ESTADO_FINALIZADO);
-                            DetalhesActivity.this.estadoLeitura.setText(estadoLeituraToString(Livro.ESTADO_FINALIZADO, DetalhesActivity.this));
-                            livro.setDataTerminoLeitura(new Date(System.currentTimeMillis()));
+                            book.setReadingState(Book.STATE_FINISHED);
+                            DetalhesActivity.this.estadoLeitura.setText(readingStateToString(Book.STATE_FINISHED, DetalhesActivity.this));
+                            book.setReadingEndDate(new Date(System.currentTimeMillis()));
                             break;
                     }
-                    DetalhesActivity.this.estadoLeitura.setText(estadoLeituraToString(which + 1, DetalhesActivity.this));
+                    DetalhesActivity.this.estadoLeitura.setText(readingStateToString(which + 1, DetalhesActivity.this));
                     dialog.dismiss();
-                    livroBox.put(livro);
+                    livroBox.put(book);
 
                 }).show();
     };
 
     private void configurarBox(long livroId) {
-        livroBox = ((App) getApplication()).getBoxStore().boxFor(Livro.class);
-        livro = livroBox.get(livroId);
+        livroBox = ((App) getApplication()).getBoxStore().boxFor(Book.class);
+        book = livroBox.get(livroId);
 
-        obterVolume(livro.getGoogleBooksId());
+        obterVolume(book.getGoogleBooksId());
     }
 
     private void configurarBox(String volumeId) {
         if (Utils.isOnline(this)) {
-            livroBox = ((App) getApplication()).getBoxStore().boxFor(Livro.class);
+            livroBox = ((App) getApplication()).getBoxStore().boxFor(Book.class);
             obterVolume(volumeId);
         }
     }
 
     private void obterVolume(String volumeId) {
         if (volumeId != null && !volumeId.equals("")) {
-            // Google Book id é válido
-            if (!Utils.isOnline(this) && livro != null) {
+            // Google Books id is valid, proceed
+            if (!Utils.isOnline(this) && book != null) {
                 popularOffline();
             } else {
                 new Thread(() -> {
                     try {
-                        volume = Utils.obterVolume(JacksonFactory.getDefaultInstance(), volumeId);
+                        volume = Utils.getVolume(volumeId);
                     } catch (Exception ignored) {}
                     runOnUiThread(this::popular);
                 }).start();
@@ -299,17 +299,17 @@ public class DetalhesActivity extends AppCompatActivity {
     }
 
     private void popularOffline() {
-        titulo.setText(notNull(livro.getTitulo(), getString(R.string.carregando)));
-        autores.setText(notNull(livro.getAutores(), getString(R.string.detalhes_erro_autor)));
+        titulo.setText(notNull(book.getTitle(), getString(R.string.carregando)));
+        autores.setText(notNull(book.getAuthors(), getString(R.string.detalhes_erro_autor)));
         descricao.setText(R.string.detalhes_erro_descricao);
         categorias.setText(R.string.detalhes_erro_categoria);
 
-        estadoLeitura.setText(estadoLeituraToString(livro.getEstadoLeitura(), DetalhesActivity.this));
-        nota.setText(notaToString(livro.getNota()));
-        tags.setText(notNull(livro.getTags(), ""));
+        estadoLeitura.setText(readingStateToString(book.getReadingState(), DetalhesActivity.this));
+        nota.setText(notaToString(book.getScore()));
+        tags.setText(notNull(book.getTags(), ""));
 
-        String inicioStr = Utils.dateToString(livro.getDataInicioLeitura());
-        String fimStr = Utils.dateToString(livro.getDataTerminoLeitura());
+        String inicioStr = Utils.dateToString(book.getReadingStartDate());
+        String fimStr = Utils.dateToString(book.getReadingEndDate());
         inicioLeitura.setText(inicioStr.equals("")
                 ? getString(R.string.inicio_leitura, "-")
                 : getString(R.string.inicio_leitura, inicioStr));
@@ -322,19 +322,19 @@ public class DetalhesActivity extends AppCompatActivity {
             maisDetalhesLayout.setVisibility(View.VISIBLE);
             capa.setImageResource(R.drawable.broken_image);
             favorito.setVisibility(View.VISIBLE);
-            if (livro.isFavorito())
+            if (book.isFavorite())
                 favorito.setImageResource(R.drawable.ic_favorito_ativado);
             else
                 favorito.setImageResource(R.drawable.ic_favorito);
-            favoritado = livro.isFavorito();
+            favoritado = book.isFavorite();
         } else {
             favorito.setVisibility(View.INVISIBLE);
         }
     }
 
     private void popular() {
-        if (livro == null) {
-            livro = new Livro();
+        if (book == null) {
+            book = new Book();
             estadoLeitura.setText(R.string.add_lista);
             nota.setText(notaToString(0));
             nota.setEnabled(false);
@@ -392,38 +392,38 @@ public class DetalhesActivity extends AppCompatActivity {
         inicioLeitura.setOnClickListener(dataListener(true));
         terminoLeitura.setOnClickListener(dataListener(false));
         nota.setOnClickListener(v -> {
-            int checkedItem = livro.getNota() == 0 ? -1 : livro.getNota() -1;
+            int checkedItem = book.getScore() == 0 ? -1 : book.getScore() -1;
             String[] notas = getResources().getStringArray(R.array.notas_array);
             new AlertDialog.Builder(this)
                     .setTitle(R.string.nota)
                     .setSingleChoiceItems(notas, checkedItem, (dialog, which) -> {
-                        livro.setNota(which + 1);
-                        livroBox.put(livro);
+                        book.setScore(which + 1);
+                        livroBox.put(book);
                         nota.setText(notaToString(which + 1));
                         dialog.dismiss();
                     }).show();
         });
         favorito.setOnClickListener(view -> {
             if (favoritado) {
-                livro.setFavorito(false);
+                book.setFavorite(false);
                 favorito.setColorFilter(null);
                 favorito.setImageResource(R.drawable.ic_favorito);
                 favoritado = false;
             } else {
-                livro.setFavorito(true);
+                book.setFavorite(true);
                 favorito.setColorFilter(null);
                 favorito.setImageResource(R.drawable.ic_favorito_ativado);
                 favoritado = true;
             }
-            livroBox.put(livro);
+            livroBox.put(book);
         });
         favorito.setOnLongClickListener(view -> {
             Toast.makeText(DetalhesActivity.this, "Favoritar / Desfavoritar", Toast.LENGTH_SHORT).show();
             return true;
         });
         salvarTags.setOnClickListener(v -> {
-            livro.setTags(tags.getText().toString());
-            livroBox.put(livro);
+            book.setTags(tags.getText().toString());
+            livroBox.put(book);
         });
     }
 

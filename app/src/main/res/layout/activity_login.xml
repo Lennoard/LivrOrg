@@ -48,7 +48,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
                 android:id="@+id/login_senha"
-                android:hint="@string/senha" />
+                android:hint="@string/password" />
 
         </android.support.design.widget.TextInputLayout>
 

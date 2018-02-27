@@ -43,7 +43,6 @@ public class PesquisarActivity extends AppCompatActivity {
     RecyclerView.Adapter mAdapter;
     private RecyclerView rv;
     private List<Volume> volumesLista = new ArrayList<>();
-    private JsonFactory jsonFactory;
     private SwipeRefreshLayout swipeLayout;
     private String prefixo = "intitle:";
     private String queryAtual = "";
@@ -73,7 +72,6 @@ public class PesquisarActivity extends AppCompatActivity {
         }
     };
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,8 +88,6 @@ public class PesquisarActivity extends AppCompatActivity {
         swipeLayout = findViewById(R.id.swipe_rv_pesquisar);
         swipeLayout.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorAccent));
         swipeLayout.setOnRefreshListener(() -> refreshList(true));
-        jsonFactory = JacksonFactory.getDefaultInstance();
-
 
         refreshList(false);
     }
@@ -256,7 +252,7 @@ public class PesquisarActivity extends AppCompatActivity {
             swipeLayout.setRefreshing(fromUser);
             new Thread(() -> {
                 try {
-                    volumesLista = Utils.pesquisarVolumes(jsonFactory, prefixo + queryAtual);
+                    volumesLista = Utils.searchVolumes(prefixo + queryAtual);
                 } catch (Exception ignored) {}
                 runOnUiThread(() -> {
                     swipeLayout.setRefreshing(false);

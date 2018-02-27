@@ -73,7 +73,7 @@
                         android:layout_height="wrap_content"
                         android:inputType="textPassword"
                         android:id="@+id/cadastrar_senha"
-                        android:hint="@string/senha" />
+                        android:hint="@string/password" />
 
                 </android.support.design.widget.TextInputLayout>
 

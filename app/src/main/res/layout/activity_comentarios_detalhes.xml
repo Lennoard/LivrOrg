@@ -47,7 +47,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/detalhes_comentario_titulo"
-                    android:hint="@string/titulo"
+                    android:hint="@string/title"
                     android:padding="4dp"
                     android:textSize="24sp"
                     android:inputType="text"
@@ -74,7 +74,7 @@
                         android:layout_height="wrap_content"
                         android:textColor="#616161"
                         android:textSize="18sp"
-                        android:text="@string/capitulo"/>
+                        android:text="@string/chapter"/>
 
                     <EditText
                         android:layout_width="match_parent"
@@ -101,7 +101,7 @@
                         android:layout_height="wrap_content"
                         android:textColor="#616161"
                         android:textSize="18sp"
-                        android:text="@string/pagina"/>
+                        android:text="@string/page"/>
 
                     <EditText
                         android:layout_width="match_parent"

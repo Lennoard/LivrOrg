@@ -42,7 +42,7 @@
                         android:inputType="textPersonName"
                         android:id="@+id/add_manual_titulo"
                         android:textSize="32sp"
-                        android:hint="@string/titulo" />
+                        android:hint="@string/title" />
 
                 </android.support.design.widget.TextInputLayout>
 
@@ -93,7 +93,7 @@
                 android:paddingEnd="16dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:onClick="estadoLeitura"
+                android:onClick="readingState"
                 style="@style/SelectableItemBackground">
 
                 <ImageView
@@ -133,7 +133,7 @@
                 android:paddingEnd="16dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:onClick="nota"
+                android:onClick="score"
                 style="@style/SelectableItemBackground">
 
                 <ImageView
@@ -153,7 +153,7 @@
                         android:layout_height="wrap_content"
                         android:textSize="16sp"
                         android:textColor="#212121"
-                        android:text="@string/nota"/>
+                        android:text="@string/score"/>
 
                     <TextView
                         android:layout_width="match_parent"

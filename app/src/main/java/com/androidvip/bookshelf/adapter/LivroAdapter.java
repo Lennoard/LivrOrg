@@ -18,7 +18,7 @@ import android.widget.TextView;
 import com.androidvip.bookshelf.App;
 import com.androidvip.bookshelf.R;
 import com.androidvip.bookshelf.activity.DetalhesActivity;
-import com.androidvip.bookshelf.model.Livro;
+import com.androidvip.bookshelf.model.Book;
 import com.androidvip.bookshelf.util.Utils;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.books.model.Volume;
@@ -30,17 +30,17 @@ import io.objectbox.Box;
 
 public class LivroAdapter extends RecyclerView.Adapter<LivroAdapter.ViewHolder> {
     private Activity activity;
-    private List<Livro> mDataSet;
-    private Box<Livro> livroBox;
+    private List<Book> mDataSet;
+    private Box<Book> livroBox;
     private boolean livrosFinalizados;
     private CoordinatorLayout cl;
 
-    public LivroAdapter(Activity activity, List<Livro> list, boolean livrosFinalizados) {
+    public LivroAdapter(Activity activity, List<Book> list, boolean livrosFinalizados) {
         this.activity = activity;
         this.livrosFinalizados = livrosFinalizados;
         mDataSet = list;
         cl = activity.findViewById(R.id.cl);
-        livroBox = ((App) activity.getApplication()).getBoxStore().boxFor(Livro.class);
+        livroBox = ((App) activity.getApplication()).getBoxStore().boxFor(Book.class);
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -70,11 +70,11 @@ public class LivroAdapter extends RecyclerView.Adapter<LivroAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(final LivroAdapter.ViewHolder holder, int position) {
         holder.capa.setImageResource(R.drawable.carregando_imagem);
-        Livro livro = mDataSet.get(position);
+        Book book = mDataSet.get(position);
 
         new Thread(() -> {
             try {
-                Volume volume = Utils.obterVolume(JacksonFactory.getDefaultInstance(), livro.getGoogleBooksId());
+                Volume volume = Utils.getVolume(book.getGoogleBooksId());
                 activity.runOnUiThread(() -> {
                     if (volume.getVolumeInfo().getImageLinks() != null)
                         Picasso.with(activity)
@@ -90,12 +90,12 @@ public class LivroAdapter extends RecyclerView.Adapter<LivroAdapter.ViewHolder> 
             }
         }).start();
 
-        holder.titulo.setText(livro.getTitulo());
-        holder.autores.setText(livro.getAutores());
-        holder.nota.setRating(livro.getNota());
+        holder.titulo.setText(book.getTitle());
+        holder.autores.setText(book.getAuthors());
+        holder.nota.setRating(book.getScore());
         holder.data.setText(livrosFinalizados
-                ? Utils.dateToString(livro.getDataTerminoLeitura())
-                : Utils.dateToString(livro.getDataInicioLeitura())
+                ? Utils.dateToString(book.getReadingEndDate())
+                : Utils.dateToString(book.getReadingStartDate())
         );
 
         holder.cardLayout.setOnLongClickListener(v -> {
@@ -104,16 +104,16 @@ public class LivroAdapter extends RecyclerView.Adapter<LivroAdapter.ViewHolder> 
             popup.setOnMenuItemClickListener(item -> {
                 switch (item.getItemId()){
                     case R.id.popup_remover:
-                        Livro livroParaRemover = mDataSet.get(position);
+                        Book bookParaRemover = mDataSet.get(position);
                         new AlertDialog.Builder(activity)
                                 .setTitle(android.R.string.dialog_alert_title)
-                                .setMessage(activity.getString(R.string.aviso_remover_livro, livro.getTitulo()))
-                                .setPositiveButton(android.R.string.yes, (dialog, which) -> removerLivro(livroParaRemover, position))
+                                .setMessage(activity.getString(R.string.aviso_remover_livro, book.getTitle()))
+                                .setPositiveButton(android.R.string.yes, (dialog, which) -> removerLivro(bookParaRemover, position))
                                 .setNegativeButton(android.R.string.cancel, (dialog, which) -> {})
                                 .show();
                         break;
                     case R.id.popup_books:
-                        Utils.webPage(activity, "https://books.google.com.br/books?id=" + livro.getGoogleBooksId());
+                        Utils.webPage(activity, "https://books.google.com.br/books?id=" + book.getGoogleBooksId());
                         break;
                 }
                 return true;
@@ -124,38 +124,38 @@ public class LivroAdapter extends RecyclerView.Adapter<LivroAdapter.ViewHolder> 
 
         holder.cardLayout.setOnClickListener(v -> {
             Intent intent = new Intent(activity, DetalhesActivity.class);
-            intent.putExtra("livroId", livroBox.getId(livro));
+            intent.putExtra("livroId", livroBox.getId(book));
             activity.startActivity(intent);
         });
 
         holder.notaLayout.setOnClickListener(v -> {
-            int checkedItem = livro.getNota() == 0 ? -1 : livro.getNota() -1;
+            int checkedItem = book.getScore() == 0 ? -1 : book.getScore() -1;
             String[] notas = activity.getResources().getStringArray(R.array.notas_array);
             new AlertDialog.Builder(activity)
                     .setTitle(R.string.nota)
                     .setSingleChoiceItems(notas, checkedItem, (dialog, which) -> {
-                        livro.setNota(which + 1);
-                        livroBox.put(livro);
+                        book.setScore(which + 1);
+                        livroBox.put(book);
                         holder.nota.setRating(which + 1);
                         dialog.dismiss();
                     }).show();
         });
     }
 
-    private void removerLivro(Livro livro, int position) {
-        livroBox.remove(livro);
+    private void removerLivro(Book book, int position) {
+        livroBox.remove(book);
         mDataSet.remove(position);
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, getItemCount());
-        Snackbar.make(cl, activity.getString(R.string.item_removido, livro.getTitulo()), Snackbar.LENGTH_LONG)
-                .setAction(R.string.desfazer, v1 -> addLivro(livro)).show();
+        Snackbar.make(cl, activity.getString(R.string.item_removido, book.getTitle()), Snackbar.LENGTH_LONG)
+                .setAction(R.string.desfazer, v1 -> addLivro(book)).show();
     }
 
-    private void addLivro(Livro livro) {
-        livroBox.put(livro);
-        mDataSet.add(livro);
+    private void addLivro(Book book) {
+        livroBox.put(book);
+        mDataSet.add(book);
         notifyDataSetChanged();
-        Snackbar.make(cl, activity.getString(R.string.item_adicionado, livro.getTitulo()), Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(cl, activity.getString(R.string.item_adicionado, book.getTitle()), Snackbar.LENGTH_SHORT).show();
     }
 
     @Override

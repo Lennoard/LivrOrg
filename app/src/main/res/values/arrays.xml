@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="pesquisar_por_array">
-        <item>@string/titulo</item>
+        <item>@string/title</item>
         <item>@string/autor</item>
         <item>ISBN</item>
     </string-array>

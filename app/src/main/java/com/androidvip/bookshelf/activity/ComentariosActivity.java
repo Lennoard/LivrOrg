@@ -16,7 +16,7 @@ import android.widget.Toast;
 import com.androidvip.bookshelf.App;
 import com.androidvip.bookshelf.R;
 import com.androidvip.bookshelf.adapter.ComentarioAdapter;
-import com.androidvip.bookshelf.model.Comentario;
+import com.androidvip.bookshelf.model.Comment;
 import com.androidvip.bookshelf.model.Comentario_;
 
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ public class ComentariosActivity extends AppCompatActivity {
     RecyclerView rv;
     RecyclerView.Adapter mAdapter;
     private SwipeRefreshLayout swipeLayout;
-    private List<Comentario> lista;
+    private List<Comment> lista;
     private long livroId;
 
     @Override
@@ -76,7 +76,7 @@ public class ComentariosActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
-        Box<Comentario> comentarioBox = ((App) getApplication()).getBoxStore().boxFor(Comentario.class);
+        Box<Comment> comentarioBox = ((App) getApplication()).getBoxStore().boxFor(Comment.class);
         swipeLayout.setRefreshing(true);
 
         lista = comentarioBox.query().equal(Comentario_.livroId, livroId).build().find();
@@ -96,7 +96,7 @@ public class ComentariosActivity extends AppCompatActivity {
         return true;
     }
 
-    private void configurarRecyclerView(List<Comentario> lista) {
+    private void configurarRecyclerView(List<Comment> lista) {
         if (rv != null) {
             mAdapter = new ComentarioAdapter(this, lista);
             rv.setAdapter(mAdapter);

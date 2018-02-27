@@ -17,8 +17,7 @@ import android.widget.TextView;
 import com.androidvip.bookshelf.App;
 import com.androidvip.bookshelf.R;
 import com.androidvip.bookshelf.activity.DetalhesActivity;
-import com.androidvip.bookshelf.model.Livro;
-import com.androidvip.bookshelf.util.Utils;
+import com.androidvip.bookshelf.model.Book;
 import com.google.api.services.books.model.Volume;
 import com.squareup.picasso.Picasso;
 
@@ -29,13 +28,13 @@ import io.objectbox.Box;
 public class VolumeAdapter extends RecyclerView.Adapter<VolumeAdapter.ViewHolder> {
     private Activity activity;
     private List<Volume> mDataSet;
-    private Box<Livro> livroBox;
+    private Box<Book> livroBox;
     private CoordinatorLayout cl;
 
     public VolumeAdapter(Activity activity, List<Volume> list) {
         this.activity = activity;
         mDataSet = list;
-        livroBox = ((App) activity.getApplication()).getBoxStore().boxFor(Livro.class);
+        livroBox = ((App) activity.getApplication()).getBoxStore().boxFor(Book.class);
         cl = activity.findViewById(R.id.cl);
     }
 
@@ -85,12 +84,12 @@ public class VolumeAdapter extends RecyclerView.Adapter<VolumeAdapter.ViewHolder
 
             holder.cardLayout.setOnLongClickListener(v -> {
                 String titulo = volumeInfo.getTitle();
-                Livro livro = new Livro();
-                livro.setTitulo(titulo == null ? "" : titulo);
-                livro.setAutores(volumeInfo.getAuthors() == null ? "" : TextUtils.join(", ", volumeInfo.getAuthors()));
-                livro.setGoogleBooksId(volume.getId());
-                livro.setEstadoLeitura(Livro.ESTADO_DESEJADO);
-                long id = livroBox.put(livro);
+                Book book = new Book();
+                book.setTitle(titulo == null ? "" : titulo);
+                book.setAuthors(volumeInfo.getAuthors() == null ? "" : TextUtils.join(", ", volumeInfo.getAuthors()));
+                book.setGoogleBooksId(volume.getId());
+                book.setReadingState(Book.STATE_WISH);
+                long id = livroBox.put(book);
 
                 Snackbar.make(cl, activity.getString(R.string.item_adicionado, titulo), Snackbar.LENGTH_LONG)
                         .setAction(R.string.desfazer, view -> {

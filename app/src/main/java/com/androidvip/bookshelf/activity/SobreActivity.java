@@ -33,7 +33,7 @@ public class SobreActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        
+
         TextView versao = findViewById(R.id.sobre_versao);
         versao.setText("v" + BuildConfig.VERSION_NAME);
     }

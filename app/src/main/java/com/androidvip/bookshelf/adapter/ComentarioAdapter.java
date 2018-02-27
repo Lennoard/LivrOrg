@@ -15,7 +15,7 @@ import android.widget.TextView;
 import com.androidvip.bookshelf.App;
 import com.androidvip.bookshelf.R;
 import com.androidvip.bookshelf.activity.ComentariosDetalhesActivity;
-import com.androidvip.bookshelf.model.Comentario;
+import com.androidvip.bookshelf.model.Comment;
 import com.androidvip.bookshelf.util.Utils;
 
 import java.util.List;
@@ -24,15 +24,15 @@ import io.objectbox.Box;
 
 public class ComentarioAdapter extends RecyclerView.Adapter<ComentarioAdapter.ViewHolder> {
     private Activity activity;
-    private List<Comentario> mDataSet;
-    private Box<Comentario> comentarioBox;
+    private List<Comment> mDataSet;
+    private Box<Comment> comentarioBox;
     private CoordinatorLayout cl;
 
-    public ComentarioAdapter(Activity activity, List<Comentario> list) {
+    public ComentarioAdapter(Activity activity, List<Comment> list) {
         this.activity = activity;
         mDataSet = list;
         cl = activity.findViewById(R.id.cl);
-        comentarioBox = ((App) activity.getApplication()).getBoxStore().boxFor(Comentario.class);
+        comentarioBox = ((App) activity.getApplication()).getBoxStore().boxFor(Comment.class);
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -56,15 +56,15 @@ public class ComentarioAdapter extends RecyclerView.Adapter<ComentarioAdapter.Vi
 
     @Override
     public void onBindViewHolder(final ComentarioAdapter.ViewHolder holder, int position) {
-        Comentario comentario = mDataSet.get(position);
+        Comment comment = mDataSet.get(position);
 
-        holder.titulo.setText(comentario.getTitulo());
-        holder.data.setText(Utils.dateToString(comentario.getData()));
-        holder.capitulo.setText(capBuilder(comentario.getCapitulo(), comentario.getPagina()));
+        holder.titulo.setText(comment.getTitle());
+        holder.data.setText(Utils.dateToString(comment.getDate()));
+        holder.capitulo.setText(capBuilder(comment.getChapter(), comment.getPage()));
 
         holder.itemLayout.setOnClickListener(v -> {
             Intent intent = new Intent(activity, ComentariosDetalhesActivity.class);
-            intent.putExtra("id", comentario.getId());
+            intent.putExtra("id", comment.getId());
             activity.startActivity(intent);
         });
 
@@ -74,14 +74,14 @@ public class ComentarioAdapter extends RecyclerView.Adapter<ComentarioAdapter.Vi
                     .setMessage(R.string.aviso_remover_comentario)
                     .setNegativeButton(android.R.string.no, (dialog, which) -> {})
                     .setPositiveButton(android.R.string.yes, (dialog, which) -> {
-                        comentarioBox.remove(comentario);
+                        comentarioBox.remove(comment);
                         mDataSet.remove(position);
                         notifyItemRemoved(position);
                         notifyItemRangeChanged(position, getItemCount());
-                        Snackbar.make(cl, activity.getString(R.string.item_removido, comentario.getTitulo()), Snackbar.LENGTH_LONG)
+                        Snackbar.make(cl, activity.getString(R.string.item_removido, comment.getTitle()), Snackbar.LENGTH_LONG)
                                 .setAction(R.string.desfazer, v1 -> {
-                                    comentarioBox.put(comentario);
-                                    mDataSet.add(comentario);
+                                    comentarioBox.put(comment);
+                                    mDataSet.add(comment);
                                     notifyDataSetChanged();
                                 }).show();
                     })

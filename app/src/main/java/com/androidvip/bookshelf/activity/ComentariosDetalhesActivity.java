@@ -1,6 +1,5 @@
 package com.androidvip.bookshelf.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -9,14 +8,12 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.androidvip.bookshelf.App;
 import com.androidvip.bookshelf.R;
-import com.androidvip.bookshelf.model.Comentario;
+import com.androidvip.bookshelf.model.Comment;
 import com.androidvip.bookshelf.util.Utils;
 
 import java.util.Date;
@@ -27,8 +24,8 @@ public class ComentariosDetalhesActivity extends AppCompatActivity {
     private long id, livroId;
     EditText editTitulo, editComent, editCapitulo, editPagina;
     FloatingActionButton fab;
-    private Box<Comentario> comentarioBox;
-    private Comentario comentario;
+    private Box<Comment> comentarioBox;
+    private Comment comment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +35,7 @@ public class ComentariosDetalhesActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        comentarioBox = ((App) getApplication()).getBoxStore().boxFor(Comentario.class);
+        comentarioBox = ((App) getApplication()).getBoxStore().boxFor(Comment.class);
 
         bindViews();
 
@@ -47,8 +44,8 @@ public class ComentariosDetalhesActivity extends AppCompatActivity {
             id = intent.getLongExtra("id", 0);
             livroId = intent.getLongExtra("livroId", 0);
             if (id > 0) {
-                comentario = comentarioBox.get(id);
-                livroId = comentario.getLivroId();
+                comment = comentarioBox.get(id);
+                livroId = comment.getBookId();
                 popular();
             } else
                 getSupportActionBar().setTitle(R.string.comentario_novo);
@@ -56,14 +53,14 @@ public class ComentariosDetalhesActivity extends AppCompatActivity {
 
         fab.setOnClickListener(v -> {
             Utils.hideKeyboard(ComentariosDetalhesActivity.this);
-            Comentario novoComentario;
-            if (comentario != null)
-                novoComentario = gerarComentario(comentario);
+            Comment novoComment;
+            if (comment != null)
+                novoComment = gerarComentario(comment);
             else
-                novoComentario = gerarComentario(null);
+                novoComment = gerarComentario(null);
 
-            if (novoComentario != null) {
-                comentarioBox.put(novoComentario);
+            if (novoComment != null) {
+                comentarioBox.put(novoComment);
                 Snackbar.make(fab, R.string.comentario_salvo, Snackbar.LENGTH_SHORT).show();
             } else
                 Snackbar.make(fab, R.string.comentario_falha_salvar, Snackbar.LENGTH_LONG).show();
@@ -79,15 +76,15 @@ public class ComentariosDetalhesActivity extends AppCompatActivity {
         return true;
     }
 
-    private Comentario gerarComentario(Comentario coment) {
-        Comentario baseComentario = coment == null ? new Comentario() : coment;
+    private Comment gerarComentario(Comment coment) {
+        Comment baseComment = coment == null ? new Comment() : coment;
         try {
-            baseComentario.setTitulo(getText(editTitulo));
-            baseComentario.setTexto(getText(editComent));
-            baseComentario.setCapitulo(Integer.parseInt(getText(editCapitulo)));
-            baseComentario.setPagina(Integer.parseInt(getText(editPagina)));
-            baseComentario.setData(new Date(System.currentTimeMillis()));
-            baseComentario.setLivroId(livroId);
+            baseComment.setTitle(getText(editTitulo));
+            baseComment.setText(getText(editComent));
+            baseComment.setChapter(Integer.parseInt(getText(editCapitulo)));
+            baseComment.setPage(Integer.parseInt(getText(editPagina)));
+            baseComment.setDate(new Date(System.currentTimeMillis()));
+            baseComment.setBookId(livroId);
         } catch (Exception e) {
             new AlertDialog.Builder(this)
                     .setTitle(R.string.erro)
@@ -96,15 +93,15 @@ public class ComentariosDetalhesActivity extends AppCompatActivity {
                     .show();
             return null;
         }
-        return baseComentario;
+        return baseComment;
     }
 
     private void popular() {
-        if (comentario != null) {
-            setText(editTitulo, comentario.getTitulo());
-            setText(editComent, comentario.getTexto());
-            setText(editPagina, String.valueOf(comentario.getPagina()));
-            setText(editCapitulo, String.valueOf(comentario.getCapitulo()));
+        if (comment != null) {
+            setText(editTitulo, comment.getTitle());
+            setText(editComent, comment.getText());
+            setText(editPagina, String.valueOf(comment.getPage()));
+            setText(editCapitulo, String.valueOf(comment.getChapter()));
         } else {
             Toast.makeText(this, R.string.comentarios_erro, Toast.LENGTH_LONG).show();
             finish();

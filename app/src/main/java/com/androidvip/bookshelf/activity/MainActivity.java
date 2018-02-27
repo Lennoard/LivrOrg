@@ -31,7 +31,7 @@ import android.view.MenuItem;
 import com.androidvip.bookshelf.App;
 import com.androidvip.bookshelf.R;
 import com.androidvip.bookshelf.adapter.LivroAdapter;
-import com.androidvip.bookshelf.model.Livro;
+import com.androidvip.bookshelf.model.Book;
 import com.androidvip.bookshelf.model.Livro_;
 import com.androidvip.bookshelf.util.K;
 import com.androidvip.bookshelf.util.Utils;
@@ -48,8 +48,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     RecyclerView rv;
     RecyclerView.Adapter mAdapter;
     private SwipeRefreshLayout swipeLayout;
-    private Box<Livro> livroBox;
-    private List<Livro> listaAtual;
+    private Box<Book> bookBox;
+    private List<Book> currentList;
     private int idNavAtual;
     private Snackbar snackNet;
     private SharedPreferences sp;
@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     protected void onStart() {
-        livroBox = ((App) getApplication()).getBoxStore().boxFor(Livro.class);
+        bookBox = ((App) getApplication()).getBoxStore().boxFor(Book.class);
         swipeLayout.setRefreshing(true);
         trocarNavItems(idNavAtual);
         super.onStart();
@@ -158,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
-                configurarRecyclerView(listaAtual);
+                configurarRecyclerView(currentList);
                 return true;
             }
         });
@@ -234,27 +234,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (itemId) {
             case R.id.nav_lendo:
                 idNavAtual = R.id.nav_lendo;
-                configurarRecyclerView(filtrarPorEstadoLeitura(Livro.ESTADO_LENDO));
+                configurarRecyclerView(filtrarPorEstadoLeitura(Book.STATE_READING));
                 actionBar.setTitle(R.string.estado_leitura_lendo);
                 break;
             case R.id.nav_lista_desejos:
                 idNavAtual = R.id.nav_lista_desejos;
-                configurarRecyclerView(filtrarPorEstadoLeitura(Livro.ESTADO_DESEJADO));
+                configurarRecyclerView(filtrarPorEstadoLeitura(Book.STATE_WISH));
                 actionBar.setTitle(R.string.estado_leitura_desejo);
                 break;
             case R.id.nav_em_espera:
                 idNavAtual = R.id.nav_em_espera;
-                configurarRecyclerView(filtrarPorEstadoLeitura(Livro.ESTADO_EM_ESPERA));
+                configurarRecyclerView(filtrarPorEstadoLeitura(Book.STATE_ON_HOLD));
                 actionBar.setTitle(R.string.estado_leitura_em_espera);
                 break;
             case R.id.nav_desistencias:
                 idNavAtual = R.id.nav_desistencias;
-                configurarRecyclerView(filtrarPorEstadoLeitura(Livro.ESTADO_DESISTIDO));
+                configurarRecyclerView(filtrarPorEstadoLeitura(Book.STATE_DROPPED));
                 actionBar.setTitle(R.string.desistencias);
                 break;
             case R.id.nav_finalizados:
                 idNavAtual = R.id.nav_finalizados;
-                configurarRecyclerView(filtrarPorEstadoLeitura(Livro.ESTADO_FINALIZADO));
+                configurarRecyclerView(filtrarPorEstadoLeitura(Book.STATE_FINISHED));
                 actionBar.setTitle(R.string.finalizados);
                 break;
             case R.id.nav_favoritos:
@@ -269,25 +269,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer.closeDrawer(GravityCompat.START);
     }
 
-    private List<Livro> filtrarPorEstadoLeitura(int estadoLeitura){
-        List<Livro> l = livroBox.query().equal(Livro_.estadoLeitura, estadoLeitura).build().find();
-        listaAtual = l;
+    private List<Book> filtrarPorEstadoLeitura(int estadoLeitura){
+        List<Book> l = bookBox.query().equal(Livro_.estadoLeitura, estadoLeitura).build().find();
+        currentList = l;
         return l;
     }
 
-    private List<Livro> filtrarPorFavorito(){
-        List<Livro> l = livroBox.query().equal(Livro_.favorito, true).build().find();
-        listaAtual = l;
+    private List<Book> filtrarPorFavorito(){
+        List<Book> l = bookBox.query().equal(Livro_.favorito, true).build().find();
+        currentList = l;
         return l;
     }
 
-    private List<Livro> filtrarPorMatch(String match) {
-        List<Livro> l = new ArrayList<>();
-        for (Livro livro : listaAtual)
-            if (livro.getTitulo().toLowerCase().contains(match.toLowerCase()) ||
-                    Utils.notNull(livro.getTags().toLowerCase(), "").contains(match.toLowerCase()) ||
-                    Utils.notNull(livro.getAutores().toLowerCase(), "").contains(match.toLowerCase()))
-                l.add(livro);
+    private List<Book> filtrarPorMatch(String match) {
+        List<Book> l = new ArrayList<>();
+        for (Book book : currentList)
+            if (book.getTitle().toLowerCase().contains(match.toLowerCase()) ||
+                    Utils.notNull(book.getTags().toLowerCase(), "").contains(match.toLowerCase()) ||
+                    Utils.notNull(book.getAuthors().toLowerCase(), "").contains(match.toLowerCase()))
+                l.add(book);
         return l;
     }
 
@@ -303,7 +303,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setCheckedItem(R.id.nav_lendo);
     }
 
-    private void configurarRecyclerView(List<Livro> lista) {
+    private void configurarRecyclerView(List<Book> lista) {
         if (rv != null) {
             mAdapter = new LivroAdapter(this, lista, false);
             rv.setAdapter(mAdapter);

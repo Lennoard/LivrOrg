@@ -31,7 +31,7 @@ import java.util.Locale;
 
 /**
  * Utility class. Its methods are often used statically through the whole Java codes,
- * thus, we might need not to supply {@link Context} in those methods
+ * thus, we may need to constantly supply {@link Context} in those methods
  * Nobody shall inherit from it.
  */
 public final class Utils {

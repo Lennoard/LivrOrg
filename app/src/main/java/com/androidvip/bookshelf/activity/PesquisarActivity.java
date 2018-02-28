@@ -32,8 +32,6 @@ import com.androidvip.bookshelf.util.K;
 import com.androidvip.bookshelf.util.Utils;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.books.model.Volume;
 
 import java.util.ArrayList;
@@ -198,7 +196,7 @@ public class PesquisarActivity extends AppCompatActivity {
                 break;
 
             case R.id.action_add_manualmente:
-                startActivity(new Intent(this, AddManualActivity.class));
+                startActivity(new Intent(this, ManualAddActivity.class));
                 break;
         }
     }

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.androidvip.bookshelf.activity.ComentariosActivity">
+    tools:context="com.androidvip.bookshelf.activity.CommentActivity">
 
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
@@ -36,21 +36,21 @@
             <android.support.v4.widget.SwipeRefreshLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/swipe_rv_comentarios">
+                android:id="@+id/swipe_rv_comments">
 
                 <android.support.v7.widget.RecyclerView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:paddingLeft="@dimen/margem_reclycler"
                     android:paddingRight="@dimen/margem_reclycler"
-                    android:id="@+id/rv_comentarios"/>
+                    android:id="@+id/rv_comments"/>
 
             </android.support.v4.widget.SwipeRefreshLayout>
 
         </FrameLayout>
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab_comentarios"
+            android:id="@+id/fab_comments"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"

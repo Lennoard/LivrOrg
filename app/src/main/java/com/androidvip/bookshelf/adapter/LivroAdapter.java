@@ -17,10 +17,9 @@ import android.widget.TextView;
 
 import com.androidvip.bookshelf.App;
 import com.androidvip.bookshelf.R;
-import com.androidvip.bookshelf.activity.DetalhesActivity;
+import com.androidvip.bookshelf.activity.BookDetailsActivity;
 import com.androidvip.bookshelf.model.Book;
 import com.androidvip.bookshelf.util.Utils;
-import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.books.model.Volume;
 import com.squareup.picasso.Picasso;
 
@@ -123,14 +122,14 @@ public class LivroAdapter extends RecyclerView.Adapter<LivroAdapter.ViewHolder> 
         });
 
         holder.cardLayout.setOnClickListener(v -> {
-            Intent intent = new Intent(activity, DetalhesActivity.class);
+            Intent intent = new Intent(activity, BookDetailsActivity.class);
             intent.putExtra("livroId", livroBox.getId(book));
             activity.startActivity(intent);
         });
 
         holder.notaLayout.setOnClickListener(v -> {
             int checkedItem = book.getScore() == 0 ? -1 : book.getScore() -1;
-            String[] notas = activity.getResources().getStringArray(R.array.notas_array);
+            String[] notas = activity.getResources().getStringArray(R.array.scores_array);
             new AlertDialog.Builder(activity)
                     .setTitle(R.string.nota)
                     .setSingleChoiceItems(notas, checkedItem, (dialog, which) -> {

@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.androidvip.bookshelf.App;
 import com.androidvip.bookshelf.R;
-import com.androidvip.bookshelf.activity.ComentariosDetalhesActivity;
+import com.androidvip.bookshelf.activity.CommentDetailsActivity;
 import com.androidvip.bookshelf.model.Comment;
 import com.androidvip.bookshelf.util.Utils;
 
@@ -63,7 +63,7 @@ public class ComentarioAdapter extends RecyclerView.Adapter<ComentarioAdapter.Vi
         holder.capitulo.setText(capBuilder(comment.getChapter(), comment.getPage()));
 
         holder.itemLayout.setOnClickListener(v -> {
-            Intent intent = new Intent(activity, ComentariosDetalhesActivity.class);
+            Intent intent = new Intent(activity, CommentDetailsActivity.class);
             intent.putExtra("id", comment.getId());
             activity.startActivity(intent);
         });

@@ -4,7 +4,7 @@
     android:id="@+id/detalhes_scroll"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.androidvip.bookshelf.activity.DetalhesActivity"
+    tools:context="com.androidvip.bookshelf.activity.BookDetailsActivity"
     tools:showIn="@layout/activity_detalhes">
 
     <LinearLayout
@@ -186,7 +186,7 @@
                     android:paddingTop="16dp"
                     android:paddingBottom="16dp"
                     android:drawableEnd="@drawable/ic_chevron_right"
-                    android:onClick="comentarios"
+                    android:onClick="comments"
                     style="@style/SelectableItemBackground"/>
 
             </LinearLayout>

@@ -17,19 +17,20 @@ import com.androidvip.bookshelf.App;
 import com.androidvip.bookshelf.R;
 import com.androidvip.bookshelf.adapter.ComentarioAdapter;
 import com.androidvip.bookshelf.model.Comment;
-import com.androidvip.bookshelf.model.Comentario_;
+import com.androidvip.bookshelf.model.Comment_;
+import com.androidvip.bookshelf.util.K;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import io.objectbox.Box;
 
-public class ComentariosActivity extends AppCompatActivity {
+public class CommentActivity extends AppCompatActivity {
     RecyclerView rv;
     RecyclerView.Adapter mAdapter;
     private SwipeRefreshLayout swipeLayout;
-    private List<Comment> lista;
-    private long livroId;
+    private List<Comment> commentList;
+    private long bookId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,48 +42,38 @@ public class ComentariosActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         if (intent != null) {
-            livroId = intent.getLongExtra("livroId", 0);
-            if (livroId <= 0) {
-                Toast.makeText(this, R.string.comentarios_erro, Toast.LENGTH_LONG).show();
+            bookId = intent.getLongExtra(K.EXTRA_BOOK_ID, 0);
+            if (bookId <= 0) {
+                // This activity shows comments of a book. We could not receive
+                // a valid book id, therefore there is nothing else to do here
+                Toast.makeText(this, R.string.comments_error, Toast.LENGTH_LONG).show();
                 finish();
             }
         } else {
-            Toast.makeText(this, R.string.comentarios_erro, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.comments_error, Toast.LENGTH_LONG).show();
             finish();
         }
 
-        lista = new ArrayList<>();
+        commentList = new ArrayList<>();
 
-        swipeLayout = findViewById(R.id.swipe_rv_comentarios);
+        swipeLayout = findViewById(R.id.swipe_rv_comments);
         swipeLayout.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorAccent));
         swipeLayout.setOnRefreshListener(this::onStart);
 
-        FloatingActionButton fab = findViewById(R.id.fab_comentarios);
+        FloatingActionButton fab = findViewById(R.id.fab_comments);
         fab.setOnClickListener(view -> {
-            Intent i = new Intent(ComentariosActivity.this, ComentariosDetalhesActivity.class);
-            i.putExtra("livroId", livroId);
+            Intent i = new Intent(CommentActivity.this, CommentDetailsActivity.class);
+            i.putExtra(K.EXTRA_BOOK_ID, bookId);
             startActivity(i);
         });
-
-        rv = findViewById(R.id.rv_comentarios);
-        mAdapter = new ComentarioAdapter(this, lista);
-
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
-        rv.setHasFixedSize(true);
-        rv.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
-        rv.setLayoutManager(mLayoutManager);
-        rv.setAdapter(mAdapter);
+        
     }
 
     @Override
     protected void onStart() {
-        Box<Comment> comentarioBox = ((App) getApplication()).getBoxStore().boxFor(Comment.class);
-        swipeLayout.setRefreshing(true);
-
-        lista = comentarioBox.query().equal(Comentario_.livroId, livroId).build().find();
-
-        configurarRecyclerView(lista);
-        swipeLayout.setRefreshing(false);
+        Box<Comment> commentBox = ((App) getApplication()).getBoxStore().boxFor(Comment.class);
+        commentList = commentBox.query().equal(Comment_.bookId, bookId).build().find();
+        setUpRecyclerView(commentList);
         super.onStart();
 
     }
@@ -96,13 +87,14 @@ public class ComentariosActivity extends AppCompatActivity {
         return true;
     }
 
-    private void configurarRecyclerView(List<Comment> lista) {
+    private void setUpRecyclerView(List<Comment> commentList) {
+        swipeLayout.setRefreshing(true);
         if (rv != null) {
-            mAdapter = new ComentarioAdapter(this, lista);
+            mAdapter = new ComentarioAdapter(this, commentList);
             rv.setAdapter(mAdapter);
         } else {
-            rv = findViewById(R.id.rv_comentarios);
-            mAdapter = new ComentarioAdapter(this, lista);
+            rv = findViewById(R.id.rv_comments);
+            mAdapter = new ComentarioAdapter(this, commentList);
 
             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
             rv.setHasFixedSize(true);

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:id="@+id/cl"
-    tools:context="com.androidvip.bookshelf.activity.AddManualActivity">
+    tools:context="com.androidvip.bookshelf.activity.ManualAddActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"
@@ -40,7 +40,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textPersonName"
-                        android:id="@+id/add_manual_titulo"
+                        android:id="@+id/manual_add_title"
                         android:textSize="32sp"
                         android:hint="@string/title" />
 
@@ -55,7 +55,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textPersonName"
-                        android:id="@+id/add_manual_autor"
+                        android:id="@+id/manual_add_author"
                         android:hint="@string/autor" />
 
                 </android.support.design.widget.TextInputLayout>

@@ -31,7 +31,7 @@ import java.util.Locale;
 
 /**
  * Utility class. Its methods are often used statically through the whole Java codes,
- * thus, we may need to constantly supply {@link Context} in those methods
+ * thus, we may need to constantly supply {@link Context} in those methods.
  * Nobody shall inherit from it.
  */
 public final class Utils {
@@ -41,8 +41,8 @@ public final class Utils {
     }
 
     /**
-     * Searches for volumes given a query. The query must built with a valid prefix.
-     * Do not call this method from the main thread
+     * Searches for volumes given a query. The query must be built with a valid prefix.
+     * You should not this method from the main thread.
      *
      * @param query The string representing the query used to search through the Books API database
      * @return A list of volumes that matches the query
@@ -173,6 +173,12 @@ public final class Utils {
             return String.valueOf(o);
     }
 
+    /**
+     * Creates the Book service used to manage and fetch books
+     * from the Google Books API though this class
+     *
+     * @return the Book instance
+     */
     private static Books booksReference() {
         return new Books.Builder(new ApacheHttpTransport(), JacksonFactory.getDefaultInstance(), null)
                 .setApplicationName("Bookshelf-AndroidVIP")

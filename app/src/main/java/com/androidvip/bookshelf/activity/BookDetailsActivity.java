@@ -33,8 +33,8 @@ import android.widget.Toast;
 import com.androidvip.bookshelf.App;
 import com.androidvip.bookshelf.R;
 import com.androidvip.bookshelf.model.Book;
+import com.androidvip.bookshelf.util.K;
 import com.androidvip.bookshelf.util.Utils;
-import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.books.model.Volume;
 import com.squareup.picasso.Picasso;
 
@@ -48,20 +48,20 @@ import static android.view.animation.AnimationUtils.loadAnimation;
 import static com.androidvip.bookshelf.util.Utils.readingStateToString;
 import static com.androidvip.bookshelf.util.Utils.notNull;
 
-public class DetalhesActivity extends AppCompatActivity {
-    private TextSwitcher titulo, autores;
-    private TextView descricao, publicacao;
-    private TextView categorias, classificacoes, inicioLeitura, terminoLeitura;
-    private Button estadoLeitura, nota;
+public class BookDetailsActivity extends AppCompatActivity {
+    private TextSwitcher title, author;
+    private TextView description, publication;
+    private TextView categories, ratings, readingStart, readingEnd;
+    private Button readingStateButton, ratingButton;
     EditText tags;
-    ImageView capa, salvarTags, favorito;
+    ImageView cover, saveTagsButton, favoriteButton;
     Book book = null;
     Volume volume;
-    private Box<Book> livroBox;
-    private boolean favoritado;
+    private Box<Book> bookBox;
+    private boolean isFavorite;
     private Snackbar snackNet;
-    private LinearLayout maisDetalhesLayout;
-    private boolean presenteEmLista;
+    private LinearLayout moreDetailsLayout;
+    private boolean isPresentInList;
 
     private BroadcastReceiver netReceiver = new BroadcastReceiver() {
         @Override
@@ -70,25 +70,25 @@ public class DetalhesActivity extends AppCompatActivity {
                 ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
                 NetworkInfo networkInfo = connectivityManager != null ? connectivityManager.getActiveNetworkInfo() : null;
                 if (networkInfo != null && networkInfo.getDetailedState() == NetworkInfo.DetailedState.CONNECTED) {
-                    checarIntent();
+                    checkIntent();
                     snackNet.dismiss();
-                    if (!favorito.isEnabled())
-                        favorito.setEnabled(true);
-                    if (!nota.isEnabled()) {
-                        nota.setEnabled(true);
-                        nota.setTextColor(Color.parseColor("#ffab40"));
+                    if (!favoriteButton.isEnabled())
+                        favoriteButton.setEnabled(true);
+                    if (!ratingButton.isEnabled()) {
+                        ratingButton.setEnabled(true);
+                        ratingButton.setTextColor(Color.parseColor("#ffab40"));
                     }
-                    if (!estadoLeitura.isEnabled()) {
-                        estadoLeitura.setEnabled(true);
-                        estadoLeitura.setTextColor(Color.parseColor("#ffab40"));
+                    if (!readingStateButton.isEnabled()) {
+                        readingStateButton.setEnabled(true);
+                        readingStateButton.setTextColor(Color.parseColor("#ffab40"));
                     }
                 } else {
                     snackNet.show();
-                    favorito.setEnabled(false);
-                    nota.setEnabled(false);
-                    nota.setTextColor(Color.parseColor("#9e9e9e"));
-                    estadoLeitura.setEnabled(false);
-                    estadoLeitura.setTextColor(Color.parseColor("#9e9e9e"));
+                    favoriteButton.setEnabled(false);
+                    ratingButton.setEnabled(false);
+                    ratingButton.setTextColor(Color.parseColor("#9e9e9e"));
+                    readingStateButton.setEnabled(false);
+                    readingStateButton.setTextColor(Color.parseColor("#9e9e9e"));
                 }
             }
         }
@@ -108,12 +108,12 @@ public class DetalhesActivity extends AppCompatActivity {
             toolbarLayout.setExpandedTitleColor(Color.parseColor("#00ebe6e4"));
         }
 
-        maisDetalhesLayout = findViewById(R.id.detalhes_layout_mais_detalhes);
-        maisDetalhesLayout.setVisibility(View.GONE);
+        moreDetailsLayout = findViewById(R.id.detalhes_layout_mais_detalhes);
+        moreDetailsLayout.setVisibility(View.GONE);
 
         bindViews();
         
-        titulo.setText(getString(R.string.carregando));
+        title.setText(getString(R.string.carregando));
     }
 
     @Override
@@ -123,10 +123,10 @@ public class DetalhesActivity extends AppCompatActivity {
         if (!Utils.isOnline(this))
             snackNet.show();
 
-        autores.setText("");
+        author.setText("");
         registerReceiver(netReceiver, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
 
-        checarIntent();
+        checkIntent();
     }
 
     @Override
@@ -147,27 +147,27 @@ public class DetalhesActivity extends AppCompatActivity {
     }
 
     //onClick
-    public void comentarios(View view) {
-        Intent intent = new Intent(this, ComentariosActivity.class);
-        intent.putExtra("livroId", book.getId());
+    public void comments(View view) {
+        Intent intent = new Intent(this, CommentActivity.class);
+        intent.putExtra(K.EXTRA_BOOK_ID, book.getId());
         startActivity(intent);
     }
 
-    private void checarIntent() {
+    private void checkIntent() {
         Intent intent = getIntent();
         if (intent != null) {
-            long livroId = intent.getLongExtra("livroId", 0);
-            String volumeId = intent.getStringExtra("volumeId");
+            long bookId = intent.getLongExtra(K.EXTRA_BOOK_ID, 0);
+            String volumeId = intent.getStringExtra(K.EXTRA_VOLUME_ID);
 
             if (volumeId != null && !volumeId.equals("")) {
-                configurarBox(volumeId);
-                presenteEmLista = false;
+                setUpBox(volumeId);
+                isPresentInList = false;
                 tags.setVisibility(View.INVISIBLE);
-                salvarTags.setVisibility(View.INVISIBLE);
+                saveTagsButton.setVisibility(View.INVISIBLE);
             } else {
-                if (livroId > 0) {
-                   configurarBox(livroId);
-                   presenteEmLista = true;
+                if (bookId > 0) {
+                   setUpBox(bookId);
+                   isPresentInList = true;
                 } else {
                     Toast.makeText(this, R.string.detalhes_erro, Toast.LENGTH_LONG).show();
                     finish();
@@ -176,60 +176,60 @@ public class DetalhesActivity extends AppCompatActivity {
         }
     }
 
-    private View.OnClickListener dataListener(boolean inicio) {
-        Calendar hoje = Calendar.getInstance();
-        hoje.setTimeInMillis(System.currentTimeMillis());
+    private View.OnClickListener dateListener(boolean readingStart) {
+        Calendar today = Calendar.getInstance();
+        today.setTimeInMillis(System.currentTimeMillis());
         return v -> {
             DatePickerDialog dialog = new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
-                Date novaData = new GregorianCalendar(year, month, dayOfMonth).getTime();
-                if (inicio) {
+                Date newDate = new GregorianCalendar(year, month, dayOfMonth).getTime();
+                if (readingStart) {
                     if (book.getReadingState() != Book.STATE_READING) {
-                        new AlertDialog.Builder(DetalhesActivity.this)
+                        new AlertDialog.Builder(BookDetailsActivity.this)
                                 .setTitle(R.string.registros)
                                 .setMessage(R.string.aviso_atualizar_lendo)
                                 .setPositiveButton(android.R.string.yes, (dialog1, which) -> {
                                     book.setReadingState(Book.STATE_READING);
-                                    estadoLeitura.setText(readingStateToString(Book.STATE_READING, DetalhesActivity.this));
-                                    livroBox.put(book);
+                                    readingStateButton.setText(readingStateToString(Book.STATE_READING, BookDetailsActivity.this));
+                                    bookBox.put(book);
                                 })
                                 .setNegativeButton(android.R.string.no, (dialog12, which) -> {})
                                 .show();
                     }
-                    inicioLeitura.setText(getString(R.string.inicio_leitura, Utils.dateToString(novaData)));
-                    book.setReadingStartDate(novaData);
-                    livroBox.put(book);
+                    this.readingStart.setText(getString(R.string.inicio_leitura, Utils.dateToString(newDate)));
+                    book.setReadingStartDate(newDate);
+                    bookBox.put(book);
                 } else {
                     if (book.getReadingState() != Book.STATE_FINISHED) {
-                        new AlertDialog.Builder(DetalhesActivity.this)
+                        new AlertDialog.Builder(BookDetailsActivity.this)
                                 .setTitle(R.string.registros)
                                 .setMessage(R.string.aviso_atualizar_finalizado)
                                 .setPositiveButton(android.R.string.yes, (dialog1, which) -> {
                                     book.setReadingState(Book.STATE_FINISHED);
-                                    estadoLeitura.setText(readingStateToString(Book.STATE_FINISHED, DetalhesActivity.this));
-                                    livroBox.put(book);
+                                    readingStateButton.setText(readingStateToString(Book.STATE_FINISHED, BookDetailsActivity.this));
+                                    bookBox.put(book);
                                 })
                                 .setNegativeButton(android.R.string.no, (dialog12, which) -> {})
                                 .show();
                     }
-                    terminoLeitura.setText(getString(R.string.termino_leitura, Utils.dateToString(novaData)));
-                    book.setReadingEndDate(novaData);
-                    livroBox.put(book);
+                    readingEnd.setText(getString(R.string.termino_leitura, Utils.dateToString(newDate)));
+                    book.setReadingEndDate(newDate);
+                    bookBox.put(book);
                 }
-            }, hoje.get(Calendar.YEAR), hoje.get(Calendar.MONTH), hoje.get(Calendar.DAY_OF_MONTH));
+            }, today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH));
             dialog.show();
-            livroBox.put(book);
+            bookBox.put(book);
         };
     }
 
     private View.OnClickListener estadoListener = v -> {
-        int estadoLeitura = book.getReadingState();
-        int checkedItem = estadoLeitura == 0 ? -1 : book.getReadingState() - 1;
+        int readingState = book.getReadingState();
+        int checkedItem = readingState == 0 ? -1 : book.getReadingState() - 1;
         new AlertDialog.Builder(this)
                 .setTitle(R.string.add_lista)
-                .setSingleChoiceItems(R.array.estado_leitura_array, checkedItem, (dialog, which) -> {
-                    if (estadoLeitura == 0){
-                        TextView tituloView = (TextView)titulo.getCurrentView();
-                        TextView autoresView = (TextView)autores.getCurrentView();
+                .setSingleChoiceItems(R.array.reading_state_array, checkedItem, (dialog, which) -> {
+                    if (readingState == 0){
+                        TextView tituloView = (TextView) title.getCurrentView();
+                        TextView autoresView = (TextView) author.getCurrentView();
                         book.setTitle(tituloView.getText().toString());
                         book.setAuthors(autoresView.getText().toString());
                         book.setGoogleBooksId(volume.getId());
@@ -239,48 +239,48 @@ public class DetalhesActivity extends AppCompatActivity {
                             book.setReadingState(Book.STATE_READING);
                             book.setReadingStartDate(new Date(System.currentTimeMillis()));
                             book.setReadingEndDate(null);
-                            DetalhesActivity.this.estadoLeitura.setText(readingStateToString(Book.STATE_READING, DetalhesActivity.this));
+                            BookDetailsActivity.this.readingStateButton.setText(readingStateToString(Book.STATE_READING, BookDetailsActivity.this));
                             break;
                         case 1:
                             book.setReadingState(Book.STATE_WISH);
-                            DetalhesActivity.this.estadoLeitura.setText(readingStateToString(Book.STATE_WISH, DetalhesActivity.this));
+                            BookDetailsActivity.this.readingStateButton.setText(readingStateToString(Book.STATE_WISH, BookDetailsActivity.this));
                             break;
                         case 2:
                             book.setReadingState(Book.STATE_ON_HOLD);
-                            DetalhesActivity.this.estadoLeitura.setText(readingStateToString(Book.STATE_ON_HOLD, DetalhesActivity.this));
+                            BookDetailsActivity.this.readingStateButton.setText(readingStateToString(Book.STATE_ON_HOLD, BookDetailsActivity.this));
                             break;
                         case 3:
                             book.setReadingState(Book.STATE_DROPPED);
-                            DetalhesActivity.this.estadoLeitura.setText(readingStateToString(Book.STATE_DROPPED, DetalhesActivity.this));
+                            BookDetailsActivity.this.readingStateButton.setText(readingStateToString(Book.STATE_DROPPED, BookDetailsActivity.this));
                             break;
                         case 4:
                             book.setReadingState(Book.STATE_FINISHED);
-                            DetalhesActivity.this.estadoLeitura.setText(readingStateToString(Book.STATE_FINISHED, DetalhesActivity.this));
+                            BookDetailsActivity.this.readingStateButton.setText(readingStateToString(Book.STATE_FINISHED, BookDetailsActivity.this));
                             book.setReadingEndDate(new Date(System.currentTimeMillis()));
                             break;
                     }
-                    DetalhesActivity.this.estadoLeitura.setText(readingStateToString(which + 1, DetalhesActivity.this));
+                    BookDetailsActivity.this.readingStateButton.setText(readingStateToString(which + 1, BookDetailsActivity.this));
                     dialog.dismiss();
-                    livroBox.put(book);
+                    bookBox.put(book);
 
                 }).show();
     };
 
-    private void configurarBox(long livroId) {
-        livroBox = ((App) getApplication()).getBoxStore().boxFor(Book.class);
-        book = livroBox.get(livroId);
+    private void setUpBox(long bookId) {
+        bookBox = ((App) getApplication()).getBoxStore().boxFor(Book.class);
+        book = bookBox.get(bookId);
 
-        obterVolume(book.getGoogleBooksId());
+        getVolume(book.getGoogleBooksId());
     }
 
-    private void configurarBox(String volumeId) {
+    private void setUpBox(String volumeId) {
         if (Utils.isOnline(this)) {
-            livroBox = ((App) getApplication()).getBoxStore().boxFor(Book.class);
-            obterVolume(volumeId);
+            bookBox = ((App) getApplication()).getBoxStore().boxFor(Book.class);
+            getVolume(volumeId);
         }
     }
 
-    private void obterVolume(String volumeId) {
+    private void getVolume(String volumeId) {
         if (volumeId != null && !volumeId.equals("")) {
             // Google Books id is valid, proceed
             if (!Utils.isOnline(this) && book != null) {
@@ -299,131 +299,131 @@ public class DetalhesActivity extends AppCompatActivity {
     }
 
     private void popularOffline() {
-        titulo.setText(notNull(book.getTitle(), getString(R.string.carregando)));
-        autores.setText(notNull(book.getAuthors(), getString(R.string.detalhes_erro_autor)));
-        descricao.setText(R.string.detalhes_erro_descricao);
-        categorias.setText(R.string.detalhes_erro_categoria);
+        title.setText(notNull(book.getTitle(), getString(R.string.carregando)));
+        author.setText(notNull(book.getAuthors(), getString(R.string.detalhes_erro_autor)));
+        description.setText(R.string.detalhes_erro_descricao);
+        categories.setText(R.string.detalhes_erro_categoria);
 
-        estadoLeitura.setText(readingStateToString(book.getReadingState(), DetalhesActivity.this));
-        nota.setText(notaToString(book.getScore()));
+        readingStateButton.setText(readingStateToString(book.getReadingState(), BookDetailsActivity.this));
+        ratingButton.setText(notaToString(book.getScore()));
         tags.setText(notNull(book.getTags(), ""));
 
         String inicioStr = Utils.dateToString(book.getReadingStartDate());
         String fimStr = Utils.dateToString(book.getReadingEndDate());
-        inicioLeitura.setText(inicioStr.equals("")
+        readingStart.setText(inicioStr.equals("")
                 ? getString(R.string.inicio_leitura, "-")
                 : getString(R.string.inicio_leitura, inicioStr));
-        terminoLeitura.setText(fimStr.equals("")
+        readingEnd.setText(fimStr.equals("")
                 ? getString(R.string.termino_leitura, "-")
                 : getString(R.string.termino_leitura, fimStr));
 
-        if (presenteEmLista) {
+        if (isPresentInList) {
             configurarListeners();
-            maisDetalhesLayout.setVisibility(View.VISIBLE);
-            capa.setImageResource(R.drawable.broken_image);
-            favorito.setVisibility(View.VISIBLE);
+            moreDetailsLayout.setVisibility(View.VISIBLE);
+            cover.setImageResource(R.drawable.broken_image);
+            favoriteButton.setVisibility(View.VISIBLE);
             if (book.isFavorite())
-                favorito.setImageResource(R.drawable.ic_favorito_ativado);
+                favoriteButton.setImageResource(R.drawable.ic_favorito_ativado);
             else
-                favorito.setImageResource(R.drawable.ic_favorito);
-            favoritado = book.isFavorite();
+                favoriteButton.setImageResource(R.drawable.ic_favorito);
+            isFavorite = book.isFavorite();
         } else {
-            favorito.setVisibility(View.INVISIBLE);
+            favoriteButton.setVisibility(View.INVISIBLE);
         }
     }
 
     private void popular() {
         if (book == null) {
             book = new Book();
-            estadoLeitura.setText(R.string.add_lista);
-            nota.setText(notaToString(0));
-            nota.setEnabled(false);
-            nota.setTextColor(Color.parseColor("#9e9e9e"));
+            readingStateButton.setText(R.string.add_lista);
+            ratingButton.setText(notaToString(0));
+            ratingButton.setEnabled(false);
+            ratingButton.setTextColor(Color.parseColor("#9e9e9e"));
         } else {
             popularOffline();
         }
 
-        if (presenteEmLista)
-            maisDetalhesLayout.setVisibility(View.VISIBLE);
+        if (isPresentInList)
+            moreDetailsLayout.setVisibility(View.VISIBLE);
 
         if (volume != null) {
             Volume.VolumeInfo volumeInfo = volume.getVolumeInfo();
             if (volumeInfo != null) {
-                titulo.setText(notNull(volumeInfo.getTitle(), getString(R.string.carregando)));
+                title.setText(notNull(volumeInfo.getTitle(), getString(R.string.carregando)));
                 if (volumeInfo.getAuthors() != null)
-                    autores.setText(TextUtils.join(", ", volumeInfo.getAuthors()));
+                    author.setText(TextUtils.join(", ", volumeInfo.getAuthors()));
 
-                publicacao.setText(getString(R.string.data_publicacao,
+                publication.setText(getString(R.string.data_publicacao,
                         notNull(volumeInfo.getPublishedDate(), getString(R.string.detalhes_erro_data_publicacao)),
                         notNull(volumeInfo.getPublisher(), getString(R.string.detalhes_erro_publicador))));
 
-                classificacoes.setText(getString(R.string.classificacoes_format,
+                ratings.setText(getString(R.string.classificacoes_format,
                         volumeInfo.getAverageRating() == null ? 0 : volumeInfo.getAverageRating().floatValue(),
                         volumeInfo.getRatingsCount() == null ? 0 : volumeInfo.getRatingsCount(),
                         notNull(volumeInfo.getMaturityRating(), getString(R.string.detalhes_erro_maturidade))));
 
                 String desc = notNull(volumeInfo.getDescription(), getString(R.string.detalhes_erro_descricao));
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                    descricao.setText(Html.fromHtml(desc, Html.FROM_HTML_MODE_COMPACT));
+                    description.setText(Html.fromHtml(desc, Html.FROM_HTML_MODE_COMPACT));
                 else
-                    descricao.setText(Html.fromHtml(desc));
+                    description.setText(Html.fromHtml(desc));
 
                 if (volumeInfo.getCategories() != null) {
                     String cats = TextUtils.join(", ", volumeInfo.getCategories());
-                    categorias.setText(cats.equals("") || cats.equals(", ") ? getString(R.string.detalhes_erro_categoria) : cats);
+                    categories.setText(cats.equals("") || cats.equals(", ") ? getString(R.string.detalhes_erro_categoria) : cats);
                 } else
-                    categorias.setText(R.string.detalhes_erro_categoria);
+                    categories.setText(R.string.detalhes_erro_categoria);
 
                 if (volumeInfo.getImageLinks() != null)
                     Picasso.with(this)
                             .load(volumeInfo.getImageLinks().getThumbnail())
                             .placeholder(R.drawable.carregando_imagem)
                             .error(R.drawable.broken_image)
-                            .into(capa);
+                            .into(cover);
                 else
-                    Picasso.with(this).load(R.drawable.broken_image).into(capa);
+                    Picasso.with(this).load(R.drawable.broken_image).into(cover);
             }
         }
         configurarListeners();
     }
 
     private void configurarListeners() {
-        estadoLeitura.setOnClickListener(estadoListener);
-        inicioLeitura.setOnClickListener(dataListener(true));
-        terminoLeitura.setOnClickListener(dataListener(false));
-        nota.setOnClickListener(v -> {
+        readingStateButton.setOnClickListener(estadoListener);
+        readingStart.setOnClickListener(dateListener(true));
+        readingEnd.setOnClickListener(dateListener(false));
+        ratingButton.setOnClickListener(v -> {
             int checkedItem = book.getScore() == 0 ? -1 : book.getScore() -1;
-            String[] notas = getResources().getStringArray(R.array.notas_array);
+            String[] notas = getResources().getStringArray(R.array.scores_array);
             new AlertDialog.Builder(this)
-                    .setTitle(R.string.nota)
+                    .setTitle(R.string.score)
                     .setSingleChoiceItems(notas, checkedItem, (dialog, which) -> {
                         book.setScore(which + 1);
-                        livroBox.put(book);
-                        nota.setText(notaToString(which + 1));
+                        bookBox.put(book);
+                        ratingButton.setText(notaToString(which + 1));
                         dialog.dismiss();
                     }).show();
         });
-        favorito.setOnClickListener(view -> {
-            if (favoritado) {
+        favoriteButton.setOnClickListener(view -> {
+            if (isFavorite) {
                 book.setFavorite(false);
-                favorito.setColorFilter(null);
-                favorito.setImageResource(R.drawable.ic_favorito);
-                favoritado = false;
+                favoriteButton.setColorFilter(null);
+                favoriteButton.setImageResource(R.drawable.ic_favorito);
+                isFavorite = false;
             } else {
                 book.setFavorite(true);
-                favorito.setColorFilter(null);
-                favorito.setImageResource(R.drawable.ic_favorito_ativado);
-                favoritado = true;
+                favoriteButton.setColorFilter(null);
+                favoriteButton.setImageResource(R.drawable.ic_favorito_ativado);
+                isFavorite = true;
             }
-            livroBox.put(book);
+            bookBox.put(book);
         });
-        favorito.setOnLongClickListener(view -> {
-            Toast.makeText(DetalhesActivity.this, "Favoritar / Desfavoritar", Toast.LENGTH_SHORT).show();
+        favoriteButton.setOnLongClickListener(view -> {
+            Toast.makeText(BookDetailsActivity.this, "Favoritar / Desfavoritar", Toast.LENGTH_SHORT).show();
             return true;
         });
-        salvarTags.setOnClickListener(v -> {
+        saveTagsButton.setOnClickListener(v -> {
             book.setTags(tags.getText().toString());
-            livroBox.put(book);
+            bookBox.put(book);
         });
     }
 
@@ -432,27 +432,27 @@ public class DetalhesActivity extends AppCompatActivity {
     }
 
     private void bindViews() {
-        titulo = findViewById(R.id.detalhes_titulo);
-        autores = findViewById(R.id.detalhes_autores);
-        descricao = findViewById(R.id.detalhes_descricao);
-        publicacao = findViewById(R.id.detalhes_publicacao);
-        estadoLeitura = findViewById(R.id.detalhes_estado);
-        nota = findViewById(R.id.detalhes_nota);
+        title = findViewById(R.id.detalhes_titulo);
+        author = findViewById(R.id.detalhes_autores);
+        description = findViewById(R.id.detalhes_descricao);
+        publication = findViewById(R.id.detalhes_publicacao);
+        readingStateButton = findViewById(R.id.detalhes_estado);
+        ratingButton = findViewById(R.id.detalhes_nota);
         tags = findViewById(R.id.detalhes_tag_edit);
-        salvarTags = findViewById(R.id.detalhes_tag_botao);
-        capa = findViewById(R.id.detalhes_capa);
-        categorias = findViewById(R.id.detalhes_categorias);
-        classificacoes = findViewById(R.id.detalhes_classificacoes);
-        inicioLeitura = findViewById(R.id.detalhes_inicio_leitura);
-        terminoLeitura = findViewById(R.id.detalhes_fim_leitura);
-        favorito = findViewById(R.id.detalhes_favorito);
+        saveTagsButton = findViewById(R.id.detalhes_tag_botao);
+        cover = findViewById(R.id.detalhes_capa);
+        categories = findViewById(R.id.detalhes_categorias);
+        ratings = findViewById(R.id.detalhes_classificacoes);
+        readingStart = findViewById(R.id.detalhes_inicio_leitura);
+        readingEnd = findViewById(R.id.detalhes_fim_leitura);
+        favoriteButton = findViewById(R.id.detalhes_favorito);
 
         configurarAnimacoes();
     }
 
     private void configurarAnimacoes() {
-        titulo.setFactory(() -> {
-            TextView textView = new TextView(DetalhesActivity.this);
+        title.setFactory(() -> {
+            TextView textView = new TextView(BookDetailsActivity.this);
             textView.setGravity(Gravity.CENTER_HORIZONTAL);
             textView.setTextSize(20);
             textView.setMaxLines(2);
@@ -461,8 +461,8 @@ public class DetalhesActivity extends AppCompatActivity {
             return textView;
         });
 
-        autores.setFactory(() -> {
-            TextView textView = new TextView(DetalhesActivity.this);
+        author.setFactory(() -> {
+            TextView textView = new TextView(BookDetailsActivity.this);
             textView.setGravity(Gravity.CENTER_HORIZONTAL);
             textView.setTextSize(14);
             textView.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
@@ -477,9 +477,9 @@ public class DetalhesActivity extends AppCompatActivity {
         in.setDuration(1000);
         out.setDuration(320);
 
-        titulo.setInAnimation(in);
-        titulo.setOutAnimation(out);
-        autores.setInAnimation(in);
-        autores.setOutAnimation(out);
+        title.setInAnimation(in);
+        title.setOutAnimation(out);
+        author.setInAnimation(in);
+        author.setOutAnimation(out);
     }
 }

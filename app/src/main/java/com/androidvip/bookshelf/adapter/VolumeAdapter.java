@@ -16,8 +16,9 @@ import android.widget.TextView;
 
 import com.androidvip.bookshelf.App;
 import com.androidvip.bookshelf.R;
-import com.androidvip.bookshelf.activity.DetalhesActivity;
+import com.androidvip.bookshelf.activity.BookDetailsActivity;
 import com.androidvip.bookshelf.model.Book;
+import com.androidvip.bookshelf.util.K;
 import com.google.api.services.books.model.Volume;
 import com.squareup.picasso.Picasso;
 
@@ -100,8 +101,8 @@ public class VolumeAdapter extends RecyclerView.Adapter<VolumeAdapter.ViewHolder
             });
 
             holder.cardLayout.setOnClickListener(v -> {
-                Intent intent = new Intent(activity, DetalhesActivity.class);
-                intent.putExtra("volumeId", volume.getId());
+                Intent intent = new Intent(activity, BookDetailsActivity.class);
+                intent.putExtra(K.EXTRA_VOLUME_ID, volume.getId());
                 activity.startActivity(intent);
             });
         }

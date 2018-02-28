@@ -32,7 +32,7 @@ import com.androidvip.bookshelf.App;
 import com.androidvip.bookshelf.R;
 import com.androidvip.bookshelf.adapter.LivroAdapter;
 import com.androidvip.bookshelf.model.Book;
-import com.androidvip.bookshelf.model.Livro_;
+import com.androidvip.bookshelf.model.Book_;
 import com.androidvip.bookshelf.util.K;
 import com.androidvip.bookshelf.util.Utils;
 import com.getkeepsafe.taptargetview.TapTarget;
@@ -270,13 +270,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private List<Book> filtrarPorEstadoLeitura(int estadoLeitura){
-        List<Book> l = bookBox.query().equal(Livro_.estadoLeitura, estadoLeitura).build().find();
+        List<Book> l = bookBox.query().equal(Book_.readingState, estadoLeitura).build().find();
         currentList = l;
         return l;
     }
 
     private List<Book> filtrarPorFavorito(){
-        List<Book> l = bookBox.query().equal(Livro_.favorito, true).build().find();
+        List<Book> l = bookBox.query().equal(Book_.favorite, true).build().find();
         currentList = l;
         return l;
     }

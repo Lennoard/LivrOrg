@@ -58,6 +58,10 @@ public class AboutActivity extends AppCompatActivity {
         }
     }
 
+    public void sourceCode(View view) {
+        Utils.webPage(this, "https://github.com/Lennoard/LivrOrg");
+    }
+
     public void lic(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 

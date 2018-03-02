@@ -198,7 +198,7 @@ public final class Utils {
      */
     private static Books booksReference() {
         return new Books.Builder(new ApacheHttpTransport(), JacksonFactory.getDefaultInstance(), null)
-                .setApplicationName("Bookshelf-AndroidVIP")
+                .setApplicationName("LivrOrg-AndroidVIP")
                 .setGoogleClientRequestInitializer(new BooksRequestInitializer(K.API_KEY))
                 .build();
     }

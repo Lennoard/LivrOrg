@@ -28,7 +28,7 @@
                     android:title="@string/finalizados" />
                 <item
                     android:id="@+id/nav_favoritos"
-                    android:icon="@drawable/ic_favorito"
+                    android:icon="@drawable/ic_favorite"
                     android:title="@string/favoritos" />
             </group>
         </menu>
@@ -40,7 +40,7 @@
                 <item
                     android:id="@+id/nav_pesquisar"
                     android:icon="@drawable/ic_pesquisa"
-                    android:title="@string/pesquisar" />
+                    android:title="@string/search" />
             </group>
         </menu>
 

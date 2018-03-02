@@ -40,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
             logIn();
     }
 
-    public void logInBotao(View view) {
+    public void logInButton(View view) {
         if (getText(usuario).length() > 0 && getText(senha).length() > 0 && validarFormulario())
             logIn();
         else

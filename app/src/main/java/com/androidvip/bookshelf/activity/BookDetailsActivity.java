@@ -97,7 +97,7 @@ public class BookDetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detalhes);
+        setContentView(R.layout.activity_details);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -113,13 +113,15 @@ public class BookDetailsActivity extends AppCompatActivity {
 
         bindViews();
         
-        title.setText(getString(R.string.carregando));
+        title.setText(getString(R.string.loading));
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        // Create the snackbar to be shown when the device goes offline
         snackNet = Snackbar.make(findViewById(R.id.cl), R.string.erro_sem_conexao, Snackbar.LENGTH_INDEFINITE);
+        // Initial check, ths will be checked before later by the Broadcast Receiver
         if (!Utils.isOnline(this))
             snackNet.show();
 
@@ -147,29 +149,45 @@ public class BookDetailsActivity extends AppCompatActivity {
     }
 
     //onClick
-    public void comments(View view) {
+    public void goToComments(View view) {
         Intent intent = new Intent(this, CommentActivity.class);
-        intent.putExtra(K.EXTRA_BOOK_ID, book.getId());
+        intent.putExtra(K.EXTRA_BOOK_ID_DB, book.getId());
         startActivity(intent);
     }
 
     private void checkIntent() {
         Intent intent = getIntent();
         if (intent != null) {
-            long bookId = intent.getLongExtra(K.EXTRA_BOOK_ID, 0);
+            // Fetching extra information from the intent
+            long bookId = intent.getLongExtra(K.EXTRA_BOOK_ID_DB, 0);
             String volumeId = intent.getStringExtra(K.EXTRA_VOLUME_ID);
 
             if (volumeId != null && !volumeId.equals("")) {
+                /*
+                 * We have a valid volumeId, with this we can fetch volume information
+                 * from the Google Books API, so set up the activity accordingly.
+                 * In this state, the user should be searching for a volume to add to
+                 * his/her lists, therefore, we don't need to show some views now...
+                 */
                 setUpBox(volumeId);
                 isPresentInList = false;
+                // ... such as these
                 tags.setVisibility(View.INVISIBLE);
                 saveTagsButton.setVisibility(View.INVISIBLE);
             } else {
+                /*
+                 * We have no volumeId and a valid bookId, with this we can fetch book
+                 * information from the local database, so set up the activity accordingly.
+                 * In this state the user might want to update his reading state, dates
+                 * comments etc, so we need to show some views to make it possible.
+                 */
                 if (bookId > 0) {
                    setUpBox(bookId);
                    isPresentInList = true;
                 } else {
+                    // We didn't get any valid id, the activity is now useless
                     Toast.makeText(this, R.string.detalhes_erro, Toast.LENGTH_LONG).show();
+                    // Can we handle this?
                     finish();
                 }
             }
@@ -177,31 +195,46 @@ public class BookDetailsActivity extends AppCompatActivity {
     }
 
     private View.OnClickListener dateListener(boolean readingStart) {
+        // Create a Calendar object
         Calendar today = Calendar.getInstance();
+        // Set it to today, right now
         today.setTimeInMillis(System.currentTimeMillis());
         return v -> {
             DatePickerDialog dialog = new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
                 Date newDate = new GregorianCalendar(year, month, dayOfMonth).getTime();
                 if (readingStart) {
+                    // This listener has been called to update the "readingStartDate" property of a book
                     if (book.getReadingState() != Book.STATE_READING) {
+                        /*
+                         * The user has selected a date the indicates when he/she started to
+                         * read a book, but the book is not in the "reading" state, we may use
+                         * this opportunity to ask him/her to update the state to "reading"
+                         */
                         new AlertDialog.Builder(BookDetailsActivity.this)
-                                .setTitle(R.string.registros)
+                                .setTitle(R.string.records)
                                 .setMessage(R.string.aviso_atualizar_lendo)
                                 .setPositiveButton(android.R.string.yes, (dialog1, which) -> {
                                     book.setReadingState(Book.STATE_READING);
                                     readingStateButton.setText(readingStateToString(Book.STATE_READING, BookDetailsActivity.this));
                                     bookBox.put(book);
                                 })
-                                .setNegativeButton(android.R.string.no, (dialog12, which) -> {})
+                                .setNegativeButton(android.R.string.no, (dialog2, which) -> {})
                                 .show();
                     }
                     this.readingStart.setText(getString(R.string.inicio_leitura, Utils.dateToString(newDate)));
                     book.setReadingStartDate(newDate);
+                    // Update the database
                     bookBox.put(book);
                 } else {
+                    // This listener has been called to update the "readingEndDate" property of a book
                     if (book.getReadingState() != Book.STATE_FINISHED) {
+                        /*
+                         * The user has selected a date the indicates when he/she finished to
+                         * read a book, but the book is not in the "finished" state, we may use
+                         * this opportunity to ask him/her to update the state to "finished"
+                         */
                         new AlertDialog.Builder(BookDetailsActivity.this)
-                                .setTitle(R.string.registros)
+                                .setTitle(R.string.records)
                                 .setMessage(R.string.aviso_atualizar_finalizado)
                                 .setPositiveButton(android.R.string.yes, (dialog1, which) -> {
                                     book.setReadingState(Book.STATE_FINISHED);
@@ -213,25 +246,42 @@ public class BookDetailsActivity extends AppCompatActivity {
                     }
                     readingEnd.setText(getString(R.string.termino_leitura, Utils.dateToString(newDate)));
                     book.setReadingEndDate(newDate);
+                    // Update the database
                     bookBox.put(book);
-                }
+                } // Default date information to show when the dialog is created is set below
             }, today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH));
             dialog.show();
+            // Regardless of what happened above, update the database
             bookBox.put(book);
         };
     }
 
-    private View.OnClickListener estadoListener = v -> {
+    // Shows a dialog allowing the user to set a reading state fot the book
+    private View.OnClickListener stateListener = v -> {
         int readingState = book.getReadingState();
+        /*
+         * The dialog's checked item. If the book has no reading state yet (0),
+         * then use -1, which is the default value and checks nothing, otherwise
+         * use the book's reading state -1 (reading states start from 1)
+         */
         int checkedItem = readingState == 0 ? -1 : book.getReadingState() - 1;
         new AlertDialog.Builder(this)
                 .setTitle(R.string.add_lista)
                 .setSingleChoiceItems(R.array.reading_state_array, checkedItem, (dialog, which) -> {
-                    if (readingState == 0){
-                        TextView tituloView = (TextView) title.getCurrentView();
-                        TextView autoresView = (TextView) author.getCurrentView();
-                        book.setTitle(tituloView.getText().toString());
-                        book.setAuthors(autoresView.getText().toString());
+                    if (readingState == 0) {
+                        /*
+                         * A book must have a reading state, 0 is not a valid one. We
+                         * are assuming that in this scenario, the user is adding a book
+                         * to his/her lists, we will user this opportunity to set title
+                         * and authors to the book object as well
+                         */
+                        // These TextSwitchers have TextViews as children, get them
+                        TextView titleView = (TextView) title.getCurrentView();
+                        TextView authorsView = (TextView) author.getCurrentView();
+                        // Use their text to fill up the book's information
+                        book.setTitle(titleView.getText().toString());
+                        book.setAuthors(authorsView.getText().toString());
+                        // Finally set the Google Books ID with the currently showing volume
                         book.setGoogleBooksId(volume.getId());
                     }
                     switch (which) {
@@ -239,33 +289,41 @@ public class BookDetailsActivity extends AppCompatActivity {
                             book.setReadingState(Book.STATE_READING);
                             book.setReadingStartDate(new Date(System.currentTimeMillis()));
                             book.setReadingEndDate(null);
-                            BookDetailsActivity.this.readingStateButton.setText(readingStateToString(Book.STATE_READING, BookDetailsActivity.this));
+                            readingStateButton.setText(readingStateToString(Book.STATE_READING, BookDetailsActivity.this));
                             break;
                         case 1:
                             book.setReadingState(Book.STATE_WISH);
-                            BookDetailsActivity.this.readingStateButton.setText(readingStateToString(Book.STATE_WISH, BookDetailsActivity.this));
+                            readingStateButton.setText(readingStateToString(Book.STATE_WISH, BookDetailsActivity.this));
                             break;
                         case 2:
                             book.setReadingState(Book.STATE_ON_HOLD);
-                            BookDetailsActivity.this.readingStateButton.setText(readingStateToString(Book.STATE_ON_HOLD, BookDetailsActivity.this));
+                            readingStateButton.setText(readingStateToString(Book.STATE_ON_HOLD, BookDetailsActivity.this));
                             break;
                         case 3:
                             book.setReadingState(Book.STATE_DROPPED);
-                            BookDetailsActivity.this.readingStateButton.setText(readingStateToString(Book.STATE_DROPPED, BookDetailsActivity.this));
+                            readingStateButton.setText(readingStateToString(Book.STATE_DROPPED, BookDetailsActivity.this));
                             break;
                         case 4:
                             book.setReadingState(Book.STATE_FINISHED);
-                            BookDetailsActivity.this.readingStateButton.setText(readingStateToString(Book.STATE_FINISHED, BookDetailsActivity.this));
+                            readingStateButton.setText(readingStateToString(Book.STATE_FINISHED, BookDetailsActivity.this));
                             book.setReadingEndDate(new Date(System.currentTimeMillis()));
                             break;
                     }
-                    BookDetailsActivity.this.readingStateButton.setText(readingStateToString(which + 1, BookDetailsActivity.this));
+                    readingStateButton.setText(readingStateToString(which + 1, BookDetailsActivity.this));
                     dialog.dismiss();
+                    // Regardless of what happened above, update the database
                     bookBox.put(book);
 
                 }).show();
     };
 
+    /**
+     * Method to set up the book box and get the volume information based
+     * on the given id. If the method was called, we have a book saved in the
+     * local database and we want to fetch online information with its id.
+     *
+     * @param bookId the Google Books ID
+     */
     private void setUpBox(long bookId) {
         bookBox = ((App) getApplication()).getBoxStore().boxFor(Book.class);
         book = bookBox.get(bookId);
@@ -273,74 +331,93 @@ public class BookDetailsActivity extends AppCompatActivity {
         getVolume(book.getGoogleBooksId());
     }
 
+    /**
+     * Method to set up the book box and get the volume information based
+     * on the given id. If the method was called, we have only the id and we
+     * with this we can fetch the volume information.
+     *
+     * @param volumeId the Google Books ID
+     */
     private void setUpBox(String volumeId) {
+        // We cannot fetch the volume's information without internet connection
         if (Utils.isOnline(this)) {
             bookBox = ((App) getApplication()).getBoxStore().boxFor(Book.class);
             getVolume(volumeId);
         }
+        // The receiver and onStart() will handle "else" for us
     }
 
     private void getVolume(String volumeId) {
         if (volumeId != null && !volumeId.equals("")) {
             // Google Books id is valid, proceed
             if (!Utils.isOnline(this) && book != null) {
-                popularOffline();
+                // We are not online but we have book
+                populateOffline();
             } else {
+                // Fetch volume information
                 new Thread(() -> {
                     try {
                         volume = Utils.getVolume(volumeId);
                     } catch (Exception ignored) {}
-                    runOnUiThread(this::popular);
+                    runOnUiThread(this::populate);
                 }).start();
             }
         } else {
-            popularOffline();
+            populateOffline();
         }
     }
 
-    private void popularOffline() {
-        title.setText(notNull(book.getTitle(), getString(R.string.carregando)));
+    private void populateOffline() {
+        title.setText(notNull(book.getTitle(), getString(R.string.loading)));
         author.setText(notNull(book.getAuthors(), getString(R.string.detalhes_erro_autor)));
         description.setText(R.string.detalhes_erro_descricao);
         categories.setText(R.string.detalhes_erro_categoria);
 
         readingStateButton.setText(readingStateToString(book.getReadingState(), BookDetailsActivity.this));
-        ratingButton.setText(notaToString(book.getScore()));
+        ratingButton.setText(scoreToString(book.getScore()));
         tags.setText(notNull(book.getTags(), ""));
 
-        String inicioStr = Utils.dateToString(book.getReadingStartDate());
-        String fimStr = Utils.dateToString(book.getReadingEndDate());
-        readingStart.setText(inicioStr.equals("")
+        String startStr = Utils.dateToString(book.getReadingStartDate());
+        String endStr = Utils.dateToString(book.getReadingEndDate());
+        readingStart.setText(startStr.equals("")
                 ? getString(R.string.inicio_leitura, "-")
-                : getString(R.string.inicio_leitura, inicioStr));
-        readingEnd.setText(fimStr.equals("")
+                : getString(R.string.inicio_leitura, startStr));
+        readingEnd.setText(endStr.equals("")
                 ? getString(R.string.termino_leitura, "-")
-                : getString(R.string.termino_leitura, fimStr));
+                : getString(R.string.termino_leitura, endStr));
 
         if (isPresentInList) {
-            configurarListeners();
+            /*
+             * We have a book already saved in the local database, set up listeners,
+             * show some views so the user can update the reading information, edit
+             * tags, favorite, add comments etc.
+             */
+            setUpListeners();
             moreDetailsLayout.setVisibility(View.VISIBLE);
+
+            // We are offline here, no cover image to fetch
             cover.setImageResource(R.drawable.broken_image);
             favoriteButton.setVisibility(View.VISIBLE);
             if (book.isFavorite())
-                favoriteButton.setImageResource(R.drawable.ic_favorito_ativado);
+                favoriteButton.setImageResource(R.drawable.ic_favorite_enabled);
             else
-                favoriteButton.setImageResource(R.drawable.ic_favorito);
+                favoriteButton.setImageResource(R.drawable.ic_favorite);
             isFavorite = book.isFavorite();
         } else {
             favoriteButton.setVisibility(View.INVISIBLE);
         }
     }
 
-    private void popular() {
+    private void populate() {
         if (book == null) {
+            // No book provided (adding to a list?), create an empty one
             book = new Book();
             readingStateButton.setText(R.string.add_lista);
-            ratingButton.setText(notaToString(0));
+            ratingButton.setText(scoreToString(0));
             ratingButton.setEnabled(false);
             ratingButton.setTextColor(Color.parseColor("#9e9e9e"));
         } else {
-            popularOffline();
+            populateOffline();
         }
 
         if (isPresentInList)
@@ -349,7 +426,7 @@ public class BookDetailsActivity extends AppCompatActivity {
         if (volume != null) {
             Volume.VolumeInfo volumeInfo = volume.getVolumeInfo();
             if (volumeInfo != null) {
-                title.setText(notNull(volumeInfo.getTitle(), getString(R.string.carregando)));
+                title.setText(notNull(volumeInfo.getTitle(), getString(R.string.loading)));
                 if (volumeInfo.getAuthors() != null)
                     author.setText(TextUtils.join(", ", volumeInfo.getAuthors()));
 
@@ -377,18 +454,18 @@ public class BookDetailsActivity extends AppCompatActivity {
                 if (volumeInfo.getImageLinks() != null)
                     Picasso.with(this)
                             .load(volumeInfo.getImageLinks().getThumbnail())
-                            .placeholder(R.drawable.carregando_imagem)
+                            .placeholder(R.drawable.loading_image)
                             .error(R.drawable.broken_image)
                             .into(cover);
                 else
                     Picasso.with(this).load(R.drawable.broken_image).into(cover);
             }
         }
-        configurarListeners();
+        setUpListeners();
     }
 
-    private void configurarListeners() {
-        readingStateButton.setOnClickListener(estadoListener);
+    private void setUpListeners() {
+        readingStateButton.setOnClickListener(stateListener);
         readingStart.setOnClickListener(dateListener(true));
         readingEnd.setOnClickListener(dateListener(false));
         ratingButton.setOnClickListener(v -> {
@@ -399,7 +476,7 @@ public class BookDetailsActivity extends AppCompatActivity {
                     .setSingleChoiceItems(notas, checkedItem, (dialog, which) -> {
                         book.setScore(which + 1);
                         bookBox.put(book);
-                        ratingButton.setText(notaToString(which + 1));
+                        ratingButton.setText(scoreToString(which + 1));
                         dialog.dismiss();
                     }).show();
         });
@@ -407,18 +484,18 @@ public class BookDetailsActivity extends AppCompatActivity {
             if (isFavorite) {
                 book.setFavorite(false);
                 favoriteButton.setColorFilter(null);
-                favoriteButton.setImageResource(R.drawable.ic_favorito);
+                favoriteButton.setImageResource(R.drawable.ic_favorite);
                 isFavorite = false;
             } else {
                 book.setFavorite(true);
                 favoriteButton.setColorFilter(null);
-                favoriteButton.setImageResource(R.drawable.ic_favorito_ativado);
+                favoriteButton.setImageResource(R.drawable.ic_favorite_enabled);
                 isFavorite = true;
             }
             bookBox.put(book);
         });
         favoriteButton.setOnLongClickListener(view -> {
-            Toast.makeText(BookDetailsActivity.this, "Favoritar / Desfavoritar", Toast.LENGTH_SHORT).show();
+            Toast.makeText(BookDetailsActivity.this, R.string.favorite_a_book, Toast.LENGTH_SHORT).show();
             return true;
         });
         saveTagsButton.setOnClickListener(v -> {
@@ -427,8 +504,14 @@ public class BookDetailsActivity extends AppCompatActivity {
         });
     }
 
-    private String notaToString(int nota) {
-        return nota == 0 ? getString(R.string.nota_sem_nota) : getString(R.string.nota_format, nota);
+    /**
+     * Formats a score string given a book score
+     *
+     * @param score the book's score set by the user
+     * @return the formatted string e.g "Score: 5" or "No score" if no valid score is given
+     */
+    private String scoreToString(int score) {
+        return score == 0 ? getString(R.string.score_no_score) : getString(R.string.score_format, score);
     }
 
     private void bindViews() {
@@ -447,10 +530,11 @@ public class BookDetailsActivity extends AppCompatActivity {
         readingEnd = findViewById(R.id.detalhes_fim_leitura);
         favoriteButton = findViewById(R.id.detalhes_favorito);
 
-        configurarAnimacoes();
+        setUpAnimations();
     }
 
-    private void configurarAnimacoes() {
+    // TextSwitcher animations for smoothness' sake
+    private void setUpAnimations() {
         title.setFactory(() -> {
             TextView textView = new TextView(BookDetailsActivity.this);
             textView.setGravity(Gravity.CENTER_HORIZONTAL);

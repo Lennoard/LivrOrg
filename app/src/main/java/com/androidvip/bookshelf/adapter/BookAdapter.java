@@ -19,6 +19,7 @@ import com.androidvip.bookshelf.App;
 import com.androidvip.bookshelf.R;
 import com.androidvip.bookshelf.activity.BookDetailsActivity;
 import com.androidvip.bookshelf.model.Book;
+import com.androidvip.bookshelf.util.K;
 import com.androidvip.bookshelf.util.Utils;
 import com.google.api.services.books.model.Volume;
 import com.squareup.picasso.Picasso;
@@ -27,50 +28,52 @@ import java.util.List;
 
 import io.objectbox.Box;
 
-public class LivroAdapter extends RecyclerView.Adapter<LivroAdapter.ViewHolder> {
+public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
     private Activity activity;
     private List<Book> mDataSet;
-    private Box<Book> livroBox;
-    private boolean livrosFinalizados;
+    private Box<Book> bookBox;
+    private boolean finishedBooks;
     private CoordinatorLayout cl;
 
-    public LivroAdapter(Activity activity, List<Book> list, boolean livrosFinalizados) {
+    public BookAdapter(Activity activity, List<Book> list, boolean finishedBooks) {
         this.activity = activity;
-        this.livrosFinalizados = livrosFinalizados;
+        this.finishedBooks = finishedBooks;
         mDataSet = list;
+        bookBox = ((App) activity.getApplication()).getBoxStore().boxFor(Book.class);
+        // Snackbars view
         cl = activity.findViewById(R.id.cl);
-        livroBox = ((App) activity.getApplication()).getBoxStore().boxFor(Book.class);
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        TextView titulo, autores, data;
-        RatingBar nota;
-        ImageView capa;
-        RelativeLayout cardLayout, notaLayout;
+        TextView title, authors, date;
+        RatingBar rating;
+        ImageView cover;
+        RelativeLayout cardLayout, ratingLayout;
 
         ViewHolder(View v){
             super(v);
-            titulo = v.findViewById(R.id.lista_titulo);
-            autores = v.findViewById(R.id.lista_autores);
-            data = v.findViewById(R.id.lista_data);
-            nota = v.findViewById(R.id.lista_nota);
-            capa = v.findViewById(R.id.lista_capa_livro);
-            cardLayout = v.findViewById(R.id.card_layout);
-            notaLayout = v.findViewById(R.id.lista_layout_nota);
+            title = v.findViewById(R.id.list_book_title);
+            authors = v.findViewById(R.id.list_book_authors);
+            date = v.findViewById(R.id.list_book_date);
+            rating = v.findViewById(R.id.list_book_rating);
+            cover = v.findViewById(R.id.list_book_cover);
+            cardLayout = v.findViewById(R.id.list_book_card_layout);
+            ratingLayout = v.findViewById(R.id.list_book_layout_rating);
         }
     }
 
     @Override
-    public LivroAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(activity).inflate(R.layout.item_lista_livro, parent,false);
-        return new LivroAdapter.ViewHolder(v);
+    public BookAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(activity).inflate(R.layout.list_item_book, parent,false);
+        return new BookAdapter.ViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(final LivroAdapter.ViewHolder holder, int position) {
-        holder.capa.setImageResource(R.drawable.carregando_imagem);
+    public void onBindViewHolder(final BookAdapter.ViewHolder holder, int position) {
+        holder.cover.setImageResource(R.drawable.loading_image);
         Book book = mDataSet.get(position);
 
+        // Get volume form the book id once so we can fetch and display the book cover
         new Thread(() -> {
             try {
                 Volume volume = Utils.getVolume(book.getGoogleBooksId());
@@ -78,21 +81,21 @@ public class LivroAdapter extends RecyclerView.Adapter<LivroAdapter.ViewHolder> 
                     if (volume.getVolumeInfo().getImageLinks() != null)
                         Picasso.with(activity)
                                 .load(volume.getVolumeInfo().getImageLinks().getThumbnail())
-                                .placeholder(R.drawable.carregando_imagem)
+                                .placeholder(R.drawable.loading_image)
                                 .error(R.drawable.broken_image)
-                                .into(holder.capa);
+                                .into(holder.cover);
                     else
-                        holder.capa.setImageResource(R.drawable.broken_image);
+                        holder.cover.setImageResource(R.drawable.broken_image);
                 });
             } catch (Exception e){
-                activity.runOnUiThread(() -> holder.capa.setImageResource(R.drawable.broken_image));
+                activity.runOnUiThread(() -> holder.cover.setImageResource(R.drawable.broken_image));
             }
         }).start();
 
-        holder.titulo.setText(book.getTitle());
-        holder.autores.setText(book.getAuthors());
-        holder.nota.setRating(book.getScore());
-        holder.data.setText(livrosFinalizados
+        holder.title.setText(book.getTitle());
+        holder.authors.setText(book.getAuthors());
+        holder.rating.setRating(book.getScore());
+        holder.date.setText(finishedBooks
                 ? Utils.dateToString(book.getReadingEndDate())
                 : Utils.dateToString(book.getReadingStartDate())
         );
@@ -102,16 +105,16 @@ public class LivroAdapter extends RecyclerView.Adapter<LivroAdapter.ViewHolder> 
             popup.getMenuInflater().inflate(R.menu.popup, popup.getMenu());
             popup.setOnMenuItemClickListener(item -> {
                 switch (item.getItemId()){
-                    case R.id.popup_remover:
-                        Book bookParaRemover = mDataSet.get(position);
+                    case R.id.popup_remove_book:
+                        Book bookToRemove = mDataSet.get(position);
                         new AlertDialog.Builder(activity)
                                 .setTitle(android.R.string.dialog_alert_title)
                                 .setMessage(activity.getString(R.string.aviso_remover_livro, book.getTitle()))
-                                .setPositiveButton(android.R.string.yes, (dialog, which) -> removerLivro(bookParaRemover, position))
+                                .setPositiveButton(android.R.string.yes, (dialog, which) -> removeBook(bookToRemove, position))
                                 .setNegativeButton(android.R.string.cancel, (dialog, which) -> {})
                                 .show();
                         break;
-                    case R.id.popup_books:
+                    case R.id.popup_google_books:
                         Utils.webPage(activity, "https://books.google.com.br/books?id=" + book.getGoogleBooksId());
                         break;
                 }
@@ -123,38 +126,44 @@ public class LivroAdapter extends RecyclerView.Adapter<LivroAdapter.ViewHolder> 
 
         holder.cardLayout.setOnClickListener(v -> {
             Intent intent = new Intent(activity, BookDetailsActivity.class);
-            intent.putExtra("livroId", livroBox.getId(book));
+            intent.putExtra(K.EXTRA_BOOK_ID_DB, bookBox.getId(book));
             activity.startActivity(intent);
         });
 
-        holder.notaLayout.setOnClickListener(v -> {
-            int checkedItem = book.getScore() == 0 ? -1 : book.getScore() -1;
-            String[] notas = activity.getResources().getStringArray(R.array.scores_array);
+        // Let the user set a score with a single choice dialog selection
+        holder.ratingLayout.setOnClickListener(v -> {
+            /*
+            * The dialog's checked item. If the book has no reading state yet (0),
+            * then use -1, which is the default value and checks nothing, otherwise
+            * use the book's reading state -1 (reading states start from 1)
+            */
+            int checkedItem = book.getScore() == 0 ? -1 : book.getScore() - 1;
+            String[] scores = activity.getResources().getStringArray(R.array.scores_array);
             new AlertDialog.Builder(activity)
-                    .setTitle(R.string.nota)
-                    .setSingleChoiceItems(notas, checkedItem, (dialog, which) -> {
+                    .setTitle(R.string.score)
+                    .setSingleChoiceItems(scores, checkedItem, (dialog, which) -> {
                         book.setScore(which + 1);
-                        livroBox.put(book);
-                        holder.nota.setRating(which + 1);
+                        bookBox.put(book);
+                        holder.rating.setRating(which + 1);
                         dialog.dismiss();
                     }).show();
         });
     }
 
-    private void removerLivro(Book book, int position) {
-        livroBox.remove(book);
+    private void removeBook(Book bookToRemove, int position) {
+        bookBox.remove(bookToRemove);
         mDataSet.remove(position);
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, getItemCount());
-        Snackbar.make(cl, activity.getString(R.string.item_removido, book.getTitle()), Snackbar.LENGTH_LONG)
-                .setAction(R.string.desfazer, v1 -> addLivro(book)).show();
+        Snackbar.make(cl, activity.getString(R.string.item_removido, bookToRemove.getTitle()), Snackbar.LENGTH_LONG)
+                .setAction(R.string.undo, v1 -> addBook(bookToRemove)).show();
     }
 
-    private void addLivro(Book book) {
-        livroBox.put(book);
-        mDataSet.add(book);
+    private void addBook(Book bookToAdd) {
+        bookBox.put(bookToAdd);
+        mDataSet.add(bookToAdd);
         notifyDataSetChanged();
-        Snackbar.make(cl, activity.getString(R.string.item_adicionado, book.getTitle()), Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(cl, activity.getString(R.string.item_adicionado, bookToAdd.getTitle()), Snackbar.LENGTH_SHORT).show();
     }
 
     @Override

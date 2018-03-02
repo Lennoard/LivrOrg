@@ -3,13 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="8dp"
-    android:id="@+id/comentarios_item_layout"
+    android:id="@+id/list_comment_layout"
     style="@style/SelectableItemBackground">
 
     <TextView
         android:layout_width="64dp"
         android:layout_height="64dp"
-        android:id="@+id/comentarios_cap"
+        android:id="@+id/list_comment_location"
         android:layout_marginEnd="16dp"
         android:maxLines="2"
         android:gravity="center"
@@ -22,19 +22,19 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/comentarios_titulo"
+        android:id="@+id/list_comment_title"
         android:layout_marginTop="6dp"
         android:textSize="16sp"
         android:textColor="#212121"
         android:maxLines="1"
-        android:layout_toEndOf="@id/comentarios_cap"/>
+        android:layout_toEndOf="@id/list_comment_location"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/comentarios_data"
-        android:layout_below="@id/comentarios_titulo"
-        android:layout_toEndOf="@id/comentarios_cap"
+        android:id="@+id/list_comment_date"
+        android:layout_below="@id/list_comment_title"
+        android:layout_toEndOf="@id/list_comment_location"
         android:maxLines="1"
         android:layout_marginTop="2dp" />
 

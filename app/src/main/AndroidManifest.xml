@@ -41,11 +41,11 @@
         </activity>
         <activity
             android:name=".activity.PesquisarActivity"
-            android:label="@string/pesquisar"
+            android:label="@string/search"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.app.searchable"
-                android:resource="@xml/searchable_pesquisar" />
+                android:resource="@xml/searchable_search" />
         </activity>
         <activity
             android:name=".activity.BookDetailsActivity"

@@ -32,7 +32,7 @@ public class CommentDetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_comentarios_detalhes);
+        setContentView(R.layout.activity_comment_details);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -46,7 +46,7 @@ public class CommentDetailsActivity extends AppCompatActivity {
             // Show details of a comment given its id,
             // populating views accordingly
             commentId = intent.getLongExtra(K.EXTRA_COMMENT_ID, 0);
-            bookId = intent.getLongExtra("bookId", 0);
+            bookId = intent.getLongExtra(K.EXTRA_BOOK_ID_DB, 0);
             if (commentId > 0) {
                 comment = commentBox.get(commentId);
                 bookId = comment.getBookId();
@@ -129,7 +129,7 @@ public class CommentDetailsActivity extends AppCompatActivity {
     }
 
     /**
-     * Gets the text of an EdtText in a String form
+     * Gets the text of an EditText in a String form
      *
      * @throws Exception if the String is empty
      */
@@ -145,7 +145,10 @@ public class CommentDetailsActivity extends AppCompatActivity {
 
     private void setText(EditText editText, String text) {
         if (text.equals("0"))
-            // 0 is not a valid page or chapter, so use a blank String instead
+            /*
+             * 0 is not a valid page or chapter, but the user can comment about
+             * something that is none of which so use a blank String instead
+             */
             setText(editText, "");
         else {
             editText.setText(text);
@@ -160,5 +163,4 @@ public class CommentDetailsActivity extends AppCompatActivity {
         editPage = findViewById(R.id.detalhes_comentario_pagina);
         editComment = findViewById(R.id.detalhes_comentario_coment);
     }
-
 }

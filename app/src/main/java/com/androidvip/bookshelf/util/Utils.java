@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -42,7 +41,7 @@ public final class Utils {
 
     /**
      * Searches for volumes given a query. The query must be built with a valid prefix.
-     * You should not this method from the main thread.
+     * You should not use this method from the main thread.
      *
      * @param query The string representing the query used to search through the Books API database
      * @return A list of volumes that matches the query
@@ -93,7 +92,7 @@ public final class Utils {
     }
 
     /**
-     * Coverts java.util.Date to dd/MM/yyyy format e.g 08/03/1992
+     * Coverts java.util.Date to dd/MM/yyyy HH:mm format e.g 08/03/1992 12:53
      *
      * @param date the Date reference
      * @return an empty String if {@param date} is illegal, the formatted String otherwise
@@ -125,12 +124,11 @@ public final class Utils {
 
     /**
      * One of the possible methods to hide the soft keyboard.
-     * Used when displaying bottom information on the screen,
+     * Used here when displaying bottom information on the screen,
      * such as a {@link android.support.design.widget.Snackbar]
      *
      * @param activity the Activity that holds the currently focused view
      */
-
     public static void hideKeyboard(Activity activity) {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         View view = activity.getCurrentFocus();

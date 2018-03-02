@@ -1,21 +1,21 @@
 <resources>
     <string name="app_name">LivrOrg</string>
-    <string name="navigation_drawer_open">Abir menu de navegação</string>
-    <string name="navigation_drawer_close">Fechar menu de navegação</string>
-    <string name="pesquisar">Pesquisar</string>
-    <string name="title">Título</string>
-    <string name="autor">Autor</string>
-    <string name="pesquisar_por">Pesquisar por</string>
-    <string name="add_manualmente">Adicionar manualmente</string>
-    <string name="remover_da_lista">Remover da lista</string>
-    <string name="ver_no_google_books">Ver no Google Books</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="search">Search</string>
+    <string name="title">Title</string>
+    <string name="author">Author</string>
+    <string name="search_by">Search by</string>
+    <string name="manually_add">Manually add</string>
+    <string name="remove_from_list">Remove from list</string>
+    <string name="view_in_google_books">View in Google Books</string>
     <string name="aviso_remover_livro">Tem certeza que deseja remover \"%s\" da sua lista?</string>
     <string name="aviso_remover_comentario">Tem certeza que deseja remover esse comentário?</string>
     <string name="aviso_atualizar_finalizado">Deseja atualizar o estado do book para \"finalizado\"?</string>
     <string name="aviso_atualizar_lendo">Deseja atualizar o estado do book para \"lendo\"?</string>
     <string name="item_removido">%s foi removido</string>
     <string name="item_adicionado">%s foi adicionado à lista de desejos</string>
-    <string name="desfazer">Desfazer</string>
+    <string name="undo">Desfazer</string>
     <string name="detalhes">Detalhes</string>
     <string name="detalhes_erro">Não foi possível carregar os detalhes do book</string>
     <string name="detalhes_erro_descricao">Não foi possível encontrar uma descrição para o book</string>
@@ -26,8 +26,8 @@
     <string name="detalhes_erro_maturidade">nenhuma classificação de maturidade disponível</string>
     <string name="nenhuma_tag">Nenhuma tag</string>
     <string name="score">Nota</string>
-    <string name="nota_sem_nota">Sem score</string>
-    <string name="nota_format">Nota: %d</string>
+    <string name="score_no_score">Sem score</string>
+    <string name="score_format">Nota: %d</string>
     <string name="comentarios">Comentários</string>
     <string name="comment">Comentário</string>
     <string name="estado_leitura_lendo">Lendo</string>
@@ -36,7 +36,7 @@
     <string name="estado_leitura_finalizado">Finalizado</string>
     <string name="estado_leitura_em_espera">Em espera</string>
     <string name="add_lista">Adicionar à lista</string>
-    <string name="carregando">Carregando…</string>
+    <string name="loading">Carregando…</string>
     <string name="descricao">Descrição</string>
     <string name="desistencias">Desistências</string>
     <string name="favoritos">Favoritos</string>
@@ -55,7 +55,7 @@
     <string name="logging_in">Entrando…</string>
     <string name="confirmar_senha">Confirmar password</string>
     <string name="cadastrar_erro_senha">As senhas não correspondem</string>
-    <string name="registros">Registros</string>
+    <string name="records">Registros</string>
     <string name="inicio_leitura">Início da leitura: %s</string>
     <string name="termino_leitura">Término da leitura: %s</string>
     <string name="categorias">Categorias</string>
@@ -90,4 +90,5 @@
     <string name="tap_target_add">Toque aqui para procurar e adicionar um book</string>
     <string name="licencas_open_source">Licenças de código aberto</string>
     <string name="browser_failure">Could not start the browser: </string>
+    <string name="favorite_a_book">Favorite a book</string>
 </resources>

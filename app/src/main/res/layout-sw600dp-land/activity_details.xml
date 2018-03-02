@@ -33,7 +33,7 @@
             android:animateLayoutChanges="true"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <include layout="@layout/content_detalhes" />
+            <include layout="@layout/content_details" />
 
             <ImageView
                 android:layout_width="wrap_content"

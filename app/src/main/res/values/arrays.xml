@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="pesquisar_por_array">
+    <string-array name="search_by_array">
         <item>@string/title</item>
-        <item>@string/autor</item>
+        <item>@string/author</item>
         <item>ISBN</item>
     </string-array>
     <string-array name="reading_state_array">
@@ -13,10 +13,10 @@
         <item>@string/estado_leitura_finalizado</item>
     </string-array>
     <string-array name="scores_array">
-        <item>1 - Horrível</item>
-        <item>2 - Ruim</item>
-        <item>3 - Bom</item>
-        <item>4 - Excelente</item>
-        <item>5 - Obra prima</item>
+        <item>1 - Horrible</item>
+        <item>2 - Bad</item>
+        <item>3 - Good</item>
+        <item>4 - Excellent</item>
+        <item>5 - Masterpiece</item>
     </string-array>
 </resources>

@@ -73,7 +73,7 @@ public class PesquisarActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pesquisar);
+        setContentView(R.layout.activity_search);
         sp = PreferenceManager.getDefaultSharedPreferences(this);
 
         Intent intent = getIntent();
@@ -111,9 +111,9 @@ public class PesquisarActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (adicionarActivity)
-            getMenuInflater().inflate(R.menu.adicionar_livro, menu);
+            getMenuInflater().inflate(R.menu.book_add, menu);
         else
-            getMenuInflater().inflate(R.menu.pesquisar_livro, menu);
+            getMenuInflater().inflate(R.menu.book_search, menu);
 
         setUpSearch(menu);
         return true;
@@ -127,8 +127,8 @@ public class PesquisarActivity extends AppCompatActivity {
 
     private void setUpToolBar(Toolbar toolbar) {
         if (!sp.getBoolean(K.PREF.TAP_TARGET_SEARCH, false)) {
-            toolbar.inflateMenu(adicionarActivity ? R.menu.adicionar_livro : R.menu.pesquisar_livro);
-            toolbar.setTitle(adicionarActivity ? R.string.add : R.string.pesquisar);
+            toolbar.inflateMenu(adicionarActivity ? R.menu.book_add : R.menu.book_search);
+            toolbar.setTitle(adicionarActivity ? R.string.add : R.string.search);
             showTapTarget(toolbar);
             toolbar.setOnMenuItemClickListener(item -> {
                 setUpMenuItemAction(item);
@@ -139,7 +139,7 @@ public class PesquisarActivity extends AppCompatActivity {
             setSupportActionBar(toolbar);
             ActionBar actionBar = getSupportActionBar();
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle(adicionarActivity ? R.string.add : R.string.pesquisar);
+            actionBar.setTitle(adicionarActivity ? R.string.add : R.string.search);
         }
     }
 
@@ -174,9 +174,9 @@ public class PesquisarActivity extends AppCompatActivity {
                 break;
 
             case R.id.action_pesquisar_por:
-                String[] array = getResources().getStringArray(R.array.pesquisar_por_array);
+                String[] array = getResources().getStringArray(R.array.search_by_array);
                 new AlertDialog.Builder(this)
-                        .setTitle(R.string.pesquisar_por)
+                        .setTitle(R.string.search_by)
                         .setSingleChoiceItems(array, checkedItem, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -207,9 +207,9 @@ public class PesquisarActivity extends AppCompatActivity {
                     .continueOnCancel(true)
                     .targets(
                             TapTarget.forToolbarMenuItem(toolbar, R.id.action_pesquisar,
-                                    getString(R.string.pesquisar), getString(R.string.tap_target_pesquisa, new String(Character.toChars(0x1F50D)))).id(1),
+                                    getString(R.string.search), getString(R.string.tap_target_pesquisa, new String(Character.toChars(0x1F50D)))).id(1),
                             TapTarget.forToolbarMenuItem(toolbar, R.id.action_pesquisar_por,
-                                    getString(R.string.pesquisar_por), getString(R.string.tap_target_pesquisar_por)).id(2)
+                                    getString(R.string.search_by), getString(R.string.tap_target_pesquisar_por)).id(2)
                     ).listener(new TapTargetSequence.Listener() {
                 @Override
                 public void onSequenceFinish() {

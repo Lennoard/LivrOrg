@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.androidvip.bookshelf.activity.BookDetailsActivity"
-    tools:showIn="@layout/activity_detalhes"
+    tools:showIn="@layout/activity_details"
     android:orientation="horizontal">
 
     <android.support.v4.widget.NestedScrollView
@@ -26,7 +26,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:id="@+id/detalhes_titulo"
-                android:text="@string/carregando"
+                android:text="@string/loading"
                 android:textSize="20sp"
                 android:paddingBottom="9dp"
 
@@ -54,7 +54,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/detalhes_publicacao"
                 android:gravity="center"
-                android:text="@string/carregando"
+                android:text="@string/loading"
                 android:padding="12dp"
                 android:background="#eeeeee"
                 android:textColor="#212121"/>
@@ -78,7 +78,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="12dp"
                 android:textIsSelectable="true"
-                android:text="@string/carregando"/>
+                android:text="@string/loading"/>
 
             <View
                 android:layout_width="match_parent"
@@ -98,7 +98,7 @@
                 android:id="@+id/detalhes_categorias"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="12dp"
-                android:text="@string/carregando"/>
+                android:text="@string/loading"/>
 
             <View
                 android:layout_width="match_parent"
@@ -118,7 +118,7 @@
                 android:id="@+id/detalhes_classificacoes"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="12dp"
-                android:text="@string/carregando"/>
+                android:text="@string/loading"/>
 
             <View
                 android:layout_width="match_parent"
@@ -142,7 +142,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:text="@string/registros"
+                    android:text="@string/records"
                     android:textColor="@color/colorAccent"/>
 
                 <TextView
@@ -184,7 +184,7 @@
                     android:paddingTop="16dp"
                     android:paddingBottom="16dp"
                     android:drawableEnd="@drawable/ic_chevron_right"
-                    android:onClick="comments"
+                    android:onClick="goToComments"
                     style="@style/SelectableItemBackground"/>
 
             </LinearLayout>
@@ -239,7 +239,7 @@
             android:layout_width="113dp"
             android:layout_height="151dp"
             android:id="@+id/detalhes_capa"
-            android:src="@drawable/carregando_imagem"
+            android:src="@drawable/loading_image"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="12dp" />
 
@@ -260,7 +260,7 @@
                 android:layout_marginBottom="8dp"
                 android:maxLines="1"
                 android:ellipsize="end"
-                android:text="@string/carregando" />
+                android:text="@string/loading" />
 
             <Button
                 android:layout_width="match_parent"
@@ -270,13 +270,13 @@
                 android:background="@drawable/botao_detalhes_selector"
                 android:maxLines="1"
                 android:ellipsize="end"
-                android:text="@string/carregando" />
+                android:text="@string/loading" />
 
             <ImageView
                 android:layout_width="48dp"
                 android:layout_height="match_parent"
                 android:id="@+id/detalhes_favorito"
-                android:src="@drawable/ic_favorito"
+                android:src="@drawable/ic_favorite"
                 android:visibility="visible"
                 android:layout_marginTop="8dp"
                 android:layout_gravity="end"

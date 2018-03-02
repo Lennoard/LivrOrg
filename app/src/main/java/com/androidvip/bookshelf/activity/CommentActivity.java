@@ -15,7 +15,7 @@ import android.widget.Toast;
 
 import com.androidvip.bookshelf.App;
 import com.androidvip.bookshelf.R;
-import com.androidvip.bookshelf.adapter.ComentarioAdapter;
+import com.androidvip.bookshelf.adapter.CommentAdapter;
 import com.androidvip.bookshelf.model.Comment;
 import com.androidvip.bookshelf.model.Comment_;
 import com.androidvip.bookshelf.util.K;
@@ -35,16 +35,16 @@ public class CommentActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_comentarios);
+        setContentView(R.layout.activity_comments);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
         if (intent != null) {
-            bookId = intent.getLongExtra(K.EXTRA_BOOK_ID, 0);
+            bookId = intent.getLongExtra(K.EXTRA_BOOK_ID_DB, 0);
             if (bookId <= 0) {
-                // This activity shows comments of a book. We could not receive
+                // This activity shows goToComments of a book. We could not receive
                 // a valid book id, therefore there is nothing else to do here
                 Toast.makeText(this, R.string.comments_error, Toast.LENGTH_LONG).show();
                 finish();
@@ -63,7 +63,7 @@ public class CommentActivity extends AppCompatActivity {
         FloatingActionButton fab = findViewById(R.id.fab_comments);
         fab.setOnClickListener(view -> {
             Intent i = new Intent(CommentActivity.this, CommentDetailsActivity.class);
-            i.putExtra(K.EXTRA_BOOK_ID, bookId);
+            i.putExtra(K.EXTRA_BOOK_ID_DB, bookId);
             startActivity(i);
         });
         
@@ -90,11 +90,11 @@ public class CommentActivity extends AppCompatActivity {
     private void setUpRecyclerView(List<Comment> commentList) {
         swipeLayout.setRefreshing(true);
         if (rv != null) {
-            mAdapter = new ComentarioAdapter(this, commentList);
+            mAdapter = new CommentAdapter(this, commentList);
             rv.setAdapter(mAdapter);
         } else {
             rv = findViewById(R.id.rv_comments);
-            mAdapter = new ComentarioAdapter(this, commentList);
+            mAdapter = new CommentAdapter(this, commentList);
 
             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
             rv.setHasFixedSize(true);

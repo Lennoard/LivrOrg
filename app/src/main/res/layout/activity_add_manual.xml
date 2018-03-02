@@ -56,7 +56,7 @@
                         android:layout_height="wrap_content"
                         android:inputType="textPersonName"
                         android:id="@+id/manual_add_author"
-                        android:hint="@string/autor" />
+                        android:hint="@string/author" />
 
                 </android.support.design.widget.TextInputLayout>
 
@@ -159,7 +159,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/add_manual_nota"
-                        android:text="@string/nota_sem_nota"/>
+                        android:text="@string/score_no_score"/>
 
                 </LinearLayout>
 

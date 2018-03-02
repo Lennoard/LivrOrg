@@ -30,7 +30,7 @@ import android.view.MenuItem;
 
 import com.androidvip.bookshelf.App;
 import com.androidvip.bookshelf.R;
-import com.androidvip.bookshelf.adapter.LivroAdapter;
+import com.androidvip.bookshelf.adapter.BookAdapter;
 import com.androidvip.bookshelf.model.Book;
 import com.androidvip.bookshelf.model.Book_;
 import com.androidvip.bookshelf.util.K;
@@ -305,11 +305,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void configurarRecyclerView(List<Book> lista) {
         if (rv != null) {
-            mAdapter = new LivroAdapter(this, lista, false);
+            mAdapter = new BookAdapter(this, lista, false);
             rv.setAdapter(mAdapter);
         } else {
             rv = findViewById(R.id.rv_main);
-            mAdapter = new LivroAdapter(this, lista, false);
+            mAdapter = new BookAdapter(this, lista, false);
 
             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
             rv.setHasFixedSize(true);

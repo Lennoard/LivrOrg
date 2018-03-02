@@ -9,29 +9,29 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="138dp"
-        android:id="@+id/card_layout"
+        android:id="@+id/list_book_card_layout"
         style="@style/SelectableItemBackground">
 
         <ImageView
-            android:id="@+id/lista_capa_livro"
+            android:id="@+id/list_book_cover"
             android:layout_width="96dp"
             android:layout_height="138dp"
-            android:src="@drawable/carregando_imagem" />
+            android:src="@drawable/loading_image" />
 
         <TextView
-            android:id="@+id/lista_titulo"
+            android:id="@+id/list_book_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/lista_capa_livro"
+            android:layout_toEndOf="@+id/list_book_cover"
             android:theme="@style/TextoVolumeTitulo" />
 
         <TextView
-            android:id="@+id/lista_autores"
+            android:id="@+id/list_book_authors"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:theme="@style/TextoVolumeAutor"
-            android:layout_below="@+id/lista_titulo"
-            android:layout_toEndOf="@+id/lista_capa_livro" />
+            android:layout_below="@+id/list_book_title"
+            android:layout_toEndOf="@+id/list_book_cover" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -39,8 +39,8 @@
             android:orientation="vertical"
             android:gravity="center"
             android:layout_marginTop="16dp"
-            android:layout_toEndOf="@+id/lista_capa_livro"
-            android:layout_below="@+id/lista_autores">
+            android:layout_toEndOf="@+id/list_book_cover"
+            android:layout_below="@+id/list_book_authors">
 
             <View
                 android:layout_width="match_parent"

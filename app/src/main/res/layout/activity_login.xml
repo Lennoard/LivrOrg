@@ -77,7 +77,7 @@
                 style="?attr/buttonBarButtonStyle"
                 android:layout_weight="1"
                 android:text="@string/log_in"
-                android:onClick="logInBotao"/>
+                android:onClick="logInButton"/>
 
         </LinearLayout>
 

@@ -16,55 +16,56 @@ import com.androidvip.bookshelf.App;
 import com.androidvip.bookshelf.R;
 import com.androidvip.bookshelf.activity.CommentDetailsActivity;
 import com.androidvip.bookshelf.model.Comment;
+import com.androidvip.bookshelf.util.K;
 import com.androidvip.bookshelf.util.Utils;
 
 import java.util.List;
 
 import io.objectbox.Box;
 
-public class ComentarioAdapter extends RecyclerView.Adapter<ComentarioAdapter.ViewHolder> {
+public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHolder> {
     private Activity activity;
     private List<Comment> mDataSet;
-    private Box<Comment> comentarioBox;
+    private Box<Comment> commentBox;
     private CoordinatorLayout cl;
 
-    public ComentarioAdapter(Activity activity, List<Comment> list) {
+    public CommentAdapter(Activity activity, List<Comment> list) {
         this.activity = activity;
         mDataSet = list;
         cl = activity.findViewById(R.id.cl);
-        comentarioBox = ((App) activity.getApplication()).getBoxStore().boxFor(Comment.class);
+        commentBox = ((App) activity.getApplication()).getBoxStore().boxFor(Comment.class);
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        TextView titulo, data, capitulo;
+        TextView title, date, location;
         RelativeLayout itemLayout;
 
         ViewHolder(View v){
             super(v);
-            titulo = v.findViewById(R.id.comentarios_titulo);
-            data = v.findViewById(R.id.comentarios_data);
-            capitulo = v.findViewById(R.id.comentarios_cap);
-            itemLayout = v.findViewById(R.id.comentarios_item_layout);
+            title = v.findViewById(R.id.list_comment_title);
+            date = v.findViewById(R.id.list_comment_date);
+            location = v.findViewById(R.id.list_comment_location);
+            itemLayout = v.findViewById(R.id.list_comment_layout);
         }
     }
 
     @Override
-    public ComentarioAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(activity).inflate(R.layout.item_lista_comentario, parent,false);
-        return new ComentarioAdapter.ViewHolder(v);
+    public CommentAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(activity).inflate(R.layout.item_list_comment, parent,false);
+        return new CommentAdapter.ViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(final ComentarioAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(final CommentAdapter.ViewHolder holder, int position) {
         Comment comment = mDataSet.get(position);
 
-        holder.titulo.setText(comment.getTitle());
-        holder.data.setText(Utils.dateToString(comment.getDate()));
-        holder.capitulo.setText(capBuilder(comment.getChapter(), comment.getPage()));
+        holder.title.setText(comment.getTitle());
+        holder.date.setText(Utils.dateToString(comment.getDate()));
+        holder.location.setText(buildCommentLocation(comment.getChapter(), comment.getPage()));
 
         holder.itemLayout.setOnClickListener(v -> {
             Intent intent = new Intent(activity, CommentDetailsActivity.class);
-            intent.putExtra("id", comment.getId());
+            intent.putExtra(K.EXTRA_COMMENT_ID, comment.getId());
             activity.startActivity(intent);
         });
 
@@ -74,13 +75,13 @@ public class ComentarioAdapter extends RecyclerView.Adapter<ComentarioAdapter.Vi
                     .setMessage(R.string.aviso_remover_comentario)
                     .setNegativeButton(android.R.string.no, (dialog, which) -> {})
                     .setPositiveButton(android.R.string.yes, (dialog, which) -> {
-                        comentarioBox.remove(comment);
+                        commentBox.remove(comment);
                         mDataSet.remove(position);
                         notifyItemRemoved(position);
                         notifyItemRangeChanged(position, getItemCount());
                         Snackbar.make(cl, activity.getString(R.string.item_removido, comment.getTitle()), Snackbar.LENGTH_LONG)
-                                .setAction(R.string.desfazer, v1 -> {
-                                    comentarioBox.put(comment);
+                                .setAction(R.string.undo, v1 -> {
+                                    commentBox.put(comment);
                                     mDataSet.add(comment);
                                     notifyDataSetChanged();
                                 }).show();
@@ -96,12 +97,19 @@ public class ComentarioAdapter extends RecyclerView.Adapter<ComentarioAdapter.Vi
         return mDataSet == null ? 0 : mDataSet.size();
     }
 
-    private String capBuilder(int cap, int pag) {
-        String capitulo, pagina;
-        capitulo = cap < 10 ? "0" + String.valueOf(cap) : String.valueOf(cap);
-        pagina   = pag < 10 ? "0" + String.valueOf(pag) : String.valueOf(pag);
+    /**
+     * Generates a quick and single display of the comment's location and page.
+     * It will also add 0 before the number if it is smaller than 10 for convenience
+     *
+     * @return The comment's "location" reference in the format Cxx/Pxx
+     * e.g C05/P109
+     */
+    private String buildCommentLocation(int ch, int pg) {
+        String chapter, page;
+        chapter = ch < 10 ? "0" + String.valueOf(ch) : String.valueOf(ch);
+        page    = pg < 10 ? "0" + String.valueOf(pg) : String.valueOf(pg);
 
-        return "C" + capitulo + "/P" + pagina;
+        return "C" + chapter + "/P" + page;
     }
 
 }

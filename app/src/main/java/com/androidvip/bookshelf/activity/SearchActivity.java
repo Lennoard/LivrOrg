@@ -37,23 +37,23 @@ import com.google.api.services.books.model.Volume;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PesquisarActivity extends AppCompatActivity {
+public class SearchActivity extends AppCompatActivity {
     RecyclerView.Adapter mAdapter;
     private RecyclerView rv;
-    private List<Volume> volumesLista = new ArrayList<>();
+    private List<Volume> volumeList = new ArrayList<>();
     private SwipeRefreshLayout swipeLayout;
-    private String prefixo = "intitle:";
-    private String queryAtual = "";
+    private String queryPrefix = "intitle:";
+    private String currentQuery = "";
     private int checkedItem = 0;
-    private boolean adicionarActivity = false;
+    private boolean isAddActivity = false;
     private Snackbar snackNet;
-    private SharedPreferences sp;
+    private SharedPreferences prefs;
 
     private BroadcastReceiver netReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            ImageView offline = findViewById(R.id.detalhes_img_offline);
-            RecyclerView recyclerView = findViewById(R.id.rv_pesquisar);
+            ImageView offline = findViewById(R.id.details_img_offline);
+            RecyclerView recyclerView = findViewById(R.id.rv_search);
             if (intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
                 ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
                 NetworkInfo networkInfo = connectivityManager != null ? connectivityManager.getActiveNetworkInfo() : null;
@@ -74,16 +74,16 @@ public class PesquisarActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-        sp = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         Intent intent = getIntent();
         if (intent != null)
-            adicionarActivity = intent.getBooleanExtra("add", false);
+            isAddActivity = intent.getBooleanExtra(K.EXTRA_IS_ADD_ACTIVITY, false);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setUpToolBar(toolbar);
 
-        swipeLayout = findViewById(R.id.swipe_rv_pesquisar);
+        swipeLayout = findViewById(R.id.swipe_rv_search);
         swipeLayout.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorAccent));
         swipeLayout.setOnRefreshListener(() -> refreshList(true));
 
@@ -93,7 +93,7 @@ public class PesquisarActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        snackNet = Snackbar.make(findViewById(R.id.cl), R.string.erro_sem_conexao, Snackbar.LENGTH_INDEFINITE);
+        snackNet = Snackbar.make(findViewById(R.id.cl), R.string.error_no_connection, Snackbar.LENGTH_INDEFINITE);
         if (!Utils.isOnline(this))
             snackNet.show();
 
@@ -110,7 +110,7 @@ public class PesquisarActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (adicionarActivity)
+        if (isAddActivity)
             getMenuInflater().inflate(R.menu.book_add, menu);
         else
             getMenuInflater().inflate(R.menu.book_search, menu);
@@ -126,9 +126,9 @@ public class PesquisarActivity extends AppCompatActivity {
     }
 
     private void setUpToolBar(Toolbar toolbar) {
-        if (!sp.getBoolean(K.PREF.TAP_TARGET_SEARCH, false)) {
-            toolbar.inflateMenu(adicionarActivity ? R.menu.book_add : R.menu.book_search);
-            toolbar.setTitle(adicionarActivity ? R.string.add : R.string.search);
+        if (!prefs.getBoolean(K.PREF.TAP_TARGET_SEARCH, false)) {
+            toolbar.inflateMenu(isAddActivity ? R.menu.book_add : R.menu.book_search);
+            toolbar.setTitle(isAddActivity ? R.string.add : R.string.search);
             showTapTarget(toolbar);
             toolbar.setOnMenuItemClickListener(item -> {
                 setUpMenuItemAction(item);
@@ -139,26 +139,26 @@ public class PesquisarActivity extends AppCompatActivity {
             setSupportActionBar(toolbar);
             ActionBar actionBar = getSupportActionBar();
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle(adicionarActivity ? R.string.add : R.string.search);
+            actionBar.setTitle(isAddActivity ? R.string.add : R.string.search);
         }
     }
 
     private void setUpSearch(Menu menu) {
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.action_pesquisar).getActionView();
+        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                queryAtual = query;
+                currentQuery = query;
                 refreshList(true);
                 return true;
             }
             @Override
             public boolean onQueryTextChange(String newText) {
                 if (newText.length() > 12) {
-                    queryAtual = newText;
+                    currentQuery = newText;
                     refreshList(false);
                     return true;
                 }
@@ -173,7 +173,7 @@ public class PesquisarActivity extends AppCompatActivity {
                 finish();
                 break;
 
-            case R.id.action_pesquisar_por:
+            case R.id.action_search_by:
                 String[] array = getResources().getStringArray(R.array.search_by_array);
                 new AlertDialog.Builder(this)
                         .setTitle(R.string.search_by)
@@ -181,39 +181,48 @@ public class PesquisarActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 switch (which) {
-                                    case 0: prefixo = "intitle:";  break;
-                                    case 1: prefixo = "inauthor:"; break;
-                                    case 2: prefixo = "isbn:";     break;
+                                    case 0:
+                                        queryPrefix = "intitle:";
+                                        item.setIcon(R.drawable.ic_action_title);
+                                        break;
+                                    case 1:
+                                        queryPrefix = "inauthor:";
+                                        item.setIcon(R.drawable.ic_action_author);
+                                        break;
+                                    case 2:
+                                        queryPrefix = "isbn:";
+                                        item.setIcon(R.drawable.ic_action_isbn);
+                                        break;
                                 }
                                 set(dialog, which);
                             }
                             private void set(DialogInterface dialog, int checkedItem) {
-                                PesquisarActivity.this.checkedItem = checkedItem;
+                                SearchActivity.this.checkedItem = checkedItem;
                                 refreshList(true);
                                 dialog.dismiss();
                             }
                         }).show();
                 break;
 
-            case R.id.action_add_manualmente:
+            case R.id.action_manually_add:
                 startActivity(new Intent(this, ManualAddActivity.class));
                 break;
         }
     }
 
     private void showTapTarget(Toolbar toolbar) {
-        if (!sp.getBoolean(K.PREF.TAP_TARGET_SEARCH, false)) {
+        if (!prefs.getBoolean(K.PREF.TAP_TARGET_SEARCH, false)) {
             new TapTargetSequence(this)
                     .continueOnCancel(true)
                     .targets(
-                            TapTarget.forToolbarMenuItem(toolbar, R.id.action_pesquisar,
-                                    getString(R.string.search), getString(R.string.tap_target_pesquisa, new String(Character.toChars(0x1F50D)))).id(1),
-                            TapTarget.forToolbarMenuItem(toolbar, R.id.action_pesquisar_por,
-                                    getString(R.string.search_by), getString(R.string.tap_target_pesquisar_por)).id(2)
+                            TapTarget.forToolbarMenuItem(toolbar, R.id.action_search,
+                                    getString(R.string.search), getString(R.string.tap_target_search, new String(Character.toChars(0x1F50D)))).id(1),
+                            TapTarget.forToolbarMenuItem(toolbar, R.id.action_search_by,
+                                    getString(R.string.search_by), getString(R.string.tap_target_search_by)).id(2)
                     ).listener(new TapTargetSequence.Listener() {
                 @Override
                 public void onSequenceFinish() {
-                    sp.edit().putBoolean(K.PREF.TAP_TARGET_SEARCH, true).apply();
+                    prefs.edit().putBoolean(K.PREF.TAP_TARGET_SEARCH, true).apply();
                     setUpToolBar(toolbar);
                 }
 
@@ -230,13 +239,13 @@ public class PesquisarActivity extends AppCompatActivity {
         }
     }
     
-    private void configurarRecyclerView() {
+    private void setUpRecyclerView() {
         if (rv != null) {
-            mAdapter = new VolumeAdapter(this, volumesLista);
+            mAdapter = new VolumeAdapter(this, volumeList);
             rv.setAdapter(mAdapter);
         } else {
-            rv = findViewById(R.id.rv_pesquisar);
-            mAdapter = new VolumeAdapter(this, volumesLista);
+            rv = findViewById(R.id.rv_search);
+            mAdapter = new VolumeAdapter(this, volumeList);
 
             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
             rv.setHasFixedSize(true);
@@ -246,17 +255,17 @@ public class PesquisarActivity extends AppCompatActivity {
     }
 
     private void refreshList(boolean fromUser) {
-        if (!queryAtual.equals("")) {
+        if (!currentQuery.equals("")) {
             swipeLayout.setRefreshing(fromUser);
             new Thread(() -> {
                 try {
-                    volumesLista = Utils.searchVolumes(prefixo + queryAtual);
+                    volumeList = Utils.searchVolumes(queryPrefix + currentQuery);
                 } catch (Exception ignored) {}
                 runOnUiThread(() -> {
                     swipeLayout.setRefreshing(false);
-                    configurarRecyclerView();
-                    if (volumesLista == null && fromUser) {
-                        Utils.hideKeyboard(PesquisarActivity.this);
+                    setUpRecyclerView();
+                    if (volumeList == null && fromUser) {
+                        Utils.hideKeyboard(SearchActivity.this);
                         Snackbar.make(findViewById(R.id.cl), R.string.search_no_book_found, Snackbar.LENGTH_LONG).show();
                     }
                 });

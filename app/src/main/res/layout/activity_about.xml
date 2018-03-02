@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.androidvip.bookshelf.activity.SobreActivity">
+    tools:context="com.androidvip.bookshelf.activity.AboutActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"
@@ -26,7 +26,7 @@
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/drawer_fundo"/>
+                android:background="@drawable/nav_header_background"/>
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -43,7 +43,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:context="com.androidvip.bookshelf.activity.SobreActivity"
+        tools:context="com.androidvip.bookshelf.activity.AboutActivity"
         android:background="#eee">
 
         <LinearLayout
@@ -85,7 +85,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/sobre_versao"
+                        android:id="@+id/about_version"
                         android:gravity="center_horizontal"
                         android:fontFamily="sans-serif-light"
                         android:layout_marginBottom="8dp"
@@ -110,10 +110,22 @@
                         android:layout_height="wrap_content"
                         android:padding="12dp"
                         android:gravity="center_vertical"
+                        android:drawableStart="@drawable/ic_code"
+                        android:drawablePadding="24dp"
+                        android:textColor="#212121"
+                        android:text="@string/source_code"
+                        android:onClick="gitHub"
+                        style="@style/SelectableItemBackground"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="12dp"
+                        android:gravity="center_vertical"
                         android:drawableStart="@drawable/ic_lic"
                         android:drawablePadding="24dp"
                         android:textColor="#212121"
-                        android:text="@string/licencas_open_source"
+                        android:text="@string/open_source_licenses"
                         android:onClick="lic"
                         style="@style/SelectableItemBackground"/>
 
@@ -137,7 +149,7 @@
                         android:layout_height="90dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginBottom="8dp"
-                        android:src="@drawable/ic_launcher_background"
+                        android:src="@drawable/ic_me"
                         android:layout_gravity="center_horizontal"/>
 
                     <TextView
@@ -154,7 +166,7 @@
                         android:gravity="center_horizontal"
                         android:fontFamily="sans-serif-light"
                         android:layout_marginBottom="8dp"
-                        android:text="Desenvolvedor"/>
+                        android:text="@string/developer"/>
 
                     <View
                         android:layout_width="match_parent"
@@ -171,7 +183,7 @@
                         android:drawableStart="@drawable/ic_email"
                         android:drawablePadding="24dp"
                         android:textColor="#212121"
-                        android:text="Email"
+                        android:text="@string/email"
                         android:onClick="email"
                         style="@style/SelectableItemBackground"/>
 

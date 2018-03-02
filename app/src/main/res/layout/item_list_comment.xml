@@ -17,7 +17,7 @@
         android:textSize="12sp"
         android:textColor="#fff"
         android:padding="6dp"
-        android:background="@drawable/circulo" />
+        android:background="@drawable/circle_shape_brown" />
 
     <TextView
         android:layout_width="match_parent"

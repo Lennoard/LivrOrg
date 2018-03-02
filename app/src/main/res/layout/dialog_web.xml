@@ -1,49 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:minWidth="320dp"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
     android:orientation="vertical">
 
-    <LinearLayout
+    <WebView android:id="@+id/webview_dialog"
         android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:layout_height="64dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:id="@+id/dialog_text"
-            android:gravity="center"
-            android:textColor="#212121"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:padding="16dp"/>
-    </LinearLayout>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/swipeToRefresh"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <WebView android:id="@+id/webview_dialog"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-        </android.support.v4.widget.SwipeRefreshLayout>
-
-        <ProgressBar
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="4dp"
-            android:progress="5"
-            android:id="@+id/pb_web_dialog" />
-
-    </FrameLayout>
-
+        android:layout_height="match_parent" />
 
 </LinearLayout>

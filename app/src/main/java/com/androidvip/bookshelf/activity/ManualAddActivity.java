@@ -54,12 +54,12 @@ public class ManualAddActivity extends AppCompatActivity {
             EditText editTitle = findViewById(R.id.manual_add_title);
             EditText editAuthor = findViewById(R.id.manual_add_author);
             if (editTitle.getText().toString().equals(""))
-                Snackbar.make(view, R.string.erro_text_fields, Snackbar.LENGTH_LONG).show();
+                Snackbar.make(view, R.string.error_text_fields, Snackbar.LENGTH_LONG).show();
             else {
                 book.setTitle(editTitle.getText().toString().trim());
                 book.setAuthors(editAuthor.getText().toString().trim());
                 bookBox.put(book);
-                Toast.makeText(ManualAddActivity.this, R.string.livro_adicionado, Toast.LENGTH_SHORT).show();
+                Toast.makeText(ManualAddActivity.this, R.string.book_added, Toast.LENGTH_SHORT).show();
                 // A book has been created, there is nothing
                 // else to do here so we finish this activity
                 finish();
@@ -94,7 +94,7 @@ public class ManualAddActivity extends AppCompatActivity {
         int checkedItem = readingState == 0 ? -1 : book.getReadingState() - 1;
 
         new AlertDialog.Builder(this)
-                .setTitle(R.string.add_lista)
+                .setTitle(R.string.add_to_list)
                 .setSingleChoiceItems(R.array.reading_state_array, checkedItem, (dialog, which) -> {
                     switch (which) {
                         case 0:

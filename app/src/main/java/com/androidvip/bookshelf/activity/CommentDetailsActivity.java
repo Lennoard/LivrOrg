@@ -54,7 +54,7 @@ public class CommentDetailsActivity extends AppCompatActivity {
             } else
                 // No id received, don't populate anything,
                 // instead, let the user create one
-                getSupportActionBar().setTitle(R.string.comentario_novo);
+                getSupportActionBar().setTitle(R.string.comment_new);
         }
 
         fab.setOnClickListener(v -> {
@@ -67,9 +67,9 @@ public class CommentDetailsActivity extends AppCompatActivity {
 
             if (newComment != null) {
                 commentBox.put(newComment);
-                Snackbar.make(fab, R.string.comentario_salvo, Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(fab, R.string.comment_saved, Snackbar.LENGTH_SHORT).show();
             } else
-                Snackbar.make(fab, R.string.comentario_falha_salvar, Snackbar.LENGTH_LONG).show();
+                Snackbar.make(fab, R.string.comment_failure_save, Snackbar.LENGTH_LONG).show();
         });
     }
 
@@ -103,8 +103,8 @@ public class CommentDetailsActivity extends AppCompatActivity {
             // Empty text field detected, we don't want to save any
             // empty data on the book so alert the user about it
             new AlertDialog.Builder(this)
-                    .setTitle(R.string.erro)
-                    .setMessage(R.string.erro_text_fields)
+                    .setTitle(R.string.error)
+                    .setMessage(R.string.error_text_fields)
                     .setPositiveButton(android.R.string.ok, (dialog, which) -> {})
                     .show();
             // and if so, return null

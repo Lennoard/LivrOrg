@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:id="@+id/action_pesquisar"
+    <item android:id="@+id/action_search"
         android:title="@string/search"
-        android:icon="@drawable/ic_pesquisa"
+        android:icon="@drawable/ic_search"
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="collapseActionView|ifRoom" />
 
-    <item android:id="@+id/action_pesquisar_por"
-        android:title="Pesquisar por"
-        android:icon="@drawable/ic_ordenar"
+    <item android:id="@+id/action_search_by"
+        android:title="@string/search_by"
+        app:actionViewClass="android.widget.TextView"
+        android:icon="@drawable/ic_action_title"
         app:showAsAction="ifRoom">
 
     </item>

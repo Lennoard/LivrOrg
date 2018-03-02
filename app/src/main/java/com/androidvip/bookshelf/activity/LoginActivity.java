@@ -15,9 +15,10 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.androidvip.bookshelf.R;
+import com.androidvip.bookshelf.util.K;
 
 public class LoginActivity extends AppCompatActivity {
-    TextInputEditText usuario, senha;
+    TextInputEditText user, password;
     SharedPreferences sp;
 
     @Override
@@ -25,10 +26,11 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        usuario = findViewById(R.id.login_usuario);
-        senha = findViewById(R.id.login_senha);
+        user = findViewById(R.id.login_username);
+        password = findViewById(R.id.login_password);
         sp = PreferenceManager.getDefaultSharedPreferences(this);
 
+        // Tint status bar
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
@@ -36,28 +38,30 @@ public class LoginActivity extends AppCompatActivity {
             window.setStatusBarColor(Color.parseColor("#A1887F"));
         }
 
-        if (sp.getBoolean("logado", false))
+        // Automatically log in
+        if (sp.getBoolean(K.PREF.LOGGED_IN, false))
             logIn();
     }
 
-    public void logInButton(View view) {
-        if (getText(usuario).length() > 0 && getText(senha).length() > 0 && validarFormulario())
+    public void logInButtonClick(View view) {
+        if (getText(user).length() > 0 && getText(password).length() > 0 && validForm())
             logIn();
         else
-            Toast.makeText(this, R.string.login_erro_usuario_invalido, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.login_error_invalid_user, Toast.LENGTH_SHORT).show();
     }
 
     public void registrar(View view) {
-        startActivity(new Intent(this, RegistrarActivity.class));
+        startActivity(new Intent(this, SigninActivity.class));
     }
 
     private void logIn() {
         ProgressDialog pd = new ProgressDialog(this);
         pd.setMessage(getString(R.string.logging_in));
         pd.show();
-        sp.edit().putBoolean("logado", true).apply();
+        sp.edit().putBoolean(K.PREF.LOGGED_IN, true).apply();
         new Thread(() -> {
             try {
+                // Simulation of a fake heavy task
                 Thread.sleep(1000);
             } catch (InterruptedException ignored) {}
             runOnUiThread(() -> {
@@ -72,22 +76,21 @@ public class LoginActivity extends AppCompatActivity {
         return editText.getText().toString().trim();
     }
 
-    private boolean validarFormulario() {
-        boolean valido;
-        String usuarioEstatico = sp.getString("usuario", "");
-        String senhaEstatica = sp.getString("senha", "");
+    private boolean validForm() {
+        boolean valid;
+        String staticUser = sp.getString(K.PREF.USERNAME, "");
+        String staticPassword = sp.getString(K.PREF.PASSWORD, "");
 
-        if (getText(usuario).equals(usuarioEstatico) && getText(senha).equals(senhaEstatica))
-            valido = true;
+        if (getText(user).equals(staticUser) && getText(password).equals(staticPassword))
+            valid = true;
         else {
-            valido = false;
-            if (getText(usuario).equals(""))
-                usuario.setError(getString(R.string.login_erro_usuario));
-            if (getText(senha).equals(""))
-                senha.setError(getString(R.string.login_erro_senha));
-            Toast.makeText(this, R.string.usuario_invalido, Toast.LENGTH_SHORT).show();
+            valid = false;
+            if (getText(user).equals(""))
+                user.setError(getString(R.string.login_error_user));
+            if (getText(password).equals(""))
+                password.setError(getString(R.string.login_error_password));
+            Toast.makeText(this, R.string.invalid_user, Toast.LENGTH_SHORT).show();
         }
-
-        return valido;
+        return valid;
     }
 }

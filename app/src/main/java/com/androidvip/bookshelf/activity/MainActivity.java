@@ -50,9 +50,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private SwipeRefreshLayout swipeLayout;
     private Box<Book> bookBox;
     private List<Book> currentList;
-    private int idNavAtual;
+    private int currentNavId;
     private Snackbar snackNet;
-    private SharedPreferences sp;
+    private SharedPreferences prefs;
     private ActionBar actionBar;
 
     private BroadcastReceiver netReceiver = new BroadcastReceiver() {
@@ -72,31 +72,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     // TODO: 13/02/18 localização
     // TODO: 20/02/18 icon filtrar por
-    // TODO: 20/02/2018 add ic_me git
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        sp = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         actionBar = getSupportActionBar();
-        actionBar.setTitle(getString(R.string.app_name) + ": " + getString(R.string.estado_leitura_lendo));
+        actionBar.setTitle(getString(R.string.app_name) + ": " + getString(R.string.reading_state_reading));
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(view -> {
-            Intent intent = new Intent(MainActivity.this, PesquisarActivity.class);
-            intent.putExtra("add", true);
+            Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+            intent.putExtra(K.EXTRA_IS_ADD_ACTIVITY, true);
             startActivity(intent);
         });
 
-        idNavAtual = R.id.nav_lendo;
+        currentNavId = R.id.nav_reading;
 
         registerReceiver(netReceiver, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
-        configurarDrawer(toolbar);
+        setUpDrawer(toolbar);
 
         swipeLayout = findViewById(R.id.swipe_rv_main);
         swipeLayout.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorAccent));
@@ -104,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         showTapTarget(toolbar, fab);
 
-        snackNet = Snackbar.make(findViewById(R.id.cl), R.string.erro_sem_conexao, Snackbar.LENGTH_INDEFINITE);
+        snackNet = Snackbar.make(findViewById(R.id.cl), R.string.error_no_connection, Snackbar.LENGTH_INDEFINITE);
         if (!Utils.isOnline(this))
             snackNet.show();
     }
@@ -113,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onStart() {
         bookBox = ((App) getApplication()).getBoxStore().boxFor(Book.class);
         swipeLayout.setRefreshing(true);
-        trocarNavItems(idNavAtual);
+        switchNavItems(currentNavId);
         super.onStart();
     }
 
@@ -129,39 +128,49 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
 
-        MenuItem itemPesquisar = menu.findItem(R.id.action_filtrar);
+        // Set up search
+        MenuItem searchMenuItem = menu.findItem(R.id.action_filter);
 
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) itemPesquisar.getActionView();
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-
-        itemPesquisar.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
-            @Override
-            public boolean onMenuItemActionExpand(MenuItem item) {
-                searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                    @Override
-                    public boolean onQueryTextSubmit(String query) {
-                        configurarRecyclerView(filtrarPorMatch(query));
-                        return true;
-                    }
-                    @Override
-                    public boolean onQueryTextChange(String newText) {
-                        if (newText.length() > 3) {
-                            configurarRecyclerView(filtrarPorMatch(newText));
+        // Get the search service (using this activity's context)
+        SearchManager searchManager = (SearchManager) this.getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) searchMenuItem.getActionView();
+        if (searchManager != null) {
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+            searchMenuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+                @Override
+                public boolean onMenuItemActionExpand(MenuItem item) {
+                    // The search field is now visible, good opportunity to set up a query listener
+                    searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                        @Override
+                        public boolean onQueryTextSubmit(String query) {
+                            // User has pressed the search/submit button on his/her input method,
+                            // and we received the query, update the list accordingly
+                            setUpRecyclerView(filterBooksByMatch(query));
                             return true;
                         }
-                        return false;
-                    }
-                });
-                return true;
-            }
+                        @Override
+                        public boolean onQueryTextChange(String newText) {
+                            // User has started to type his/her query
+                            if (newText.length() > 4) {
+                                // We now received the query, update the list accordingly
+                                setUpRecyclerView(filterBooksByMatch(newText));
+                                return true;
+                            }
+                            // Return false, we are not interested in queries that are no larger than 5 characters
+                            return false;
+                        }
+                    });
+                    return true;
+                }
 
-            @Override
-            public boolean onMenuItemActionCollapse(MenuItem item) {
-                configurarRecyclerView(currentList);
-                return true;
-            }
-        });
+                @Override
+                public boolean onMenuItemActionCollapse(MenuItem item) {
+                    // User has clicked on the back button, give him/her the previous list back
+                    setUpRecyclerView(currentList);
+                    return true;
+                }
+            });
+        }
         return true;
     }
 
@@ -169,16 +178,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent i;
         switch (item.getItemId()) {
-            case R.id.action_sobre:
-                startActivity(new Intent(this, SobreActivity.class));
+            case R.id.action_about:
+                startActivity(new Intent(this, AboutActivity.class));
                 break;
             case R.id.action_log_out:
                 PreferenceManager.getDefaultSharedPreferences(this)
-                        .edit().putBoolean("logado", false).apply();
+                        .edit().putBoolean(K.PREF.LOGGED_IN, false).apply();
                 i = new Intent(this, LoginActivity.class);
-                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(i);
+                // Finish this activity in case of the user attempts to come back
+                finish();
                 break;
         }
         return true;
@@ -194,16 +203,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        trocarNavItems(item.getItemId());
+        switchNavItems(item.getItemId());
         return true;
     }
 
     private void showTapTarget(Toolbar toolbar, FloatingActionButton fab) {
-        if (!sp.getBoolean(K.PREF.TAP_TARGET_MAIN, false)) {
+        if (!prefs.getBoolean(K.PREF.TAP_TARGET_MAIN, false)) {
             new TapTargetSequence(this)
                     .continueOnCancel(true)
                     .targets(
-                            TapTarget.forToolbarNavigationIcon(toolbar, getString(R.string.menu), getString(R.string.tap_target_menu)).id(1),
+                            TapTarget.forToolbarNavigationIcon(toolbar, getString(R.string.menu), getString(R.string.tap_target_drawer_button)).id(1),
                             TapTarget.forView(fab, getString(R.string.add), getString(R.string.tap_target_add))
                                     .tintTarget(false)
                                     .cancelable(false)
@@ -211,9 +220,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     ).listener(new TapTargetSequence.Listener() {
                         @Override
                         public void onSequenceFinish() {
-                            sp.edit().putBoolean(K.PREF.TAP_TARGET_MAIN, true).apply();
-                            Intent intent = new Intent(MainActivity.this, PesquisarActivity.class);
-                            intent.putExtra("add", true);
+                            prefs.edit().putBoolean(K.PREF.TAP_TARGET_MAIN, true).apply();
+                            Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+                            intent.putExtra(K.EXTRA_IS_ADD_ACTIVITY, true);
                             startActivity(intent);
                         }
 
@@ -230,68 +239,73 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    private void trocarNavItems(int itemId) {
+    private void switchNavItems(int itemId) {
         switch (itemId) {
-            case R.id.nav_lendo:
-                idNavAtual = R.id.nav_lendo;
-                configurarRecyclerView(filtrarPorEstadoLeitura(Book.STATE_READING));
-                actionBar.setTitle(R.string.estado_leitura_lendo);
+            case R.id.nav_reading:
+                currentNavId = R.id.nav_reading;
+                setUpRecyclerView(filterBooksByReadingState(Book.STATE_READING));
+                actionBar.setTitle(R.string.reading_state_reading);
                 break;
-            case R.id.nav_lista_desejos:
-                idNavAtual = R.id.nav_lista_desejos;
-                configurarRecyclerView(filtrarPorEstadoLeitura(Book.STATE_WISH));
-                actionBar.setTitle(R.string.estado_leitura_desejo);
+            case R.id.nav_wish:
+                currentNavId = R.id.nav_wish;
+                setUpRecyclerView(filterBooksByReadingState(Book.STATE_WISH));
+                actionBar.setTitle(R.string.reading_state_wish);
                 break;
-            case R.id.nav_em_espera:
-                idNavAtual = R.id.nav_em_espera;
-                configurarRecyclerView(filtrarPorEstadoLeitura(Book.STATE_ON_HOLD));
-                actionBar.setTitle(R.string.estado_leitura_em_espera);
+            case R.id.nav_on_hold:
+                currentNavId = R.id.nav_on_hold;
+                setUpRecyclerView(filterBooksByReadingState(Book.STATE_ON_HOLD));
+                actionBar.setTitle(R.string.reading_state_on_hold);
                 break;
-            case R.id.nav_desistencias:
-                idNavAtual = R.id.nav_desistencias;
-                configurarRecyclerView(filtrarPorEstadoLeitura(Book.STATE_DROPPED));
-                actionBar.setTitle(R.string.desistencias);
+            case R.id.nav_dropped:
+                currentNavId = R.id.nav_dropped;
+                setUpRecyclerView(filterBooksByReadingState(Book.STATE_DROPPED));
+                actionBar.setTitle(R.string.reading_state_dropped);
                 break;
-            case R.id.nav_finalizados:
-                idNavAtual = R.id.nav_finalizados;
-                configurarRecyclerView(filtrarPorEstadoLeitura(Book.STATE_FINISHED));
-                actionBar.setTitle(R.string.finalizados);
+            case R.id.nav_finished:
+                currentNavId = R.id.nav_finished;
+                setUpRecyclerView(filterBooksByReadingState(Book.STATE_FINISHED));
+                actionBar.setTitle(R.string.reading_state_finished);
                 break;
-            case R.id.nav_favoritos:
-                idNavAtual = R.id.nav_favoritos;
-                configurarRecyclerView(filtrarPorFavorito());
-                actionBar.setTitle(R.string.favoritos);
+            case R.id.nav_favorites:
+                currentNavId = R.id.nav_favorites;
+                setUpRecyclerView(filterBooksByFavorite());
+                actionBar.setTitle(R.string.favorites);
                 break;
-            case R.id.nav_pesquisar:
-                startActivity(new Intent(this, PesquisarActivity.class));
+            case R.id.nav_search:
+                startActivity(new Intent(this, SearchActivity.class));
                 break;
         }
         drawer.closeDrawer(GravityCompat.START);
     }
 
-    private List<Book> filtrarPorEstadoLeitura(int estadoLeitura){
-        List<Book> l = bookBox.query().equal(Book_.readingState, estadoLeitura).build().find();
+    private List<Book> filterBooksByReadingState(int readingState){
+        List<Book> l = bookBox.query().equal(Book_.readingState, readingState).build().find();
         currentList = l;
         return l;
     }
 
-    private List<Book> filtrarPorFavorito(){
+    private List<Book> filterBooksByFavorite(){
         List<Book> l = bookBox.query().equal(Book_.favorite, true).build().find();
         currentList = l;
         return l;
     }
 
-    private List<Book> filtrarPorMatch(String match) {
+    private List<Book> filterBooksByMatch(String match) {
         List<Book> l = new ArrayList<>();
-        for (Book book : currentList)
-            if (book.getTitle().toLowerCase().contains(match.toLowerCase()) ||
-                    Utils.notNull(book.getTags().toLowerCase(), "").contains(match.toLowerCase()) ||
-                    Utils.notNull(book.getAuthors().toLowerCase(), "").contains(match.toLowerCase()))
+        for (Book book : currentList) {
+            // Safe
+            String titleSearch = book.getTitle().toLowerCase();
+            // Not safe, must check for nullity, in this case, the default values are random strings
+            // rather than "" because the user might actually hit the search button with an empty query
+            String tagsSearch = Utils.notNull(book.getTags(), Utils.randomString(6)).toLowerCase();
+            String authorsSearch = Utils.notNull(book.getAuthors(), Utils.randomString(6)).toLowerCase();
+            if (titleSearch.contains(match.toLowerCase()) || tagsSearch.contains(match.toLowerCase()) || authorsSearch.contains(match.toLowerCase()))
                 l.add(book);
+        }
         return l;
     }
 
-    private void configurarDrawer(Toolbar toolbar) {
+    private void setUpDrawer(Toolbar toolbar) {
         drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -300,10 +314,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        navigationView.setCheckedItem(R.id.nav_lendo);
+        navigationView.setCheckedItem(R.id.nav_reading);
     }
 
-    private void configurarRecyclerView(List<Book> lista) {
+    private void setUpRecyclerView(List<Book> lista) {
         if (rv != null) {
             mAdapter = new BookAdapter(this, lista, false);
             rv.setAdapter(mAdapter);

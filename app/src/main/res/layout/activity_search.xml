@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.androidvip.bookshelf.activity.PesquisarActivity">
+    tools:context="com.androidvip.bookshelf.activity.SearchActivity">
 
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
@@ -38,14 +38,14 @@
             <android.support.v4.widget.SwipeRefreshLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/swipe_rv_pesquisar">
+                android:id="@+id/swipe_rv_search">
 
                 <android.support.v7.widget.RecyclerView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:paddingLeft="@dimen/margem_reclycler"
                     android:paddingRight="@dimen/margem_reclycler"
-                    android:id="@+id/rv_pesquisar">
+                    android:id="@+id/rv_search">
 
                 </android.support.v7.widget.RecyclerView>
 
@@ -54,7 +54,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/detalhes_img_offline"
+                android:id="@+id/details_img_offline"
                 android:layout_gravity="center"
                 android:visibility="gone"
                 android:src="@drawable/ic_offline"/>

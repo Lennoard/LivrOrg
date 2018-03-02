@@ -6,11 +6,11 @@
         <item>ISBN</item>
     </string-array>
     <string-array name="reading_state_array">
-        <item>@string/estado_leitura_lendo</item>
-        <item>@string/estado_leitura_desejo</item>
-        <item>@string/estado_leitura_em_espera</item>
-        <item>@string/estado_leitura_desistido</item>
-        <item>@string/estado_leitura_finalizado</item>
+        <item>@string/reading_state_reading</item>
+        <item>@string/reading_state_wish</item>
+        <item>@string/reading_state_on_hold</item>
+        <item>@string/reading_state_dropped</item>
+        <item>@string/reading_state_finished</item>
     </string-array>
     <string-array name="scores_array">
         <item>1 - Horrible</item>

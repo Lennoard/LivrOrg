@@ -68,7 +68,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:text="@string/descricao"
+                android:text="@string/description"
                 android:textColor="@color/colorAccent"/>
 
             <TextView
@@ -88,7 +88,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/categorias"
+                android:text="@string/categories"
                 android:layout_marginTop="12dp"
                 android:textColor="@color/colorAccent"/>
 
@@ -108,7 +108,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/classificacoes"
+                android:text="@string/ratings"
                 android:layout_marginTop="12dp"
                 android:textColor="@color/colorAccent"/>
 
@@ -153,7 +153,7 @@
                     android:paddingTop="12dp"
                     android:paddingBottom="12dp"
                     android:textColor="#212121"
-                    android:text="@string/inicio_leitura"
+                    android:text="@string/reading_beginning"
                     android:drawableEnd="@drawable/ic_editar"
                     style="@style/SelectableItemBackground"/>
 
@@ -165,7 +165,7 @@
                     android:paddingTop="12dp"
                     android:paddingBottom="12dp"
                     android:textColor="#212121"
-                    android:text="@string/termino_leitura"
+                    android:text="@string/reading_end"
                     android:drawableEnd="@drawable/ic_editar"
                     style="@style/SelectableItemBackground"/>
 
@@ -179,7 +179,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
                     android:layout_marginBottom="24dp"
-                    android:text="@string/comentarios"
+                    android:text="@string/comments"
                     android:textColor="#212121"
                     android:paddingTop="16dp"
                     android:paddingBottom="16dp"
@@ -256,7 +256,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/detalhes_estado"
                 android:textColor="#ffab40"
-                android:background="@drawable/botao_detalhes_selector"
+                android:background="@drawable/button_details_selector"
                 android:layout_marginBottom="8dp"
                 android:maxLines="1"
                 android:ellipsize="end"
@@ -267,7 +267,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/detalhes_nota"
                 android:textColor="#ffab40"
-                android:background="@drawable/botao_detalhes_selector"
+                android:background="@drawable/button_details_selector"
                 android:maxLines="1"
                 android:ellipsize="end"
                 android:text="@string/loading" />

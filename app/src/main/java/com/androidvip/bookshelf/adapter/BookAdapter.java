@@ -2,6 +2,7 @@ package com.androidvip.bookshelf.adapter;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
@@ -62,14 +63,15 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
         }
     }
 
+    @NonNull
     @Override
-    public BookAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public BookAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(activity).inflate(R.layout.list_item_book, parent,false);
         return new BookAdapter.ViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(final BookAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final BookAdapter.ViewHolder holder, int position) {
         holder.cover.setImageResource(R.drawable.loading_image);
         Book book = mDataSet.get(position);
 
@@ -109,7 +111,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
                         Book bookToRemove = mDataSet.get(position);
                         new AlertDialog.Builder(activity)
                                 .setTitle(android.R.string.dialog_alert_title)
-                                .setMessage(activity.getString(R.string.aviso_remover_livro, book.getTitle()))
+                                .setMessage(activity.getString(R.string.alert_remove_book, book.getTitle()))
                                 .setPositiveButton(android.R.string.yes, (dialog, which) -> removeBook(bookToRemove, position))
                                 .setNegativeButton(android.R.string.cancel, (dialog, which) -> {})
                                 .show();
@@ -155,7 +157,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
         mDataSet.remove(position);
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, getItemCount());
-        Snackbar.make(cl, activity.getString(R.string.item_removido, bookToRemove.getTitle()), Snackbar.LENGTH_LONG)
+        Snackbar.make(cl, activity.getString(R.string.item_removed, bookToRemove.getTitle()), Snackbar.LENGTH_LONG)
                 .setAction(R.string.undo, v1 -> addBook(bookToRemove)).show();
     }
 
@@ -163,7 +165,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
         bookBox.put(bookToAdd);
         mDataSet.add(bookToAdd);
         notifyDataSetChanged();
-        Snackbar.make(cl, activity.getString(R.string.item_adicionado, bookToAdd.getTitle()), Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(cl, activity.getString(R.string.item_added_wish, bookToAdd.getTitle()), Snackbar.LENGTH_SHORT).show();
     }
 
     @Override

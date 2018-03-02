@@ -3,43 +3,43 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <item android:title="@string/minha_colecao">
+    <item android:title="@string/my_collection">
         <menu>
             <group android:checkableBehavior="single">
                 <item
-                    android:id="@+id/nav_lendo"
-                    android:icon="@drawable/ic_livro"
-                    android:title="@string/estado_leitura_lendo" />
+                    android:id="@+id/nav_reading"
+                    android:icon="@drawable/ic_book"
+                    android:title="@string/reading_state_reading" />
                 <item
-                    android:id="@+id/nav_lista_desejos"
+                    android:id="@+id/nav_wish"
                     android:icon="@drawable/ic_lista_desejos"
-                    android:title="@string/estado_leitura_desejo" />
+                    android:title="@string/reading_state_wish" />
                 <item
-                    android:id="@+id/nav_em_espera"
-                    android:icon="@drawable/ic_em_espera"
-                    android:title="@string/estado_leitura_em_espera" />
+                    android:id="@+id/nav_on_hold"
+                    android:icon="@drawable/ic_on_hold"
+                    android:title="@string/reading_state_on_hold" />
                 <item
-                    android:id="@+id/nav_desistencias"
-                    android:icon="@drawable/ic_desistencias"
-                    android:title="@string/desistencias" />
+                    android:id="@+id/nav_dropped"
+                    android:icon="@drawable/ic_dropped"
+                    android:title="@string/reading_state_dropped" />
                 <item
-                    android:id="@+id/nav_finalizados"
-                    android:icon="@drawable/ic_finalizados"
-                    android:title="@string/finalizados" />
+                    android:id="@+id/nav_finished"
+                    android:icon="@drawable/ic_finished"
+                    android:title="@string/reading_state_finished" />
                 <item
-                    android:id="@+id/nav_favoritos"
+                    android:id="@+id/nav_favorites"
                     android:icon="@drawable/ic_favorite"
-                    android:title="@string/favoritos" />
+                    android:title="@string/favorites" />
             </group>
         </menu>
     </item>
 
-    <item android:title="@string/acervo">
+    <item android:title="@string/find">
         <menu>
             <group android:checkableBehavior="single">
                 <item
-                    android:id="@+id/nav_pesquisar"
-                    android:icon="@drawable/ic_pesquisa"
+                    android:id="@+id/nav_search"
+                    android:icon="@drawable/ic_search"
                     android:title="@string/search" />
             </group>
         </menu>

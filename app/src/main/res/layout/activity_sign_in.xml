@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.androidvip.bookshelf.activity.RegistrarActivity">
+    tools:context="com.androidvip.bookshelf.activity.SigninActivity">
 
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
@@ -34,7 +34,7 @@
             android:paddingLeft="@dimen/margem_padrao"
             android:paddingRight="@dimen/margem_padrao"
             android:paddingTop="16dp"
-            tools:context="com.androidvip.bookshelf.activity.RegistrarActivity"
+            tools:context="com.androidvip.bookshelf.activity.SigninActivity"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <LinearLayout
@@ -48,7 +48,7 @@
                     android:layout_marginTop="16dp"
                     android:layout_marginBottom="16dp"
                     android:gravity="center_horizontal"
-                    android:src="@drawable/ic_conta"/>
+                    android:src="@drawable/ic_accont"/>
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
@@ -59,7 +59,7 @@
                         android:layout_height="wrap_content"
                         android:inputType="textPersonName"
                         android:id="@+id/cadastrar_usuario"
-                        android:hint="@string/usuario" />
+                        android:hint="@string/user" />
 
                 </android.support.design.widget.TextInputLayout>
 
@@ -87,7 +87,7 @@
                         android:layout_height="wrap_content"
                         android:inputType="textPassword"
                         android:id="@+id/cadastrar_confirmar_senha"
-                        android:hint="@string/confirmar_senha" />
+                        android:hint="@string/confirm_password" />
 
                 </android.support.design.widget.TextInputLayout>
 

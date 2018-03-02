@@ -1,12 +1,14 @@
 package com.androidvip.bookshelf.activity;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.webkit.WebChromeClient;
@@ -20,7 +22,7 @@ import com.androidvip.bookshelf.BuildConfig;
 import com.androidvip.bookshelf.R;
 import com.androidvip.bookshelf.util.Utils;
 
-public class SobreActivity extends AppCompatActivity {
+public class AboutActivity extends AppCompatActivity {
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -32,8 +34,8 @@ public class SobreActivity extends AppCompatActivity {
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        TextView versao = findViewById(R.id.sobre_versao);
-        versao.setText("v" + BuildConfig.VERSION_NAME);
+        TextView version = findViewById(R.id.about_version);
+        version.setText("v" + BuildConfig.VERSION_NAME);
     }
 
     public void xda(View view) {
@@ -50,45 +52,24 @@ public class SobreActivity extends AppCompatActivity {
         i.putExtra(Intent.EXTRA_EMAIL, new String[]{"lennoardrai@gmail.com"});
         i.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name));
         try {
-            startActivity(Intent.createChooser(i, "Enviar email"));
+            startActivity(Intent.createChooser(i, getString(R.string.send_email)));
         } catch (android.content.ActivityNotFoundException ex) {
-            Toast.makeText(this, "Falha ao enviar email", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.send_email_failure, Toast.LENGTH_SHORT).show();
         }
     }
 
     public void lic(View view) {
-        final Dialog dialog = new Dialog(this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.dialog_web);
-        dialog.setCancelable(true);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        final TextView txt = dialog.findViewById(R.id.dialog_text);
-        final WebView webView = dialog.findViewById(R.id.webview_dialog);
-        final ProgressBar pb = dialog.findViewById(R.id.pb_web_dialog);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_web, null);
 
-        txt.setText(R.string.licencas_open_source);
+        builder.setCancelable(true);
+        builder.setTitle(R.string.open_source_licenses);
+        builder.setView(dialogView);
 
-        final SwipeRefreshLayout swipeLayout = dialog.findViewById(R.id.swipeToRefresh);
-        swipeLayout.setColorSchemeResources(R.color.colorAccent);
-        swipeLayout.setOnRefreshListener(webView::reload);
+        WebView webView = dialogView.findViewById(R.id.webview_dialog);
         webView.loadUrl("file:///android_res/raw/lic.html");
-        webView.setWebViewClient(new WebViewClient(){
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                swipeLayout.setRefreshing(false);
-            }
-        });
-        webView.setWebChromeClient(new WebChromeClient() {
-            public void onProgressChanged(WebView view, int progress) {
-                pb.setProgress(progress);
-                if (progress == 100) {
-                    pb.setVisibility(View.GONE);
-                    swipeLayout.setRefreshing(false);
-                } else
-                    pb.setVisibility(View.VISIBLE);
-            }
-
-        });
-        dialog.show();
+        builder.show();
     }
 }

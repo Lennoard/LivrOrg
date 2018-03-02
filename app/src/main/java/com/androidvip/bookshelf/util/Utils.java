@@ -27,6 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 /**
  * Utility class. Its methods are often used statically through the whole Java codes,
@@ -81,12 +82,12 @@ public final class Utils {
     public static String readingStateToString(int readingState, Context context) {
         String ret;
         switch (readingState) {
-            case Book.STATE_READING:  ret = context.getString(R.string.estado_leitura_lendo); break;
-            case Book.STATE_WISH:     ret = context.getString(R.string.estado_leitura_desejo); break;
-            case Book.STATE_ON_HOLD:  ret = context.getString(R.string.estado_leitura_em_espera); break;
-            case Book.STATE_DROPPED:  ret = context.getString(R.string.estado_leitura_desistido); break;
-            case Book.STATE_FINISHED: ret = context.getString(R.string.estado_leitura_finalizado); break;
-            default: ret = context.getString(R.string.add_lista);
+            case Book.STATE_READING:  ret = context.getString(R.string.reading_state_reading); break;
+            case Book.STATE_WISH:     ret = context.getString(R.string.reading_state_wish); break;
+            case Book.STATE_ON_HOLD:  ret = context.getString(R.string.reading_state_on_hold); break;
+            case Book.STATE_DROPPED:  ret = context.getString(R.string.reading_state_dropped); break;
+            case Book.STATE_FINISHED: ret = context.getString(R.string.reading_state_finished); break;
+            default: ret = context.getString(R.string.add_to_list);
         }
         return ret;
     }
@@ -169,6 +170,24 @@ public final class Utils {
             return o.toString().trim().equals("") ? defaultValue : o.toString();
         else
             return String.valueOf(o);
+    }
+
+    /**
+     * Generates a random String. Its characters are in the A-z range
+     *
+     * @param length the length of the string to return
+     * @see "https://www.rapidtables.com/code/text/ascii-table.html"
+     */
+    public static String randomString(int length){
+        if (length <= 0 || length >= 25)
+            throw new IllegalArgumentException("The string length must be between 1 and 24");
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < length; i++)
+            // A = 65; z = 122. The result of the random generation
+            // is converted to a char and then appended into the string builder
+            sb.append((char) (new Random().nextInt((122 - 65) + 1) + 65));
+        return sb.toString();
     }
 
     /**

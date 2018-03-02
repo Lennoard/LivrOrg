@@ -120,7 +120,7 @@ public class BookDetailsActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         // Create the snackbar to be shown when the device goes offline
-        snackNet = Snackbar.make(findViewById(R.id.cl), R.string.erro_sem_conexao, Snackbar.LENGTH_INDEFINITE);
+        snackNet = Snackbar.make(findViewById(R.id.cl), R.string.error_no_connection, Snackbar.LENGTH_INDEFINITE);
         // Initial check, ths will be checked before later by the Broadcast Receiver
         if (!Utils.isOnline(this))
             snackNet.show();
@@ -186,7 +186,7 @@ public class BookDetailsActivity extends AppCompatActivity {
                    isPresentInList = true;
                 } else {
                     // We didn't get any valid id, the activity is now useless
-                    Toast.makeText(this, R.string.detalhes_erro, Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.details_error, Toast.LENGTH_LONG).show();
                     // Can we handle this?
                     finish();
                 }
@@ -212,7 +212,7 @@ public class BookDetailsActivity extends AppCompatActivity {
                          */
                         new AlertDialog.Builder(BookDetailsActivity.this)
                                 .setTitle(R.string.records)
-                                .setMessage(R.string.aviso_atualizar_lendo)
+                                .setMessage(R.string.alert_update_reading)
                                 .setPositiveButton(android.R.string.yes, (dialog1, which) -> {
                                     book.setReadingState(Book.STATE_READING);
                                     readingStateButton.setText(readingStateToString(Book.STATE_READING, BookDetailsActivity.this));
@@ -221,7 +221,7 @@ public class BookDetailsActivity extends AppCompatActivity {
                                 .setNegativeButton(android.R.string.no, (dialog2, which) -> {})
                                 .show();
                     }
-                    this.readingStart.setText(getString(R.string.inicio_leitura, Utils.dateToString(newDate)));
+                    this.readingStart.setText(getString(R.string.reading_beginning, Utils.dateToString(newDate)));
                     book.setReadingStartDate(newDate);
                     // Update the database
                     bookBox.put(book);
@@ -235,7 +235,7 @@ public class BookDetailsActivity extends AppCompatActivity {
                          */
                         new AlertDialog.Builder(BookDetailsActivity.this)
                                 .setTitle(R.string.records)
-                                .setMessage(R.string.aviso_atualizar_finalizado)
+                                .setMessage(R.string.alert_update_finished)
                                 .setPositiveButton(android.R.string.yes, (dialog1, which) -> {
                                     book.setReadingState(Book.STATE_FINISHED);
                                     readingStateButton.setText(readingStateToString(Book.STATE_FINISHED, BookDetailsActivity.this));
@@ -244,7 +244,7 @@ public class BookDetailsActivity extends AppCompatActivity {
                                 .setNegativeButton(android.R.string.no, (dialog12, which) -> {})
                                 .show();
                     }
-                    readingEnd.setText(getString(R.string.termino_leitura, Utils.dateToString(newDate)));
+                    readingEnd.setText(getString(R.string.reading_end, Utils.dateToString(newDate)));
                     book.setReadingEndDate(newDate);
                     // Update the database
                     bookBox.put(book);
@@ -266,7 +266,7 @@ public class BookDetailsActivity extends AppCompatActivity {
          */
         int checkedItem = readingState == 0 ? -1 : book.getReadingState() - 1;
         new AlertDialog.Builder(this)
-                .setTitle(R.string.add_lista)
+                .setTitle(R.string.add_to_list)
                 .setSingleChoiceItems(R.array.reading_state_array, checkedItem, (dialog, which) -> {
                     if (readingState == 0) {
                         /*
@@ -369,9 +369,9 @@ public class BookDetailsActivity extends AppCompatActivity {
 
     private void populateOffline() {
         title.setText(notNull(book.getTitle(), getString(R.string.loading)));
-        author.setText(notNull(book.getAuthors(), getString(R.string.detalhes_erro_autor)));
-        description.setText(R.string.detalhes_erro_descricao);
-        categories.setText(R.string.detalhes_erro_categoria);
+        author.setText(notNull(book.getAuthors(), getString(R.string.details_error_author)));
+        description.setText(R.string.details_error_description);
+        categories.setText(R.string.details_error_category);
 
         readingStateButton.setText(readingStateToString(book.getReadingState(), BookDetailsActivity.this));
         ratingButton.setText(scoreToString(book.getScore()));
@@ -380,11 +380,11 @@ public class BookDetailsActivity extends AppCompatActivity {
         String startStr = Utils.dateToString(book.getReadingStartDate());
         String endStr = Utils.dateToString(book.getReadingEndDate());
         readingStart.setText(startStr.equals("")
-                ? getString(R.string.inicio_leitura, "-")
-                : getString(R.string.inicio_leitura, startStr));
+                ? getString(R.string.reading_beginning, "-")
+                : getString(R.string.reading_beginning, startStr));
         readingEnd.setText(endStr.equals("")
-                ? getString(R.string.termino_leitura, "-")
-                : getString(R.string.termino_leitura, endStr));
+                ? getString(R.string.reading_end, "-")
+                : getString(R.string.reading_end, endStr));
 
         if (isPresentInList) {
             /*
@@ -412,7 +412,7 @@ public class BookDetailsActivity extends AppCompatActivity {
         if (book == null) {
             // No book provided (adding to a list?), create an empty one
             book = new Book();
-            readingStateButton.setText(R.string.add_lista);
+            readingStateButton.setText(R.string.add_to_list);
             ratingButton.setText(scoreToString(0));
             ratingButton.setEnabled(false);
             ratingButton.setTextColor(Color.parseColor("#9e9e9e"));
@@ -430,16 +430,16 @@ public class BookDetailsActivity extends AppCompatActivity {
                 if (volumeInfo.getAuthors() != null)
                     author.setText(TextUtils.join(", ", volumeInfo.getAuthors()));
 
-                publication.setText(getString(R.string.data_publicacao,
-                        notNull(volumeInfo.getPublishedDate(), getString(R.string.detalhes_erro_data_publicacao)),
-                        notNull(volumeInfo.getPublisher(), getString(R.string.detalhes_erro_publicador))));
+                publication.setText(getString(R.string.publication_date,
+                        notNull(volumeInfo.getPublishedDate(), getString(R.string.details_error_publish_date)),
+                        notNull(volumeInfo.getPublisher(), getString(R.string.details_error_publisher))));
 
-                ratings.setText(getString(R.string.classificacoes_format,
+                ratings.setText(getString(R.string.ratings_format,
                         volumeInfo.getAverageRating() == null ? 0 : volumeInfo.getAverageRating().floatValue(),
                         volumeInfo.getRatingsCount() == null ? 0 : volumeInfo.getRatingsCount(),
-                        notNull(volumeInfo.getMaturityRating(), getString(R.string.detalhes_erro_maturidade))));
+                        notNull(volumeInfo.getMaturityRating(), getString(R.string.details_error_maturity))));
 
-                String desc = notNull(volumeInfo.getDescription(), getString(R.string.detalhes_erro_descricao));
+                String desc = notNull(volumeInfo.getDescription(), getString(R.string.details_error_description));
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
                     description.setText(Html.fromHtml(desc, Html.FROM_HTML_MODE_COMPACT));
                 else
@@ -447,9 +447,9 @@ public class BookDetailsActivity extends AppCompatActivity {
 
                 if (volumeInfo.getCategories() != null) {
                     String cats = TextUtils.join(", ", volumeInfo.getCategories());
-                    categories.setText(cats.equals("") || cats.equals(", ") ? getString(R.string.detalhes_erro_categoria) : cats);
+                    categories.setText(cats.equals("") || cats.equals(", ") ? getString(R.string.details_error_category) : cats);
                 } else
-                    categories.setText(R.string.detalhes_erro_categoria);
+                    categories.setText(R.string.details_error_category);
 
                 if (volumeInfo.getImageLinks() != null)
                     Picasso.with(this)

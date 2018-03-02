@@ -11,10 +11,11 @@ import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
 import com.androidvip.bookshelf.R;
+import com.androidvip.bookshelf.util.K;
 
-public class RegistrarActivity extends AppCompatActivity {
+public class SigninActivity extends AppCompatActivity {
     FloatingActionButton fab;
-    TextInputEditText usuario, senha, confirmarSenha;
+    TextInputEditText user, password, confirmPass;
     SharedPreferences sp;
 
     @Override
@@ -26,28 +27,28 @@ public class RegistrarActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         fab = findViewById(R.id.fab_cadastrar);
-        usuario = findViewById(R.id.cadastrar_usuario);
-        senha = findViewById(R.id.cadastrar_senha);
-        confirmarSenha = findViewById(R.id.cadastrar_confirmar_senha);
+        user = findViewById(R.id.cadastrar_usuario);
+        password = findViewById(R.id.cadastrar_senha);
+        confirmPass = findViewById(R.id.cadastrar_confirmar_senha);
         sp = PreferenceManager.getDefaultSharedPreferences(this);
         fab.hide();
 
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
-                validarFormulario(false);
+                validForm(false);
                 handler.postDelayed(this, 200);
             }
         }, 200);
 
         fab.setOnClickListener(v -> {
-            if (validarFormulario(true)) {
+            if (validForm(true)) {
                 SharedPreferences.Editor editor = sp.edit();
-                editor.putString("usuario", getText(usuario));
-                editor.putString("senha", getText(senha));
+                editor.putString(K.PREF.USERNAME, getText(user));
+                editor.putString(K.PREF.PASSWORD, getText(password));
                 editor.apply();
 
-                Toast.makeText(this, getText(usuario) + " foi cadastrado", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getText(user) + " registered", Toast.LENGTH_SHORT).show();
                 finish();
             }
         });
@@ -57,30 +58,30 @@ public class RegistrarActivity extends AppCompatActivity {
         return editText.getText().toString().trim();
     }
 
-    private boolean validarFormulario(boolean mostrarErros){
-        boolean valido = true;
-        if (getText(usuario).equals("")) {
-            valido = false;
-            if (mostrarErros)
-                usuario.setError(getString(R.string.login_erro_usuario));
+    private boolean validForm(boolean showErrors){
+        boolean valid = true;
+        if (getText(user).equals("")) {
+            valid = false;
+            if (showErrors)
+                user.setError(getString(R.string.login_error_user));
         }
-        if (getText(senha).equals("")) {
-            valido = false;
-            if (mostrarErros)
-                senha.setError(getString(R.string.login_erro_senha));
+        if (getText(password).equals("")) {
+            valid = false;
+            if (showErrors)
+                password.setError(getString(R.string.login_error_password));
             else
-                senha.setError(null);
+                password.setError(null);
         }
-        if (!getText(senha).equals(getText(confirmarSenha))) {
-            valido = false;
-            if (mostrarErros)
-                senha.setError(getString(R.string.cadastrar_erro_senha));
+        if (!getText(password).equals(getText(confirmPass))) {
+            valid = false;
+            if (showErrors)
+                password.setError(getString(R.string.sign_in_error_password));
         }
-        if (valido)
+        if (valid)
             fab.show();
         else
             fab.hide();
 
-        return valido;
+        return valid;
     }
 }

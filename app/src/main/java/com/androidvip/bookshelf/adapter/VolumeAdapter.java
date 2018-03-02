@@ -95,10 +95,10 @@ public class VolumeAdapter extends RecyclerView.Adapter<VolumeAdapter.ViewHolder
                 book.setReadingState(Book.STATE_WISH);
                 long id = bookBox.put(book);
 
-                Snackbar.make(cl, activity.getString(R.string.item_adicionado, title), Snackbar.LENGTH_LONG)
+                Snackbar.make(cl, activity.getString(R.string.item_added_wish, title), Snackbar.LENGTH_LONG)
                         .setAction(R.string.undo, view -> {
                             bookBox.remove(id);
-                            Snackbar.make(cl, activity.getString(R.string.item_removido, title), Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(cl, activity.getString(R.string.item_removed, title), Snackbar.LENGTH_SHORT).show();
                         }).show();
                 return true;
             });

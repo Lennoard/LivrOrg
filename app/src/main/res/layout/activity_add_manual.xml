@@ -99,7 +99,7 @@
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/ic_livro"
+                    android:src="@drawable/ic_book"
                     android:layout_marginEnd="24dp" />
 
                 <LinearLayout
@@ -113,14 +113,14 @@
                         android:layout_height="wrap_content"
                         android:textSize="16sp"
                         android:textColor="#212121"
-                        android:text="@string/estado_leitura"/>
+                        android:text="@string/reading_state"/>
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/add_manual_estado_leitura"
                         android:layout_marginTop="2dp"
-                        android:text="@string/estado_leitura_lendo" />
+                        android:text="@string/reading_state_reading" />
 
                 </LinearLayout>
 
@@ -139,7 +139,7 @@
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/ic_nota"
+                    android:src="@drawable/ic_score"
                     android:layout_marginEnd="24dp" />
 
                 <LinearLayout
